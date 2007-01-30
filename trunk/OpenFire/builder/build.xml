@@ -1,0 +1,98 @@
+<project name="OpenFire" default="dist" basedir="..">
+	
+	<property name="builder.dir" location="builder"/>
+	<property file="${builder.dir}/override.properties"/>
+	
+	<property name="build.dir" location="build"/>
+	<property name="main.build.dir" location="${build.dir}/main"/>
+	<property name="test.build.dir" location="${build.dir}/tests"/>
+	<property name="instr.build.dir" location="${build.dir}/instr"/>
+	
+	<property name="test.coverage.dir" location="${build.dir}/coverage"/>	
+	<property name="test.results.dir" location="${build.dir}/testResults"/>
+	
+	<property name="src.dir" location="src"/>
+	<property name="test.src.dir" location="test"/>
+	
+	<property name="3rdparty.lib.dir" location="3rdparty"/>
+	
+	<property name="coverage" value="true"/>
+	
+	<path id="tests.lib">
+		<pathelement location="${3rdparty.lib.dir}/emma.jar"/>
+		<pathelement location="${3rdparty.lib.dir}/emma_ant.jar"/>
+	</path>
+	
+	<path id="test.run.classpath">
+		<pathelement location="${main.build.dir}"/>
+	</path>
+	
+	<taskdef resource="emma_ant.properties" classpathref="tests.lib"/>
+	
+	<target name="dist" depends="compile, test"/>
+	
+	<target name="test" depends="compile.tests, compile">
+		<mkdir dir="${test.results.dir}"/>
+		<mkdir dir="${test.coverage.dir}"/>
+		<mkdir dir="${instr.build.dir}"/>
+		<emma enabled="${coverage}">
+			<instr instrpathref="test.run.classpath"
+				   destdir="${instr.build.dir}"
+				   metadatafile="${test.coverage.dir}/metadata.emma"
+				   merge="true"/>
+		</emma>
+		
+		<junit printsummary="true" fork="yes">
+			<classpath>
+				<pathelement location="${3rdparty.lib.dir}/emma.jar"/>
+				<pathelement location="${instr.build.dir}"/>
+				<pathelement location="${main.build.dir}"/>
+				<pathelement location="${test.build.dir}"/>
+				<pathelement location="${test.src.dir}"/>
+			</classpath>
+			
+			<formatter type="brief" usefile="true"/>
+			
+			<batchtest todir="${test.results.dir}">
+				<fileset dir="${test.src.dir}">
+					<include name="**/*Test.java"/>
+				</fileset>
+			</batchtest>
+			
+			<jvmarg value="-Demma.coverage.out.file=${test.coverage.dir}/coverage.emma" />
+			<jvmarg value="-Demma.coverage.out.merge=true" />
+		</junit>
+		
+		<emma enabled="${coverage}">
+			<report sourcepath="${src.dir}">
+				<fileset dir="${test.coverage.dir}">
+					<include name="*.emma"/>
+				</fileset>
+				<html outfile="${test.coverage.dir}/coverage.html"/>
+			</report>
+		</emma>
+		
+	</target>
+				
+	<target name="compile.tests" depends="compile">
+		<javac srcdir="${test.src.dir}" destdir="${test.build.dir}">
+			<classpath>
+				<pathelement location="${main.build.dir}"/>
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="compile" depends="init">
+		<javac srcdir="${src.dir}" destdir="${main.build.dir}" debug="${coverage}"/>
+	</target>
+	
+	<target name="init" depends="clean">
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${main.build.dir}"/>
+		<mkdir dir="${test.build.dir}"/>
+	</target>
+	
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+	</target>
+</project>
