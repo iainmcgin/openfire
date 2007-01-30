@@ -18,41 +18,36 @@
  */
 package uk.azdev.openfire.net.messages;
 
-import java.util.HashMap;
-import java.util.Map;
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import uk.azdev.openfire.net.messages.outgoing.ClientInformationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientVersionMessage;
 import uk.azdev.openfire.net.messages.outgoing.LoginRequestMessage;
 
+public class MessageFactoryTest {
 
-public class MessageFactory {
+	private MessageFactory factory;
 	
-	private Map<Integer, IMessage> messageMap;
-	
-	public MessageFactory() {
-		messageMap = new HashMap<Integer, IMessage>();
-		
-		addMessageType(new LoginRequestMessage());
-		addMessageType(new ClientInformationMessage());
-		addMessageType(new ClientVersionMessage());
-	}
-
-	private void addMessageType(IMessage message) {
-		messageMap.put(message.getMessageId(), message);
+	@Before
+	public void setUp() {
+		factory = new MessageFactory();
 	}
 	
-	public boolean isKnownMessageType(int type) {
-		return messageMap.containsKey(type);
+	@Test
+	public void testIsKnownMessageType() {
+		assertTrue(factory.isKnownMessageType(ClientVersionMessage.CLIENT_VERSION_MESSAGE_ID));
+		assertTrue(factory.isKnownMessageType(ClientInformationMessage.CLIENT_INFO_MESSAGE_ID));
+		assertTrue(factory.isKnownMessageType(LoginRequestMessage.LOGIN_REQUEST_MESSAGE_ID));
+		assertFalse(factory.isKnownMessageType(-1));
 	}
 	
-	public IMessage createMessage(int type) {
-		IMessage messageType = messageMap.get(type);
-		if(messageType == null) {
-			throw new UnknownMessageTypeException(type);
-		}
-		
-		return messageType.newInstance();
+	@Test
+	public void testCreateMessage() {
+		assertTrue(factory.createMessage(ClientVersionMessage.CLIENT_VERSION_MESSAGE_ID) instanceof ClientVersionMessage);
+		assertTrue(factory.createMessage(ClientInformationMessage.CLIENT_INFO_MESSAGE_ID) instanceof ClientInformationMessage);
+		assertTrue(factory.createMessage(LoginRequestMessage.LOGIN_REQUEST_MESSAGE_ID) instanceof LoginRequestMessage);
 	}
-
 }
