@@ -27,7 +27,7 @@ public class ClientVersionMessage extends StringMapBasedMessage {
 
 	private static final String VERSION_KEY = "version";
 
-	private static final int CLIENT_VERSION_MESSAGE_ID = 3;
+	public static final int CLIENT_VERSION_MESSAGE_ID = 3;
 
 	private long version;
 	
