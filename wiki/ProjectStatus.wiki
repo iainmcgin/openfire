@@ -3,7 +3,7 @@
 = OpenFire Project Status =
 This project is in the early stages of development, but I expect to have a basic level of support for the XFire protocol by April 2007.
 
-The requirements for this project are being driven by the LAN party I attend (www.gumpcom.com) and the intention is that stable releases of the software will emerge shortly before each LAN party, giving a schedule as follows:
+The requirements for this project are being driven by the LAN party I attend (http://www.gumpcom.com) and the intention is that stable releases of the software will emerge shortly before each LAN party, giving a schedule as follows:
 
 || *Release Number* || *Expected Date*||
 || v0.25            || 2007-02-08     ||
