@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.azdev.openfire.net.messages.incoming.LoginChallengeMessage;
+import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientInformationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientVersionMessage;
 import uk.azdev.openfire.net.messages.outgoing.LoginRequestMessage;
@@ -38,6 +39,7 @@ public class MessageFactory {
 		addMessageType(new ClientInformationMessage());
 		addMessageType(new ClientVersionMessage());
 		addMessageType(new LoginChallengeMessage());
+		addMessageType(new LoginSuccessMessage());
 	}
 
 	private void addMessageType(IMessage message) {
