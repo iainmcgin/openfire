@@ -30,7 +30,6 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -189,9 +188,6 @@ public class ChannelReader {
 		
 		Logger logger = Logger.getLogger("myLogger");
 		logger.setLevel(Level.FINEST);
-		ConsoleHandler handler = new ConsoleHandler();
-		handler.setLevel(Level.INFO);
-		logger.addHandler(handler);
 		
 		try {
 			InputStream messageStream = getResource(args[0]);
