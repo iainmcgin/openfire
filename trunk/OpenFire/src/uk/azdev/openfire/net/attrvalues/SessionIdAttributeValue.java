@@ -33,6 +33,10 @@ public class SessionIdAttributeValue implements AttributeValue {
 		sessionId = new byte[SESSION_ID_SIZE];
 	}
 	
+	public SessionIdAttributeValue(byte[] sessionId) {
+		setSessionId(sessionId);
+	}
+
 	public byte[] getSessionId() {
 		return sessionId;
 	}
