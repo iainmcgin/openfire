@@ -34,6 +34,7 @@ public class SessionIdAttributeValue implements AttributeValue {
 	}
 	
 	public SessionIdAttributeValue(byte[] sessionId) {
+		this();
 		setSessionId(sessionId);
 	}
 
