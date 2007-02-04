@@ -83,7 +83,9 @@ public class ClientInformationMessageTest {
 
 	@Test
 	public void testToString() {
-		assertEquals("Client information message", message.toString());
+		message.setSkinList(new String[] { "Skin1", "Skin2" });
+		message.setVersion("1.2.3.4");
+		assertEquals("Client information message\n\tSkin list: Skin1 Skin2 \n\tVersion: 1.2.3.4", message.toString());
 	}
 
 }

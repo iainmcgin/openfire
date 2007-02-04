@@ -69,6 +69,12 @@ public class ClientVersionMessageTest {
 		assertTrue(message.newInstance() instanceof ClientVersionMessage);
 	}
 	
+	@Test
+	public void testToString() {
+		message.setVersion(150);
+		assertEquals("Client Version Message\n\tVersion: 150", message.toString());
+	}
+	
 	@Test(expected=IllegalArgumentException.class)
 	public void testSetNegativeVersion() {
 		message.setVersion(-1);

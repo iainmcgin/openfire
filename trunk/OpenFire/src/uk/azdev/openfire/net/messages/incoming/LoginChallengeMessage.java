@@ -56,4 +56,13 @@ public class LoginChallengeMessage extends StringMapBasedMessage {
 		}
 		this.salt = salt;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Login Challenge Message");
+		buffer.append("\n\tSalt: ");
+		buffer.append(getSalt());
+		return buffer.toString();
+	}
 }

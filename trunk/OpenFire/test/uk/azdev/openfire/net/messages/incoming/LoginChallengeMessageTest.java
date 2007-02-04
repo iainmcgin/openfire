@@ -63,6 +63,12 @@ public class LoginChallengeMessageTest {
 		TestUtils.checkBytes(expectedBytes, buffer);
 	}
 	
+	@Test
+	public void testToString() {
+		message.setSalt(EXPECTED_SALT);
+		assertEquals("Login Challenge Message\n\tSalt: " + EXPECTED_SALT, message.toString());
+	}
+	
 	@Test(expected=IllegalArgumentException.class)
 	public void testSetSaltOfWrongSize() {
 		message.setSalt("tooshort");

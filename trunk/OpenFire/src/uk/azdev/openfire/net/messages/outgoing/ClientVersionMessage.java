@@ -57,5 +57,14 @@ public class ClientVersionMessage extends StringMapBasedMessage {
 	public IMessage newInstance() {
 		return new ClientVersionMessage();
 	}
+	
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Client Version Message\n");
+		buffer.append("\tVersion: ");
+		buffer.append(version);
+		return buffer.toString();
+	}
 
 }
