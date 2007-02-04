@@ -44,8 +44,8 @@ public class LoginRequestMessageTest {
 	public void testWriteLoginRequestMessage() throws IOException {
 		message.setFlags(0);
 		message.setUsername("testuser");
-		message.setPassword("testpass");
 		message.setSalt("d3cd8b9eacb901fc153858786b047d1bb826ea75");
+		message.setPassword("testpass");
 		
 		byte[] expectedBytes = TestUtils.getByteArrayForResource(this.getClass(), "loginrequest.sampledata");
 		
@@ -63,7 +63,7 @@ public class LoginRequestMessageTest {
 		message.readMessageContent(messageBuffer);
 		
 		assertEquals("testuser", message.getUsername());
-		assertEquals("d4ea378c5dde16ad506152b9a40d6f42471e8c5f", message.getPassword());
+		assertEquals("d4ea378c5dde16ad506152b9a40d6f42471e8c5f", message.getSaltedPassword());
 		assertEquals(0L, message.getFlags());
 	}
 	
@@ -79,9 +79,18 @@ public class LoginRequestMessageTest {
 	
 	@Test
 	public void testToString() {
-		assertEquals("Login request message", message.toString());
+		message.setUsername("testuser");
+		message.setSalt("d3cd8b9eacb901fc153858786b047d1bb826ea75");
+		message.setPassword("testpass");
+		message.setFlags(100);
+		assertEquals("Login request message\n\tUser name: testuser\n\tSalted password: d4ea378c5dde16ad506152b9a40d6f42471e8c5f\n\tFlags: 100", message.toString());
 	}
 
+	@Test(expected=IllegalStateException.class)
+	public void testSetPasswordBeforeSalt() {
+		message.setPassword("apassword");
+	}
+	
 	@Test(expected=IllegalArgumentException.class)
 	public void testSetNegativeFlags() {
 		message = new LoginRequestMessage();

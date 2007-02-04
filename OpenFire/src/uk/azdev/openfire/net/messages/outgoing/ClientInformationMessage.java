@@ -100,7 +100,13 @@ public class ClientInformationMessage extends StringMapBasedMessage {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Client information message");
-		
+		buffer.append("\n\tSkin list: ");
+		for(String skin : skinList) {
+			buffer.append(skin);
+			buffer.append(" ");
+		}
+		buffer.append("\n\tVersion: ");
+		buffer.append(getVersion());
 		return buffer.toString();
 	}
 

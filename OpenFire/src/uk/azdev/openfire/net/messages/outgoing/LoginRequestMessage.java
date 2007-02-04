@@ -34,7 +34,7 @@ public class LoginRequestMessage extends StringMapBasedMessage {
 	
 	private long flags;
 	private String username;
-	private String password;
+	private String saltedPassword;
 	private String salt;
 	
 	public int getMessageId() {
@@ -53,11 +53,16 @@ public class LoginRequestMessage extends StringMapBasedMessage {
 		this.flags = flags;
 	}
 	
-	public String getPassword() {
-		return password;
+	public String getSaltedPassword() {
+		return saltedPassword;
 	}
+	
 	public void setPassword(String password) {
-		this.password = password;
+		if(salt == null) {
+			throw new IllegalStateException("password must be set after the salt has been set");
+		}
+		
+		this.saltedPassword = CryptoUtil.getHashedPassword(password, salt);
 	}
 	
 	public String getUsername() {
@@ -75,14 +80,14 @@ public class LoginRequestMessage extends StringMapBasedMessage {
 	protected void interpretAttributeMap(StringKeyedAttributeMap map) {
 		username = map.getStringAttributeValue(USERNAME_KEY);
 		// this will be the hashed rather than plaintext value
-		password = map.getStringAttributeValue(PASSWORD_KEY);
+		saltedPassword = map.getStringAttributeValue(PASSWORD_KEY);
 		flags = map.getInt32AttributeValue(FLAGS_KEY);
 	}
 	
 	@Override
 	protected void populateAttributeMap(StringKeyedAttributeMap map) {
 		map.addAttribute(USERNAME_KEY, username);
-		map.addAttribute(PASSWORD_KEY, CryptoUtil.getHashedPassword(password, salt));
+		map.addAttribute(PASSWORD_KEY, saltedPassword);
 		map.addAttribute(FLAGS_KEY, flags);
 	}
 	
@@ -90,6 +95,12 @@ public class LoginRequestMessage extends StringMapBasedMessage {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Login request message");
+		buffer.append("\n\tUser name: ");
+		buffer.append(getUsername());
+		buffer.append("\n\tSalted password: ");
+		buffer.append(getSaltedPassword());
+		buffer.append("\n\tFlags: ");
+		buffer.append(getFlags());
 		return buffer.toString();
 	}
 
