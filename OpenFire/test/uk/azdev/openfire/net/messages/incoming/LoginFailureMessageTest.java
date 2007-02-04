@@ -67,5 +67,12 @@ public class LoginFailureMessageTest {
 		byte[] expectedBytes = TestUtils.getByteArrayForResource(this.getClass(), "loginfailure.sampledata");
 		TestUtils.checkBytes(expectedBytes, buffer);
 	}
+	
+	@Test
+	public void testToString() {
+		message.setReason(100);
+		
+		assertEquals("Login Failure Message\n\tReason: 100", message.toString());
+	}
 
 }

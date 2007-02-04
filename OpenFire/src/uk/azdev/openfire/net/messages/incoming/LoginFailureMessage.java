@@ -55,4 +55,14 @@ public class LoginFailureMessage extends StringMapBasedMessage {
 	public void setReason(long reason) {
 		this.reason = reason;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Login Failure Message");
+		buffer.append("\n\tReason: ");
+		buffer.append(reason);
+		
+		return buffer.toString();
+	}
 }
