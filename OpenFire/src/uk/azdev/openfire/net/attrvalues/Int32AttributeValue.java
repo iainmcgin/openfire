@@ -18,11 +18,14 @@
  */
 package uk.azdev.openfire.net.attrvalues;
 
+import static uk.azdev.openfire.net.util.IOUtil.*;
+
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import uk.azdev.openfire.net.util.BoundsUtil;
-
-import static uk.azdev.openfire.net.util.IOUtil.*;
 
 /**
  * Represents an unsigned 32-bit value. The methods for
@@ -45,8 +48,35 @@ public class Int32AttributeValue implements AttributeValue {
 		this(0);
 	}
 
+	public Int32AttributeValue(Inet4Address inetAddress) {
+		setValueAsIPv4Address(inetAddress);
+	}
+
 	public long getValue() {
 		return value;
+	}
+	
+	public void setValueAsIPv4Address(Inet4Address inetAddress) {
+		byte[] addrBytes = inetAddress.getAddress();
+		value = (convertByteToUnsigned(addrBytes[0]) << 24L) 
+		      | (convertByteToUnsigned(addrBytes[1]) << 16L) 
+		      | (convertByteToUnsigned(addrBytes[2]) << 8L)
+		      | (convertByteToUnsigned(addrBytes[3]));
+	}
+	
+	public Inet4Address getValueAsInetAddress() {
+		byte[] address = new byte[4];
+		address[0] = (byte)(value >> 24);
+		address[1] = (byte)(value >> 16);
+		address[2] = (byte)(value >> 8);
+		address[3] = (byte)(value);
+		try {
+			return (Inet4Address)InetAddress.getByAddress(address);
+		} catch (UnknownHostException e) {
+			// will never happen as we know the byte array we have passed
+			// is the correct length for IPv4
+			throw new RuntimeException("UnknownHostException unexpectedly thrown", e);
+		}
 	}
 	
 	public void setValue(long value) {

@@ -21,6 +21,9 @@ package uk.azdev.openfire.net.attrvalues;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import org.junit.Before;
@@ -49,6 +52,13 @@ public class Int32AttributeValueTest {
 		assertEquals(0L, value.getValue());
 		value.setValue(10);
 		assertEquals(10L, value.getValue());
+	}
+	
+	@Test
+	public void testGetValueAsInetAddress() throws UnknownHostException {
+		value.setValueAsIPv4Address((Inet4Address)InetAddress.getByAddress(new byte[] { (byte)192, (byte)168, 0, 1 }));
+		InetAddress addr = value.getValueAsInetAddress();
+		assertEquals("/192.168.0.1", addr.toString());
 	}
 
 	@Test
