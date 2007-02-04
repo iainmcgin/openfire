@@ -4,6 +4,9 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -56,6 +59,10 @@ public class TestUtils {
 	public static byte[] getByteArrayForResource(Class<?> testClass, String resourceName) throws IOException {
 		InputStream resourceStream = getTestResource(testClass, resourceName);
 		return readAllAvailable(resourceStream);
+	}
+	
+	public static Inet4Address createInet4Address(String addr) throws UnknownHostException {
+		return (Inet4Address)InetAddress.getByName(addr);
 	}
 	
 	private static InputStream getTestResource(Class<?> testClass, String resourceName) {
