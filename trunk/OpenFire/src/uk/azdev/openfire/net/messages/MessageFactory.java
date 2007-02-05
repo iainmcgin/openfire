@@ -21,6 +21,7 @@ package uk.azdev.openfire.net.messages;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.azdev.openfire.net.messages.incoming.BuddyListMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginChallengeMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginFailureMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
@@ -42,6 +43,7 @@ public class MessageFactory {
 		addMessageType(new LoginChallengeMessage());
 		addMessageType(new LoginSuccessMessage());
 		addMessageType(new LoginFailureMessage());
+		addMessageType(new BuddyListMessage());
 	}
 
 	private void addMessageType(IMessage message) {

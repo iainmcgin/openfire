@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.azdev.openfire.net.messages.incoming.BuddyListMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginChallengeMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginFailureMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
@@ -47,6 +48,7 @@ public class MessageFactoryTest {
 		assertTrue(factory.isKnownMessageType(LoginChallengeMessage.LOGIN_CHALLENGE_MESSAGE_ID));
 		assertTrue(factory.isKnownMessageType(LoginSuccessMessage.LOGIN_SUCCESS_MESSAGE_ID));
 		assertTrue(factory.isKnownMessageType(LoginFailureMessage.LOGIN_FAILURE_MESSAGE_ID));
+		assertTrue(factory.isKnownMessageType(BuddyListMessage.BUDDY_LIST_MESSAGE_ID));
 		assertFalse(factory.isKnownMessageType(-1));
 	}
 	
@@ -58,5 +60,6 @@ public class MessageFactoryTest {
 		assertTrue(factory.createMessage(LoginChallengeMessage.LOGIN_CHALLENGE_MESSAGE_ID) instanceof LoginChallengeMessage);
 		assertTrue(factory.createMessage(LoginSuccessMessage.LOGIN_SUCCESS_MESSAGE_ID) instanceof LoginSuccessMessage);
 		assertTrue(factory.createMessage(LoginFailureMessage.LOGIN_FAILURE_MESSAGE_ID) instanceof LoginFailureMessage);
+		assertTrue(factory.createMessage(BuddyListMessage.BUDDY_LIST_MESSAGE_ID) instanceof BuddyListMessage);
 	}
 }
