@@ -29,9 +29,9 @@ public class CryptoUtil {
 		throw new RuntimeException("CryptoUtil is not meant to be instantiated");
 	}
 	
-	public static String getHashedPassword(String password, String salt) {
-		String passPlusSalt = password + salt + ULTIMATE_ARENA_POSTFIX;
-		return sha1HashAsHexString(passPlusSalt);
+	public static String getHashedPassword(String username, String password, String salt) {
+		String userPassHash = sha1HashAsHexString(username + password + ULTIMATE_ARENA_POSTFIX);
+		return sha1HashAsHexString(userPassHash + salt);
 	}
 	
 	public static String sha1HashAsHexString(String s) {

@@ -34,6 +34,7 @@ public class LoginRequestMessage extends StringMapBasedMessage {
 	
 	private long flags;
 	private String username;
+	private String password;
 	private String saltedPassword;
 	private String salt;
 	
@@ -54,15 +55,15 @@ public class LoginRequestMessage extends StringMapBasedMessage {
 	}
 	
 	public String getSaltedPassword() {
+		if(saltedPassword == null) {
+			saltedPassword = CryptoUtil.getHashedPassword(username, password, salt); 
+		}
+		
 		return saltedPassword;
 	}
 	
 	public void setPassword(String password) {
-		if(salt == null) {
-			throw new IllegalStateException("password must be set after the salt has been set");
-		}
-		
-		this.saltedPassword = CryptoUtil.getHashedPassword(password, salt);
+		this.password = password;
 	}
 	
 	public String getUsername() {
@@ -79,7 +80,6 @@ public class LoginRequestMessage extends StringMapBasedMessage {
 	@Override
 	protected void interpretAttributeMap(StringKeyedAttributeMap map) {
 		username = map.getStringAttributeValue(USERNAME_KEY);
-		// this will be the hashed rather than plaintext value
 		saltedPassword = map.getStringAttributeValue(PASSWORD_KEY);
 		flags = map.getInt32AttributeValue(FLAGS_KEY);
 	}
@@ -87,7 +87,7 @@ public class LoginRequestMessage extends StringMapBasedMessage {
 	@Override
 	protected void populateAttributeMap(StringKeyedAttributeMap map) {
 		map.addAttribute(USERNAME_KEY, username);
-		map.addAttribute(PASSWORD_KEY, saltedPassword);
+		map.addAttribute(PASSWORD_KEY, getSaltedPassword());
 		map.addAttribute(FLAGS_KEY, flags);
 	}
 	
