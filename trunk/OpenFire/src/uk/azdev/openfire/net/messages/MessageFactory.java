@@ -25,6 +25,7 @@ import uk.azdev.openfire.net.messages.incoming.BuddyListMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginChallengeMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginFailureMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
+import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientInformationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientVersionMessage;
 import uk.azdev.openfire.net.messages.outgoing.LoginRequestMessage;
@@ -44,6 +45,7 @@ public class MessageFactory {
 		addMessageType(new LoginSuccessMessage());
 		addMessageType(new LoginFailureMessage());
 		addMessageType(new BuddyListMessage());
+		addMessageType(new UserSessionIdListMessage());
 	}
 
 	private void addMessageType(IMessage message) {

@@ -11,6 +11,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
+import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.util.IOUtil;
 
 
@@ -74,5 +75,14 @@ public class TestUtils {
 		stream.read(bytes);
 		stream.close();
 		return bytes;
+	}
+
+	public static void checkMessageOutput(IMessage message, Class<?> testClass, String resourceName) throws IOException {
+		ByteBuffer buffer = IOUtil.createBuffer(message.getMessageContentSize());
+		message.writeMessageContent(buffer);
+		buffer.rewind();
+		
+		byte[] expectedBytes = TestUtils.getByteArrayForResource(testClass, resourceName);
+		checkBytes(expectedBytes, buffer);
 	}
 }
