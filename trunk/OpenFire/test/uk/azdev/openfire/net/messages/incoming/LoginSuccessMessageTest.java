@@ -27,7 +27,6 @@ import java.nio.ByteBuffer;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.azdev.openfire.net.util.IOUtil;
 import uk.azdev.openfire.testutil.TestUtils;
 
 public class LoginSuccessMessageTest {
@@ -97,12 +96,7 @@ public class LoginSuccessMessageTest {
 	public void testWriteMessageContent() throws IOException {
 		setAttributes();
 		
-		ByteBuffer buffer = IOUtil.createBuffer(message.getMessageContentSize());
-		message.writeMessageContent(buffer);
-		buffer.rewind();
-		
-		byte[] expectedBytes = TestUtils.getByteArrayForResource(this.getClass(), "loginsuccess.sampledata");
-		TestUtils.checkBytes(expectedBytes, buffer);
+		TestUtils.checkMessageOutput(message, this.getClass(), "loginsuccess.sampledata");
 	}
 
 	@Test

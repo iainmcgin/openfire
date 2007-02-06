@@ -26,7 +26,6 @@ import java.nio.ByteBuffer;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.azdev.openfire.net.util.IOUtil;
 import uk.azdev.openfire.testutil.TestUtils;
 
 public class ClientInformationMessageTest {
@@ -59,16 +58,10 @@ public class ClientInformationMessageTest {
 	
 	@Test
 	public void testWriteMessageContent() throws IOException {
-		byte[] expected = TestUtils.getByteArrayForResource(this.getClass(), "clientinformation.sampledata");
-		
 		message.setVersion("3.2.0.0");
 		message.setSkinList(new String[] { "Xfire", "standard", "Separator", "XF_URL" });
 		
-		ByteBuffer buffer = IOUtil.createBuffer(message.getMessageContentSize());
-		message.writeMessageContent(buffer);
-		buffer.rewind();
-		
-		TestUtils.checkBytes(expected, buffer);
+		TestUtils.checkMessageOutput(message, this.getClass(), "clientinformation.sampledata");
 	}
 	
 	@Test

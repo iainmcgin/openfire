@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.azdev.openfire.net.messages.outgoing.LoginRequestMessage;
-import uk.azdev.openfire.net.util.IOUtil;
 import uk.azdev.openfire.testutil.TestUtils;
 
 
@@ -47,13 +46,7 @@ public class LoginRequestMessageTest {
 		message.setSalt("d3cd8b9eacb901fc153858786b047d1bb826ea75");
 		message.setPassword("testpass");
 		
-		byte[] expectedBytes = TestUtils.getByteArrayForResource(this.getClass(), "loginrequest.sampledata");
-		
-		assertEquals(expectedBytes.length, message.getMessageContentSize());
-		
-		ByteBuffer buffer = IOUtil.createBuffer(expectedBytes.length);
-		message.writeMessageContent(buffer);
-		TestUtils.checkBytes(expectedBytes, buffer);
+		TestUtils.checkMessageOutput(message, this.getClass(), "loginrequest.sampledata");
 	}
 	
 	@Test

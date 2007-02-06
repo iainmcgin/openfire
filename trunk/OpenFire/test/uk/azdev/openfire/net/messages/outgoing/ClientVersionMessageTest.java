@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.azdev.openfire.net.util.BoundsUtil;
-import uk.azdev.openfire.net.util.IOUtil;
 import uk.azdev.openfire.testutil.TestUtils;
 
 public class ClientVersionMessageTest {
@@ -49,14 +48,8 @@ public class ClientVersionMessageTest {
 	
 	@Test
 	public void testWriteMessage() throws IOException {
-		byte[] expectedBytes = TestUtils.getByteArrayForResource(this.getClass(), "clientversion.sampledata");
-		
 		message.setVersion(67);
-		ByteBuffer buffer = IOUtil.createBuffer(message.getMessageContentSize());
-		message.writeMessageContent(buffer);
-		buffer.rewind();
-		
-		TestUtils.checkBytes(expectedBytes, buffer);
+		TestUtils.checkMessageOutput(message, this.getClass(), "clientversion.sampledata");
 	}
 	
 	@Test

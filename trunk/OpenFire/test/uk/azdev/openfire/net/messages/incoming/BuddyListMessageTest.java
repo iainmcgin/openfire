@@ -27,7 +27,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.azdev.openfire.net.util.IOUtil;
 import uk.azdev.openfire.testutil.TestUtils;
 
 public class BuddyListMessageTest {
@@ -84,13 +83,7 @@ public class BuddyListMessageTest {
 			message.addUser(i, "user" + i, "user" + i + "Nick");
 		}
 		
-		ByteBuffer buffer = IOUtil.createBuffer(message.getMessageContentSize());
-		message.writeMessageContent(buffer);
-		buffer.rewind();
-		
-		byte[] expectedBytes = TestUtils.getByteArrayForResource(this.getClass(), "buddylist.sampledata");
-		
-		TestUtils.checkBytes(expectedBytes, buffer);
+		TestUtils.checkMessageOutput(message, this.getClass(), "buddylist.sampledata");
 	}
 	
 	@Test
