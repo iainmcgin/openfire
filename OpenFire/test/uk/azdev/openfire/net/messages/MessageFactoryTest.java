@@ -24,10 +24,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.azdev.openfire.net.messages.incoming.BuddyListMessage;
+import uk.azdev.openfire.net.messages.incoming.BuddyStatusMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginChallengeMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginFailureMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
 import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
+import uk.azdev.openfire.net.messages.outgoing.ClientConfigurationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientInformationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientVersionMessage;
 import uk.azdev.openfire.net.messages.outgoing.LoginRequestMessage;
@@ -51,6 +53,8 @@ public class MessageFactoryTest {
 		assertTrue(factory.isKnownMessageType(LoginFailureMessage.LOGIN_FAILURE_MESSAGE_ID));
 		assertTrue(factory.isKnownMessageType(BuddyListMessage.BUDDY_LIST_MESSAGE_ID));
 		assertTrue(factory.isKnownMessageType(UserSessionIdListMessage.USER_SESSION_ID_LIST_MESSAGE_ID));
+		assertTrue(factory.isKnownMessageType(ClientConfigurationMessage.CLIENT_CONFIGURATION_MESSAGE_ID));
+		assertTrue(factory.isKnownMessageType(BuddyStatusMessage.BUDDY_STATUS_MESSAGE_ID));
 		assertFalse(factory.isKnownMessageType(-1));
 	}
 	
@@ -64,5 +68,7 @@ public class MessageFactoryTest {
 		assertTrue(factory.createMessage(LoginFailureMessage.LOGIN_FAILURE_MESSAGE_ID) instanceof LoginFailureMessage);
 		assertTrue(factory.createMessage(BuddyListMessage.BUDDY_LIST_MESSAGE_ID) instanceof BuddyListMessage);
 		assertTrue(factory.createMessage(UserSessionIdListMessage.USER_SESSION_ID_LIST_MESSAGE_ID) instanceof UserSessionIdListMessage);
+		assertTrue(factory.createMessage(ClientConfigurationMessage.CLIENT_CONFIGURATION_MESSAGE_ID) instanceof ClientConfigurationMessage);
+		assertTrue(factory.createMessage(BuddyStatusMessage.BUDDY_STATUS_MESSAGE_ID) instanceof BuddyStatusMessage);
 	}
 }
