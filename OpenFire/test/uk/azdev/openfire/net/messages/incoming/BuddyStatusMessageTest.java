@@ -65,8 +65,9 @@ public class BuddyStatusMessageTest {
 	}
 
 	@Test
-	public void testWriteMessageContent() {
+	public void testWriteMessageContent() throws IOException {
 		message.addStatus(EXPECTED_SESSION_ID, "(AFK) Away From Keyboard");
+		TestUtils.checkMessageOutput(message, this.getClass(), "buddystatus.sampledata");
 	}
 
 	private static final String EXPECTED_TOSTRING
