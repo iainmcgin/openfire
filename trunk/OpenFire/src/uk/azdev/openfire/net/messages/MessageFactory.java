@@ -22,10 +22,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.azdev.openfire.net.messages.incoming.BuddyListMessage;
+import uk.azdev.openfire.net.messages.incoming.BuddyStatusMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginChallengeMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginFailureMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
 import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
+import uk.azdev.openfire.net.messages.outgoing.ClientConfigurationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientInformationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientVersionMessage;
 import uk.azdev.openfire.net.messages.outgoing.LoginRequestMessage;
@@ -46,6 +48,8 @@ public class MessageFactory {
 		addMessageType(new LoginFailureMessage());
 		addMessageType(new BuddyListMessage());
 		addMessageType(new UserSessionIdListMessage());
+		addMessageType(new ClientConfigurationMessage());
+		addMessageType(new BuddyStatusMessage());
 	}
 
 	private void addMessageType(IMessage message) {
