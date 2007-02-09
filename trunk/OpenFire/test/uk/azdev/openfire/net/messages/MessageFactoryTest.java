@@ -32,6 +32,7 @@ import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientConfigurationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientInformationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientVersionMessage;
+import uk.azdev.openfire.net.messages.outgoing.KeepaliveMessage;
 import uk.azdev.openfire.net.messages.outgoing.LoginRequestMessage;
 
 public class MessageFactoryTest {
@@ -55,6 +56,7 @@ public class MessageFactoryTest {
 		assertTrue(factory.isKnownMessageType(UserSessionIdListMessage.USER_SESSION_ID_LIST_MESSAGE_ID));
 		assertTrue(factory.isKnownMessageType(ClientConfigurationMessage.CLIENT_CONFIGURATION_MESSAGE_ID));
 		assertTrue(factory.isKnownMessageType(BuddyStatusMessage.BUDDY_STATUS_MESSAGE_ID));
+		assertTrue(factory.isKnownMessageType(KeepaliveMessage.KEEP_ALIVE_MESSAGE_ID));
 		assertFalse(factory.isKnownMessageType(-1));
 	}
 	
@@ -70,5 +72,6 @@ public class MessageFactoryTest {
 		assertTrue(factory.createMessage(UserSessionIdListMessage.USER_SESSION_ID_LIST_MESSAGE_ID) instanceof UserSessionIdListMessage);
 		assertTrue(factory.createMessage(ClientConfigurationMessage.CLIENT_CONFIGURATION_MESSAGE_ID) instanceof ClientConfigurationMessage);
 		assertTrue(factory.createMessage(BuddyStatusMessage.BUDDY_STATUS_MESSAGE_ID) instanceof BuddyStatusMessage);
+		assertTrue(factory.createMessage(KeepaliveMessage.KEEP_ALIVE_MESSAGE_ID) instanceof KeepaliveMessage);
 	}
 }

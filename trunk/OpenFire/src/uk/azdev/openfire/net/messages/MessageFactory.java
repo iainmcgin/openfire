@@ -30,6 +30,7 @@ import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientConfigurationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientInformationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientVersionMessage;
+import uk.azdev.openfire.net.messages.outgoing.KeepaliveMessage;
 import uk.azdev.openfire.net.messages.outgoing.LoginRequestMessage;
 
 
@@ -50,6 +51,7 @@ public class MessageFactory {
 		addMessageType(new UserSessionIdListMessage());
 		addMessageType(new ClientConfigurationMessage());
 		addMessageType(new BuddyStatusMessage());
+		addMessageType(new KeepaliveMessage());
 	}
 
 	private void addMessageType(IMessage message) {
