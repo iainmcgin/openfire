@@ -29,7 +29,7 @@ import static uk.azdev.openfire.net.util.IOUtil.*;
 public class DidAttributeValue implements AttributeValue {
 
 	public static final int TYPE_ID = 6;
-	private static final int DID_SIZE = 22;
+	private static final int DID_SIZE = 21;
 	
 	private byte[] value;
 	
