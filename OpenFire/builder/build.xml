@@ -15,12 +15,13 @@
 	<property name="test.src.dir" location="test"/>
 	
 	<property name="3rdparty.lib.dir" location="3rdparty"/>
+	<property name="3rdparty.test.lib.dir" location="3rdparty_test"/>
 	
 	<property name="coverage" value="true"/>
 	
 	<path id="tests.lib">
-		<pathelement location="${3rdparty.lib.dir}/emma.jar"/>
-		<pathelement location="${3rdparty.lib.dir}/emma_ant.jar"/>
+		<pathelement location="${3rdparty.test.lib.dir}/emma.jar"/>
+		<pathelement location="${3rdparty.test.lib.dir}/emma_ant.jar"/>
 	</path>
 	
 	<path id="test.run.classpath">
@@ -44,7 +45,7 @@
 		
 		<junit printsummary="true" fork="yes">
 			<classpath>
-				<pathelement location="${3rdparty.lib.dir}/emma.jar"/>
+				<pathelement location="${3rdparty.test.lib.dir}/emma.jar"/>
 				<pathelement location="${instr.build.dir}"/>
 				<pathelement location="${main.build.dir}"/>
 				<pathelement location="${test.build.dir}"/>
