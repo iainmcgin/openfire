@@ -61,13 +61,15 @@ public class KeepaliveMessageTest {
 	}
 
 	@Test
-	public void testWriteMessageContent() {
+	public void testWriteMessageContent() throws IOException {
 		message.setValue(1L);
 		
 		List<Long> statsList = new ArrayList<Long>();
 		statsList.add(1L);
 		
 		message.setStatsList(statsList);
+		
+		TestUtils.checkMessageOutput(message, this.getClass(), "keepalive.sampledata");
 	}
 	
 	private static final String EXPECTED_TOSTRING 
