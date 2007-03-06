@@ -2,6 +2,8 @@ package uk.azdev.openfire.testutil;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Inet4Address;
@@ -66,16 +68,38 @@ public class TestUtils {
 		return (Inet4Address)InetAddress.getByName(addr);
 	}
 	
-	private static InputStream getTestResource(Class<?> testClass, String resourceName) {
+	public static InputStream getTestResource(Class<?> testClass, String resourceName) {
 		return testClass.getResourceAsStream("testResources/" + resourceName);
 	}
 	
-	private static byte[] readAllAvailable(InputStream stream) throws IOException {
+	public static byte[] readAllAvailable(InputStream stream) throws IOException {
 		byte[] bytes = new byte[stream.available()];
 		stream.read(bytes);
 		stream.close();
 		return bytes;
 	}
+	
+	public static byte[] getBytesFromFile(File file) throws IOException {
+        InputStream is = new FileInputStream(file);
+    
+        int length = (int)file.length();
+        
+        byte[] bytes = new byte[length];
+    
+        int offset = 0;
+        int numRead = 0;
+        while (offset < bytes.length
+               && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+            offset += numRead;
+        }
+    
+        if (offset < bytes.length) {
+            throw new IOException("Could not completely read file "+file.getName());
+        }
+    
+        is.close();
+        return bytes;
+    }
 
 	public static void checkMessageOutput(IMessage message, Class<?> testClass, String resourceName) throws IOException {
 		ByteBuffer buffer = IOUtil.createBuffer(message.getMessageContentSize());

@@ -44,8 +44,8 @@
 		</emma>
 		
 		<junit printsummary="true" fork="yes">
+			<classpath refid="tests.lib"/>
 			<classpath>
-				<pathelement location="${3rdparty.test.lib.dir}/emma.jar"/>
 				<pathelement location="${instr.build.dir}"/>
 				<pathelement location="${main.build.dir}"/>
 				<pathelement location="${test.build.dir}"/>
