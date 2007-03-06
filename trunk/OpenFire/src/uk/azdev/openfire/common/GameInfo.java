@@ -1,5 +1,5 @@
 /*
- * OpenFire - a Java API to access the XFire instant messaging network.
+ * JFire - a Java API to access the XFire instant messaging network.
  * Copyright (C) 2007 Iain McGinniss
  * 
  * This library is free software; you can redistribute it and/or
@@ -16,28 +16,39 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire.net;
+package uk.azdev.openfire.common;
 
-import java.net.InetSocketAddress;
-
-/**
- * Container for common constants used in the xfire protocol.
- */
-public final class ProtocolConstants {
+public class GameInfo {
 	
-	ProtocolConstants() {
-		throw new RuntimeException("ProtocolConstants is not meant to be instantiated");
+	private long id;
+	private String name;
+	private String shortName;
+	
+	protected GameInfo(long id, String name, String shortName) {
+		this.id = id;
+		this.name = name;
+		this.shortName = shortName;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getShortName() {
+		return shortName;
 	}
 	
-	public static final String XFIRE_SERVER_NAME = "cs.xfire.com";
-	public static final int XFIRE_SERVER_PORT = 25999;
-	
-	/**
-	 * The first sequence of bytes sent to the server
-	 */
-	public static final byte[] OPENING_STATEMENT = { 0x55, 0x41, 0x30, 0x31 };
-	
-	public static final InetSocketAddress getXfireServerAddr() {
-		return new InetSocketAddress(XFIRE_SERVER_NAME, XFIRE_SERVER_PORT);
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof GameInfo)) {
+			return false;
+		}
+		
+		GameInfo otherInfo = (GameInfo)obj;
+		return otherInfo.getId() == this.id;
 	}
 }

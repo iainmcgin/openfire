@@ -1,5 +1,5 @@
 /*
- * OpenFire - a Java API to access the XFire instant messaging network.
+ * JFire - a Java API to access the XFire instant messaging network.
  * Copyright (C) 2007 Iain McGinniss
  * 
  * This library is free software; you can redistribute it and/or
@@ -16,28 +16,31 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire.net;
+package uk.azdev.openfire.common;
 
-import java.net.InetSocketAddress;
 
-/**
- * Container for common constants used in the xfire protocol.
- */
-public final class ProtocolConstants {
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class OpenFireConfigurationTest {
+
+	private OpenFireConfiguration configuration;
 	
-	ProtocolConstants() {
-		throw new RuntimeException("ProtocolConstants is not meant to be instantiated");
+	@Before
+	public void setUp() throws Exception {
+		configuration = new OpenFireConfiguration();
 	}
 	
-	public static final String XFIRE_SERVER_NAME = "cs.xfire.com";
-	public static final int XFIRE_SERVER_PORT = 25999;
+	@Test
+	public void testDefaultValues() throws Exception {
+		assertEquals("xfire_games.ini", configuration.getXfireGamesIniPath());
+	}
 	
-	/**
-	 * The first sequence of bytes sent to the server
-	 */
-	public static final byte[] OPENING_STATEMENT = { 0x55, 0x41, 0x30, 0x31 };
-	
-	public static final InetSocketAddress getXfireServerAddr() {
-		return new InetSocketAddress(XFIRE_SERVER_NAME, XFIRE_SERVER_PORT);
+	@Test
+	public void testSetXfireGamesIniPath() {
+		configuration.setXfireGamesIniPath("my.ini");
+		assertEquals("my.ini", configuration.getXfireGamesIniPath());
 	}
 }
