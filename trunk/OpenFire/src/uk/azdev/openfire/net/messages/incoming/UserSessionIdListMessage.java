@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.net.attrvalues.AttributeValue;
 import uk.azdev.openfire.net.attrvalues.Int32AttributeValue;
 import uk.azdev.openfire.net.attrvalues.ListAttributeValue;
@@ -31,7 +32,6 @@ import uk.azdev.openfire.net.attrvalues.SessionIdAttributeValue;
 import uk.azdev.openfire.net.attrvalues.StringKeyedAttributeMap;
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.StringMapBasedMessage;
-import uk.azdev.openfire.net.util.IOUtil;
 
 public class UserSessionIdListMessage extends StringMapBasedMessage {
 
@@ -40,10 +40,10 @@ public class UserSessionIdListMessage extends StringMapBasedMessage {
 	private static final String USER_ID_LIST_KEY = "userid";
 	private static final String SESSION_ID_LIST_KEY = "sid";
 	
-	private Map<Long, byte[]> userIdToSessionIdMap;
+	private Map<Long, SessionId> userIdToSessionIdMap;
 	
 	public UserSessionIdListMessage() {
-		userIdToSessionIdMap = new LinkedHashMap<Long, byte[]>();
+		userIdToSessionIdMap = new LinkedHashMap<Long, SessionId>();
 	}
 	
 	public int getMessageId() {
@@ -64,7 +64,7 @@ public class UserSessionIdListMessage extends StringMapBasedMessage {
 		
 		while(userIdIter.hasNext()) {
 			long userId = ((Int32AttributeValue)userIdIter.next()).getValue();
-			byte[] sessionId = ((SessionIdAttributeValue)sessionIdIter.next()).getSessionId();
+			SessionId sessionId = ((SessionIdAttributeValue)sessionIdIter.next()).getSessionId();
 			userIdToSessionIdMap.put(userId, sessionId);
 		}
 	}
@@ -74,7 +74,7 @@ public class UserSessionIdListMessage extends StringMapBasedMessage {
 		ListAttributeValue userIdList = new ListAttributeValue();
 		ListAttributeValue sessionIdList = new ListAttributeValue();
 		
-		for(Entry<Long, byte[]> entry : userIdToSessionIdMap.entrySet()) {
+		for(Entry<Long, SessionId> entry : userIdToSessionIdMap.entrySet()) {
 			userIdList.addValue(new Int32AttributeValue(entry.getKey()));
 			sessionIdList.addValue(new SessionIdAttributeValue(entry.getValue()));
 		}
@@ -87,11 +87,11 @@ public class UserSessionIdListMessage extends StringMapBasedMessage {
 		return userIdToSessionIdMap.keySet();
 	}
 
-	public byte[] getSessionIdForUser(long userId) {
+	public SessionId getSessionIdForUser(long userId) {
 		return userIdToSessionIdMap.get(userId);
 	}
 
-	public void addUserMapping(long userId, byte[] sessionId) {
+	public void addUserMapping(long userId, SessionId sessionId) {
 		userIdToSessionIdMap.put(userId, sessionId);
 	}
 	
@@ -101,11 +101,11 @@ public class UserSessionIdListMessage extends StringMapBasedMessage {
 		
 		buffer.append("User Session ID List Message");
 		
-		for(Entry<Long, byte[]> entry : userIdToSessionIdMap.entrySet()) {
+		for(Entry<Long, SessionId> entry : userIdToSessionIdMap.entrySet()) {
 			buffer.append("\n\t");
 			buffer.append(entry.getKey());
 			buffer.append(" -> ");
-			buffer.append(IOUtil.printByteArray(entry.getValue()));
+			buffer.append(entry.getValue().toString());
 		}
 		
 		

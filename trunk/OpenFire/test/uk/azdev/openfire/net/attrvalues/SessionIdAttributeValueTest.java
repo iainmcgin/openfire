@@ -19,13 +19,13 @@
 package uk.azdev.openfire.net.attrvalues;
 
 import static org.junit.Assert.*;
-import static uk.azdev.openfire.testutil.TestUtils.*;
 
 import java.nio.ByteBuffer;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.net.attrvalues.SessionIdAttributeValue;
 import uk.azdev.openfire.net.util.IOUtil;
 
@@ -33,14 +33,14 @@ import uk.azdev.openfire.net.util.IOUtil;
 
 public class SessionIdAttributeValueTest {
 
-	private static final byte[] INITIAL_SID
-		= { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	private static final SessionId INITIAL_SID
+		= new SessionId(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 });
 	
 	// SID pre-encoded
-	private static final byte[] SAMPLE_ATTR 
-		= { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 
-			0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
+	private static final SessionId SAMPLE_ATTR 
+		= new SessionId(new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 
+			                         0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F });
 	
 	private SessionIdAttributeValue value;
 	
@@ -51,11 +51,11 @@ public class SessionIdAttributeValueTest {
 	
 	@Test
 	public void testSetValue() {
-		checkArray(INITIAL_SID, value.getSessionId(), "initial value incorrect");
+		assertEquals("initial value incorrect", INITIAL_SID, value.getSessionId());
 		
 		value.setSessionId(SAMPLE_ATTR);
-		assertNotSame(value.getSessionId(), SAMPLE_ATTR);
-		checkArray(SAMPLE_ATTR, value.getSessionId(), "set value incorrect");
+		assertNotSame(value.getSessionId().getBytes(), SAMPLE_ATTR);
+		assertEquals("set value incorrect", SAMPLE_ATTR, value.getSessionId());
 	}
 
 	@Test
@@ -70,13 +70,13 @@ public class SessionIdAttributeValueTest {
 
 	@Test
 	public void testReadValue() {
-		ByteBuffer buffer = IOUtil.createBuffer(SAMPLE_ATTR.length);
+		ByteBuffer buffer = IOUtil.createBuffer(SAMPLE_ATTR.getBytes().length);
 		
-		buffer.put(SAMPLE_ATTR);
+		buffer.put(SAMPLE_ATTR.getBytes());
 		buffer.rewind();
 		
 		value.readValue(buffer);
-		checkArray(SAMPLE_ATTR, value.getSessionId(), "read SID does not match");
+		assertEquals("read SID does not match", SAMPLE_ATTR, value.getSessionId());
 	}
 
 	@Test
@@ -90,7 +90,7 @@ public class SessionIdAttributeValueTest {
 		readValue.readValue(buffer);
 		
 		assertNotSame(readValue.getSessionId(), SAMPLE_ATTR);
-		checkArray(SAMPLE_ATTR, readValue.getSessionId(), "read after write does not match");
+		assertEquals("read after write does not match", SAMPLE_ATTR, readValue.getSessionId());
 	}
 
 	@Test
@@ -103,10 +103,4 @@ public class SessionIdAttributeValueTest {
 		value.setSessionId(SAMPLE_ATTR);
 		assertEquals("SID:<00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F>", value.toString());
 	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public void testWrongSizeSid() {
-		value.setSessionId(new byte[25]);
-	}
-	
 }

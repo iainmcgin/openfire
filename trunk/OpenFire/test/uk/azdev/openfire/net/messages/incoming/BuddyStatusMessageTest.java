@@ -27,6 +27,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.testutil.TestUtils;
 
 public class BuddyStatusMessageTest {
@@ -48,20 +49,21 @@ public class BuddyStatusMessageTest {
 		assertTrue(message.newInstance() instanceof BuddyStatusMessage);
 	}
 
-	private static final byte[] EXPECTED_SESSION_ID
-		= new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
-					   0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10 };
+	private static final SessionId EXPECTED_SESSION_ID
+		= new SessionId(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+					                 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10 });
 
 	@Test
 	public void testReadMessageContent() throws IOException {
 		ByteBuffer buffer = TestUtils.getByteBufferForResource(this.getClass(), "buddystatus.sampledata");
 		message.readMessageContent(buffer);
 		
-		Set<byte[]> sessionIdSet = message.getSessionIdSet();
+		Set<SessionId> sessionIdSet = message.getSessionIdSet();
 		
 		assertEquals(1, sessionIdSet.size());
-		TestUtils.checkArray(EXPECTED_SESSION_ID, sessionIdSet.iterator().next());
-		assertEquals("(AFK) Away From Keyboard", message.getStatusForSessionId(sessionIdSet.iterator().next()));
+		SessionId sessionId = sessionIdSet.iterator().next();
+		assertEquals(EXPECTED_SESSION_ID, sessionId);
+		assertEquals("(AFK) Away From Keyboard", message.getStatusForSessionId(sessionId));
 	}
 
 	@Test

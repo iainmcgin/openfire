@@ -20,37 +20,36 @@ package uk.azdev.openfire.net.attrvalues;
 
 import java.nio.ByteBuffer;
 
-import static uk.azdev.openfire.net.util.IOUtil.*;
+import uk.azdev.openfire.common.SessionId;
 
 public class SessionIdAttributeValue implements AttributeValue {
 
 	public static final int TYPE_ID = 3;
-	public static final int SESSION_ID_SIZE = 16;
 
-	private byte[] sessionId;
+	private SessionId sessionId;
 	
 	public SessionIdAttributeValue() {
-		sessionId = new byte[SESSION_ID_SIZE];
+		sessionId = new SessionId();
+	}
+	
+	public SessionIdAttributeValue(SessionId sessionId) {
+		this.sessionId = sessionId;
 	}
 	
 	public SessionIdAttributeValue(byte[] sessionId) {
-		this();
-		setSessionId(sessionId);
+		this(new SessionId(sessionId));
 	}
 
-	public byte[] getSessionId() {
+	public SessionId getSessionId() {
 		return sessionId;
 	}
 	
-	public void setSessionId(byte[] sessionId) {
-		if(sessionId.length != SESSION_ID_SIZE) {
-			throw new IllegalArgumentException("wrong session id size");
-		}
-		System.arraycopy(sessionId, 0, this.sessionId, 0, SESSION_ID_SIZE);
+	public void setSessionId(SessionId sessionId) {
+		this.sessionId = sessionId;
 	}
 	
 	public int getSize() {
-		return SESSION_ID_SIZE;
+		return SessionId.SESSION_ID_SIZE;
 	}
 
 	public int getTypeId() {
@@ -62,16 +61,18 @@ public class SessionIdAttributeValue implements AttributeValue {
 	}
 
 	public void readValue(ByteBuffer buffer) {
-		buffer.get(sessionId);
+		byte[] sessionIdBytes = new byte[SessionId.SESSION_ID_SIZE];
+		buffer.get(sessionIdBytes);
+		sessionId = new SessionId(sessionIdBytes);
 	}
 
 	public void writeValue(ByteBuffer buffer) {
-		buffer.put(sessionId);
+		buffer.put(sessionId.getBytes());
 	}
 
 	@Override
 	public String toString() {
-		return "SID:<" + printByteArray(sessionId) + ">";
+		return "SID:<" + sessionId.toString() + ">";
 	}
 	
 }

@@ -27,6 +27,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.testutil.TestUtils;
 
 public class UserSessionIdListMessageTest {
@@ -45,9 +46,9 @@ public class UserSessionIdListMessageTest {
 
 	private UserSessionIdListMessage message;
 	
-	private static byte[] EXPECTED_SID 
-		= new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 
-		               0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10 };
+	private static SessionId EXPECTED_SID 
+		= new SessionId(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 
+		                             0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10 });
 	                                                   
 	
 	@Before
@@ -74,7 +75,7 @@ public class UserSessionIdListMessageTest {
 		assertEquals(9, userIdSet.size());
 		
 		for(long userId : userIdSet) {
-			TestUtils.checkArray(EXPECTED_SID, message.getSessionIdForUser(userId));
+			assertEquals(EXPECTED_SID, message.getSessionIdForUser(userId));
 		}
 	}
 

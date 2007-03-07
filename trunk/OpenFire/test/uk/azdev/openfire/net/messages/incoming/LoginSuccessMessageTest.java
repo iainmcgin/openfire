@@ -27,15 +27,16 @@ import java.nio.ByteBuffer;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.testutil.TestUtils;
 
 public class LoginSuccessMessageTest {
 
-	private static final byte[] EXPECTED_SESSION_ID 
-		= new byte[] { (byte)0x01, (byte)0x86, (byte)0x72, (byte)0x57, 
-					   (byte)0xF0, (byte)0x94, (byte)0x83, (byte)0x45,
-					   (byte)0x96, (byte)0xDA, (byte)0x5B, (byte)0x4B,
-					   (byte)0x9A, (byte)0x44, (byte)0x41, (byte)0x35};
+	private static final SessionId EXPECTED_SESSION_ID 
+		= new SessionId(new byte[] { (byte)0x01, (byte)0x86, (byte)0x72, (byte)0x57, 
+					                 (byte)0xF0, (byte)0x94, (byte)0x83, (byte)0x45,
+					                 (byte)0x96, (byte)0xDA, (byte)0x5B, (byte)0x4B,
+					                 (byte)0x9A, (byte)0x44, (byte)0x41, (byte)0x35});
 	
 	private static final String EXPECTED_TOSTRING
 		= "Login Success Message\n" +
@@ -77,7 +78,7 @@ public class LoginSuccessMessageTest {
 		message.readMessageContent(buffer);
 		
 		assertEquals(4022250974L, message.getUserId());
-		TestUtils.checkArray(EXPECTED_SESSION_ID, message.getSessionId());
+		assertEquals(EXPECTED_SESSION_ID, message.getSessionId());
 		assertEquals("", message.getNick());
 		assertEquals(15L, message.getStatus());
 		assertEquals("", message.getDlSet());
