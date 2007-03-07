@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 
+import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.net.attrvalues.AttributeValue;
 import uk.azdev.openfire.net.attrvalues.ListAttributeValue;
 import uk.azdev.openfire.net.attrvalues.SessionIdAttributeValue;
@@ -33,7 +34,6 @@ import uk.azdev.openfire.net.attrvalues.StringAttributeValue;
 import uk.azdev.openfire.net.attrvalues.StringKeyedAttributeMap;
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.StringMapBasedMessage;
-import uk.azdev.openfire.net.util.IOUtil;
 
 public class BuddyStatusMessage extends StringMapBasedMessage {
 
@@ -42,10 +42,10 @@ public class BuddyStatusMessage extends StringMapBasedMessage {
 	private static final String SESSION_ID_LIST_KEY = "sid";
 	private static final String STATUS_LIST_KEY = "msg";
 
-	private Map<byte[], String> sessionIdToStatusMap;
+	private Map<SessionId, String> sessionIdToStatusMap;
 	
 	public BuddyStatusMessage() {
-		sessionIdToStatusMap = new LinkedHashMap<byte[], String>();
+		sessionIdToStatusMap = new LinkedHashMap<SessionId, String>();
 	}
 	
 	@Override
@@ -66,7 +66,7 @@ public class BuddyStatusMessage extends StringMapBasedMessage {
 	protected void populateAttributeMap(StringKeyedAttributeMap map) {
 		ListAttributeValue sessionIdList = new ListAttributeValue();
 		ListAttributeValue statusList = new ListAttributeValue();
-		for(Entry<byte[], String> entry : sessionIdToStatusMap.entrySet()) {
+		for(Entry<SessionId, String> entry : sessionIdToStatusMap.entrySet()) {
 			sessionIdList.addValue(new SessionIdAttributeValue(entry.getKey()));
 			statusList.addValue(new StringAttributeValue(entry.getValue()));
 		}
@@ -83,15 +83,15 @@ public class BuddyStatusMessage extends StringMapBasedMessage {
 		return new BuddyStatusMessage();
 	}
 
-	public Set<byte[]> getSessionIdSet() {
+	public Set<SessionId> getSessionIdSet() {
 		return sessionIdToStatusMap.keySet();
 	}
 
-	public Object getStatusForSessionId(byte[] sessionId) {
+	public String getStatusForSessionId(SessionId sessionId) {
 		return sessionIdToStatusMap.get(sessionId);
 	}
 
-	public void addStatus(byte[] sessionId, String status) {
+	public void addStatus(SessionId sessionId, String status) {
 		sessionIdToStatusMap.put(sessionId, status);
 	}
 	
@@ -101,9 +101,9 @@ public class BuddyStatusMessage extends StringMapBasedMessage {
 		buffer.append("Buddy Status Message");
 		buffer.append("\n\tStatuses:");
 		
-		for(Entry<byte[], String> entry : sessionIdToStatusMap.entrySet()) {
+		for(Entry<SessionId, String> entry : sessionIdToStatusMap.entrySet()) {
 			buffer.append("\n\t");
-			buffer.append(IOUtil.printByteArray(entry.getKey()));
+			buffer.append(entry.getKey().toString());
 			buffer.append(" -> \"");
 			buffer.append(entry.getValue());
 			buffer.append("\"");

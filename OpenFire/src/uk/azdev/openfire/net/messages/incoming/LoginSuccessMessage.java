@@ -20,12 +20,12 @@ package uk.azdev.openfire.net.messages.incoming;
 
 import java.net.Inet4Address;
 
+import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.net.attrvalues.Int32AttributeValue;
 import uk.azdev.openfire.net.attrvalues.SessionIdAttributeValue;
 import uk.azdev.openfire.net.attrvalues.StringKeyedAttributeMap;
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.StringMapBasedMessage;
-import uk.azdev.openfire.net.util.IOUtil;
 
 public class LoginSuccessMessage extends StringMapBasedMessage {
 
@@ -47,7 +47,7 @@ public class LoginSuccessMessage extends StringMapBasedMessage {
 	public static final int LOGIN_SUCCESS_MESSAGE_ID = 130;
 
 	private long userId;
-	private byte[] sessionId;
+	private SessionId sessionId;
 	private String nick;
 	private long status;
 	private String dlSet;
@@ -193,11 +193,11 @@ public class LoginSuccessMessage extends StringMapBasedMessage {
 		this.pip = pip;
 	}
 
-	public byte[] getSessionId() {
+	public SessionId getSessionId() {
 		return sessionId;
 	}
 
-	public void setSessionId(byte[] sessionId) {
+	public void setSessionId(SessionId sessionId) {
 		this.sessionId = sessionId;
 	}
 
@@ -224,7 +224,7 @@ public class LoginSuccessMessage extends StringMapBasedMessage {
 		buffer.append("\n\tUser id: ");
 		buffer.append(userId);
 		buffer.append("\n\tSession id: ");
-		buffer.append(IOUtil.printByteArray(sessionId));
+		buffer.append(sessionId.toString());
 		buffer.append("\n\tNick: ");
 		buffer.append(nick);
 		buffer.append("\n\tStatus: ");
