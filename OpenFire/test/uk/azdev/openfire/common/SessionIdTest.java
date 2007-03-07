@@ -68,6 +68,7 @@ public class SessionIdTest {
 		assertTrue(sid2.equals(sid1));
 		assertFalse(sid1.equals(sid3));
 		assertFalse(sid1.equals(sid3));
+		assertFalse(sid1.equals(new Object()));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
