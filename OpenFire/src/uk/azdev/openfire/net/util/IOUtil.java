@@ -19,6 +19,10 @@
 package uk.azdev.openfire.net.util;
 
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.ReadableByteChannel;
@@ -105,6 +109,33 @@ public class IOUtil {
 		buffer.order(ByteOrder.LITTLE_ENDIAN);
 		
 		return buffer;
+	}
+	
+	public static Inet4Address getAddressFromInt32(long value) {
+		byte[] address = new byte[4];
+		address[0] = (byte)(value >> 24);
+		address[1] = (byte)(value >> 16);
+		address[2] = (byte)(value >> 8);
+		address[3] = (byte)(value);
+		try {
+			return (Inet4Address)InetAddress.getByAddress(address);
+		} catch (UnknownHostException e) {
+			// will never happen as we know the byte array we have passed
+			// is the correct length for IPv4
+			throw new RuntimeException("UnknownHostException unexpectedly thrown", e);
+		}
+	}
+	
+	public static InetSocketAddress getInetSocketAddress(long addrAsInt32, int port) {
+		return new InetSocketAddress(getAddressFromInt32(addrAsInt32), port);
+	}
+	
+	public static long getInt32FromAddress(Inet4Address inetAddress) {
+		byte[] addrBytes = inetAddress.getAddress();
+		return  (convertByteToUnsigned(addrBytes[0]) << 24L) 
+		      | (convertByteToUnsigned(addrBytes[1]) << 16L) 
+		      | (convertByteToUnsigned(addrBytes[2]) << 8L)
+		      | (convertByteToUnsigned(addrBytes[3]));
 	}
 	
 }
