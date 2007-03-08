@@ -51,4 +51,9 @@ public class GameInfo {
 		GameInfo otherInfo = (GameInfo)obj;
 		return otherInfo.getId() == this.id;
 	}
+	
+	@Override
+	public int hashCode() {
+		return (int)(id & 0xFFFFFFFFL);
+	}
 }
