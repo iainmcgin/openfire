@@ -18,12 +18,15 @@
  */
 package uk.azdev.openfire.net.attrvalues;
 
+import java.net.Inet4Address;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import uk.azdev.openfire.common.SessionId;
 
 import static uk.azdev.openfire.net.util.IOUtil.*;
 
@@ -90,6 +93,42 @@ public abstract class AttributeMap<K> {
 		}
 		
 		return int32List;
+	}
+	
+	public List<Integer> getAttributeValueAsInt16List(K key) {
+		List<AttributeValue> listValueContents = getListAttributeValueContents(key, Int32AttributeValue.TYPE_ID);
+		
+		ArrayList<Integer> int16List = new ArrayList<Integer>(listValueContents.size());
+		for(AttributeValue v : listValueContents) {
+			Long l = ((Int32AttributeValue)v).getValue();
+			int16List.add((int)l.longValue());
+		}
+		
+		return int16List;
+	}
+	
+	public List<Inet4Address> getAttributeValueAsInet4AddressList(K key) {
+		List<AttributeValue> listValueContents = getListAttributeValueContents(key, Int32AttributeValue.TYPE_ID);
+		
+		ArrayList<Inet4Address> inet4AddrList = new ArrayList<Inet4Address>(listValueContents.size());
+		for(AttributeValue v : listValueContents) {
+			Inet4Address addr = ((Int32AttributeValue)v).getValueAsInetAddress();
+			inet4AddrList.add(addr);
+		}
+		
+		return inet4AddrList;
+	}
+	
+	public List<SessionId> getAttributeValueAsSessionIdList(K key) {
+		List<AttributeValue> listValueContents = getListAttributeValueContents(key, SessionIdAttributeValue.TYPE_ID);
+		
+		ArrayList<SessionId> sidList = new ArrayList<SessionId>(listValueContents.size());
+		for(AttributeValue v : listValueContents) {
+			SessionId sid = ((SessionIdAttributeValue)v).getSessionId();
+			sidList.add(sid);
+		}
+		
+		return sidList;
 	}
 
 	private List<AttributeValue> getListAttributeValueContents(K key, int expectedItemType) {
