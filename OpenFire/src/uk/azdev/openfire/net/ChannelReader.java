@@ -21,16 +21,11 @@ package uk.azdev.openfire.net;
 import static uk.azdev.openfire.net.util.IOUtil.printByteArray;
 import static uk.azdev.openfire.net.util.IOUtil.readUnsignedShort;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import uk.azdev.openfire.net.messages.IMessage;
@@ -173,43 +168,5 @@ public class ChannelReader {
 	
 	protected MessageFactory createMessageFactory() {
 		return new MessageFactory();
-	}
-
-	public static void main(String[] args) throws IOException {
-		if(args.length == 0) {
-			System.out.println("Missing argument: message data file");
-			return;
-		}
-		
-		int numBytesToStrip = 0;
-		if(args.length > 1) {
-			 numBytesToStrip = Integer.parseInt(args[1]);
-		}
-		
-		Logger logger = Logger.getLogger("myLogger");
-		logger.setLevel(Level.FINEST);
-		
-		try {
-			InputStream messageStream = getResource(args[0]);
-			ReadableByteChannel channel = Channels.newChannel(messageStream);
-			stripBytes(channel, numBytesToStrip);
-			ChannelReader reader = new ChannelReader(channel, logger);
-			reader.addMessageListener(new MessagePrintingListener());
-			reader.readChannel();
-		} catch(FileNotFoundException e) {
-			System.out.println("Error: unable to file message data file");
-		}
-	}
-	
-	private static InputStream getResource(String path) throws FileNotFoundException {
-		return new FileInputStream(path);
-	}
-	
-	private static void stripBytes(ReadableByteChannel channel, int numBytesToStrip) throws IOException {
-		ByteBuffer buffer = IOUtil.createBuffer(numBytesToStrip);
-		int numRead = channel.read(buffer);
-		if(numRead != numBytesToStrip) {
-			throw new RuntimeException("number of bytes to strip exceeds channel length");
-		}
 	}
 }
