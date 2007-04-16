@@ -72,6 +72,10 @@ public class TestUtils {
 		return testClass.getResourceAsStream("testResources/" + resourceName);
 	}
 	
+	public static ReadableByteChannel getTestResourceAsChannel(Class<?> testClass, String resourceName) throws IOException {
+		return Channels.newChannel(getTestResource(testClass, resourceName));
+	}
+	
 	public static byte[] readAllAvailable(InputStream stream) throws IOException {
 		byte[] bytes = new byte[stream.available()];
 		stream.read(bytes);
