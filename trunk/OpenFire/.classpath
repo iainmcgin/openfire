@@ -4,5 +4,9 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="3rdparty_test/jmock-2.0.0/hamcrest-api-1.0.jar"/>
+	<classpathentry kind="lib" path="3rdparty_test/jmock-2.0.0/hamcrest-library-1.0.jar"/>
+	<classpathentry kind="lib" path="3rdparty_test/jmock-2.0.0/jmock-2.0.0.jar"/>
+	<classpathentry kind="lib" path="3rdparty_test/jmock-2.0.0/jmock-junit4-2.0.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
