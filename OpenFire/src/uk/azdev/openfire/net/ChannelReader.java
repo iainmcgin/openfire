@@ -1,5 +1,5 @@
 /*
- * OpenFire - a Java API to access the XFire instant messaging network.
+ * JFire - a Java API to access the XFire instant messaging network.
  * Copyright (C) 2007 Iain McGinniss
  * 
  * This library is free software; you can redistribute it and/or
@@ -18,15 +18,11 @@
  */
 package uk.azdev.openfire.net;
 
-import static uk.azdev.openfire.net.util.IOUtil.printByteArray;
 import static uk.azdev.openfire.net.util.IOUtil.readUnsignedShort;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
 
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.MessageFactory;
@@ -34,136 +30,94 @@ import uk.azdev.openfire.net.messages.UnknownInt8MapBasedMessage;
 import uk.azdev.openfire.net.messages.UnknownStringMapBasedMessage;
 import uk.azdev.openfire.net.util.IOUtil;
 
-
 public class ChannelReader {
-	
-	private static final int MAX_MESSAGE_SIZE = (1 << 16) - 1;
-	private static final int HEADER_SIZE = 4;
-	
-	private ReadableByteChannel channel;
+
 	private ByteBuffer messageBuffer;
-	private Logger logger;
+	private ReadableByteChannel channel;
 	private MessageFactory messageFactory;
-	private List<MessageListener> listenerList;
-	
-	
-	public ChannelReader(ReadableByteChannel channelToRead) {
-		this(channelToRead, Logger.getAnonymousLogger());
-	}
-	
-	public ChannelReader(ReadableByteChannel channelToRead, Logger logger) {
-		this.channel = channelToRead;
-		this.logger = logger;
-		messageBuffer = IOUtil.createBuffer(MAX_MESSAGE_SIZE-HEADER_SIZE);
+
+	public ChannelReader(ReadableByteChannel inputChannel) {
+		this.channel = inputChannel;
+		messageBuffer = IOUtil.createBuffer(ProtocolConstants.MAX_MESSAGE_SIZE - ProtocolConstants.HEADER_SIZE);
 		messageFactory = createMessageFactory();
-		listenerList = new LinkedList<MessageListener>();
 	}
 	
-	public void addMessageListener(MessageListener listener) {
-		listenerList.add(listener);
-	}
-	
-	public void readChannel() {
-		int numMessages = 0;
-		int numFailed = 0;
-		try {
-			int messageSize;
-			while((messageSize = readUnsignedShort(channel)) != -1) {
-				logger.finer("next message size: " + messageSize);
-				
-				int messageType = readUnsignedShort(channel);
-				if(messageType == -1) {
-					logger.warning("not enough bytes in stream to determine message type!");
-					break;
-				}
-				
-				logger.finer("next message type: " + messageType);
-				
-				int messageContentsSize = messageSize - HEADER_SIZE;
-				readMessageContents(messageContentsSize);
-				
-				numMessages++;
-				
-				if(messageFactory.isKnownMessageType(messageType)) {
-					IMessage message = messageFactory.createMessage(messageType);
-					message.readMessageContent(messageBuffer);
-					logger.info("successfully read message of type \"" + messageType + "\"");
-					logger.finest(message.toString());
-					dispatchToListeners(message);
-				} else {
-					// attempt to read as a generic message
-					if(!attemptStringBasedMessageRead(messageType) 
-					   && !attemptInt8BasedMessageRead(messageType)) {
-						logger.warning("Unknown message of type \"" + messageType + "\" which is not string or int8 based found in stream");
-						printBuffer(messageBuffer);
-						numFailed++;
-					}
-				}
-			}
-			
-		} catch(IOException e) {
-			logger.severe("IO Exception occurred while reading channel");
+	public IMessage readMessage() throws IOException {
+		
+		int messageSize = readUnsignedShort(channel);
+		int messageType = readUnsignedShort(channel);
+		if(messageSize == -1 || messageType == -1) {
+			return null;
 		}
 		
-		System.out.println("number of messages: " + numMessages);
-		System.out.println("number failed: " + numFailed);
-	}
-
-	private void dispatchToListeners(IMessage message) {
-		for(MessageListener listener : listenerList) {
-			try {
-				listener.messageReceived(message);
-			} catch(Exception e) {
-				logger.severe("message listener threw exception while processing message");
-				logger.severe(e.getMessage());
-			}
+		int messageContentsSize = messageSize - ProtocolConstants.HEADER_SIZE;
+		
+		if(!readMessageContents(messageContentsSize)) {
+			return null;
 		}
+		
+		if(messageFactory.isKnownMessageType(messageType)) {
+			IMessage message = messageFactory.createMessage(messageType);
+			message.readMessageContent(messageBuffer);
+			return message;
+		}
+		
+		// attempt to read as a generic message
+		IMessage unknownMessage = attemptUnknownMessageRead(messageType);
+		if(unknownMessage == null) {
+			throw new IOException("Unparseable message found on stream");
+		}
+		
+		return unknownMessage;
 	}
-
-	private boolean attemptStringBasedMessageRead(int messageType) {
+	
+	private boolean readMessageContents(int messageContentsSize) throws IOException {
+		messageBuffer.rewind();
+		messageBuffer.limit(messageContentsSize);
+		int bytesRead = channel.read(messageBuffer);
+		if(bytesRead != messageContentsSize) {
+			return false;
+		}
+		
+		messageBuffer.rewind();
+		return true;
+	}
+	
+	private IMessage attemptUnknownMessageRead(int messageType) {
+		IMessage message = attemptStringBasedMessageRead(messageType);
+		if(message == null) {
+			message = attemptInt8BasedMessageRead(messageType);
+		}
+		
+		return message;
+	}
+	
+	private UnknownStringMapBasedMessage attemptStringBasedMessageRead(int messageType) {
 		try {
 			messageBuffer.rewind();
 			UnknownStringMapBasedMessage message = new UnknownStringMapBasedMessage();
 			message.readMessageContent(messageBuffer);
 			message.setMessageId(messageType);
-			logger.info("read unknown string based message: " + message.toString());
-			return true;
+			return message;
 		} catch(Exception e) {
-			return false;
+			return null;
 		}
 	}
 	
-	private boolean attemptInt8BasedMessageRead(int messageType) {
+	private UnknownInt8MapBasedMessage attemptInt8BasedMessageRead(int messageType) {
 		try {
 			messageBuffer.rewind();
 			UnknownInt8MapBasedMessage message = new UnknownInt8MapBasedMessage();
 			message.readMessageContent(messageBuffer);
 			message.setMessageId(messageType);
-			logger.info("read unknown int8 based message: " + message.toString());
-			return true;
+			return message;
 		} catch(Exception e) {
-			return false;
+			return null;
 		}
-	}
-
-	private void readMessageContents(int messageContentsSize) throws IOException {
-		messageBuffer.rewind();
-		messageBuffer.limit(messageContentsSize);
-		int bytesRead = channel.read(messageBuffer);
-		if(bytesRead != messageContentsSize) {
-			throw new IOException("incomplete message in stream!");
-		}
-		
-		messageBuffer.rewind();
 	}
 	
-	private void printBuffer(ByteBuffer buffer) {
-		logger.finest("Message contents:");
-		
-		// strip the first two bytes, which are the type
-		byte[] bytes = new byte[buffer.remaining()];
-		buffer.get(bytes);
-		logger.finest(printByteArray(bytes));
+	public void close() throws IOException {
+		channel.close();
 	}
 	
 	protected MessageFactory createMessageFactory() {

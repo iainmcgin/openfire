@@ -19,13 +19,16 @@
 package uk.azdev.openfire.net;
 
 
+import static org.junit.Assert.*;
+
 import java.io.IOException;
 import java.nio.channels.ReadableByteChannel;
 
-import org.jmock.Expectations;
-import org.jmock.Mockery;
 import org.junit.Test;
 
+import uk.azdev.openfire.net.messages.IMessage;
+import uk.azdev.openfire.net.messages.UnknownInt8MapBasedMessage;
+import uk.azdev.openfire.net.messages.UnknownStringMapBasedMessage;
 import uk.azdev.openfire.net.messages.incoming.BuddyListMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginChallengeMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
@@ -33,23 +36,33 @@ import uk.azdev.openfire.testutil.TestUtils;
 
 public class ChannelReaderTest {
 
-	Mockery mockContext = new Mockery();
+	@Test
+	public void testReadMessage() throws IOException {
+		ReadableByteChannel inputChannel = TestUtils.getTestResourceAsChannel(ChannelReaderTest.class, "downstream.sampledata");
+		ChannelReader reader = new ChannelReader(inputChannel);
+		
+		assertTrue(reader.readMessage() instanceof LoginChallengeMessage);
+		assertTrue(reader.readMessage() instanceof LoginSuccessMessage);
+		assertTrue(reader.readMessage() instanceof BuddyListMessage);
+		
+		IMessage message = reader.readMessage();
+		assertTrue(message instanceof UnknownInt8MapBasedMessage);
+		assertEquals(155, message.getMessageId());
+		
+		message = reader.readMessage();
+		assertTrue(message instanceof UnknownStringMapBasedMessage);
+		assertEquals(156, message.getMessageId());
+		
+		assertNull(reader.readMessage());
+	}
 	
 	@Test
-	public void testReadChannel() throws IOException {
-		ReadableByteChannel channel = TestUtils.getTestResourceAsChannel(ChannelReaderTest.class, "downstream.sampledata");
+	public void testClose() throws IOException {
+		ReadableByteChannel inputChannel = TestUtils.getTestResourceAsChannel(ChannelReaderTest.class, "downstream.sampledata");
+		ChannelReader reader = new ChannelReader(inputChannel);
 		
-		final MessageListener listener = mockContext.mock(MessageListener.class);
-		mockContext.checking(new Expectations() {{
-			one(listener).messageReceived(with(a(LoginChallengeMessage.class)));
-			one(listener).messageReceived(with(a(LoginSuccessMessage.class)));
-			one(listener).messageReceived(with(a(BuddyListMessage.class)));
-		}});
-		
-		ChannelReader reader = new ChannelReader(channel);
-		reader.addMessageListener(listener);
-		reader.readChannel();
-		
-		mockContext.assertIsSatisfied();
+		assertTrue(inputChannel.isOpen());
+		reader.close();
+		assertFalse(inputChannel.isOpen());
 	}
 }

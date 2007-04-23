@@ -18,6 +18,7 @@
  */
 package uk.azdev.openfire.net;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,9 +26,8 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.util.IOUtil;
 
 /**
@@ -42,28 +42,67 @@ public class StoredSessionReader {
 			return;
 		}
 		
-		int numBytesToStrip = 0;
-		if(args.length > 1) {
-			 numBytesToStrip = Integer.parseInt(args[1]);
+		File fileToRead = getFileToRead(args[0]);
+		if(fileToRead == null) {
+			return;
 		}
 		
-		Logger logger = Logger.getLogger("myLogger");
-		logger.setLevel(Level.FINEST);
-		
-		try {
-			InputStream messageStream = getResource(args[0]);
-			ReadableByteChannel channel = Channels.newChannel(messageStream);
-			stripBytes(channel, numBytesToStrip);
-			ChannelReader reader = new ChannelReader(channel, logger);
-			reader.addMessageListener(new MessagePrintingListener());
-			reader.readChannel();
-		} catch(FileNotFoundException e) {
-			System.out.println("Error: unable to file message data file");
+		int numBytesToStrip = getNumBytesToStrip(args);
+		if(numBytesToStrip == -1) {
+			return;
 		}
+		
+		ReadableByteChannel channel = getChannel(fileToRead, numBytesToStrip);
+		ChannelReader reader = new ChannelReader(channel);
+		readAllMessages(reader);
 	}
 	
-	private static InputStream getResource(String path) throws FileNotFoundException {
-		return new FileInputStream(path);
+	
+
+	private static File getFileToRead(String filePath) {
+		File fileToRead = new File(filePath);
+		if(!fileToRead.exists()) {
+			System.err.println("File \"" + filePath + "\" does not exist");
+			return null;
+		}
+		
+		if(!fileToRead.isFile()) {
+			System.err.println("File \"" + filePath + "\" is not a file");
+			return null;
+		}
+		
+		return fileToRead;
+	}
+	
+	private static int getNumBytesToStrip(String[] args) {
+		int numBytesToStrip = 0;
+		if(args.length > 1) {
+			try {
+				numBytesToStrip = Integer.parseInt(args[1]);
+			} catch(NumberFormatException e) {
+				System.err.println("Second argument is not a valid integer");
+				return -1;
+			}
+			
+			if(numBytesToStrip <= 0) {
+				System.err.println("Second argument is not a positive integer");
+				return -1;
+			}
+		}
+		
+		return numBytesToStrip;
+	}
+	
+	private static ReadableByteChannel getChannel(File fileToRead, int numBytesToStrip) throws IOException {
+		InputStream messageStream = getResource(fileToRead);
+		ReadableByteChannel channel = Channels.newChannel(messageStream);
+		stripBytes(channel, numBytesToStrip);
+		
+		return channel;
+	}
+	
+	private static InputStream getResource(File file) throws FileNotFoundException {
+		return new FileInputStream(file);
 	}
 	
 	private static void stripBytes(ReadableByteChannel channel, int numBytesToStrip) throws IOException {
@@ -72,6 +111,20 @@ public class StoredSessionReader {
 		if(numRead != numBytesToStrip) {
 			throw new RuntimeException("number of bytes to strip exceeds channel length");
 		}
+	}
+	
+	private static void readAllMessages(ChannelReader reader) {
+		IMessage message;
+		try {
+			while((message = reader.readMessage()) != null) {
+				System.out.println(message);
+				System.out.println();
+			}
+		} catch (IOException e) {
+			System.err.println("Error occurred while attempting to read message");
+			e.printStackTrace();
+		}
+		
 	}
 	
 }

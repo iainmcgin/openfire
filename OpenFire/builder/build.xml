@@ -22,6 +22,10 @@
 	<path id="tests.lib">
 		<pathelement location="${3rdparty.test.lib.dir}/emma.jar"/>
 		<pathelement location="${3rdparty.test.lib.dir}/emma_ant.jar"/>
+		<pathelement location="${3rdparty.test.lib.dir}/jmock-2.0.0/hamcrest-api-1.0.jar"/>
+		<pathelement location="${3rdparty.test.lib.dir}/jmock-2.0.0/hamcrest-library-1.0.jar"/>
+		<pathelement location="${3rdparty.test.lib.dir}/jmock-2.0.0/jmock-2.0.0.jar"/>
+		<pathelement location="${3rdparty.test.lib.dir}/jmock-2.0.0/jmock-junit4-2.0.0.jar"/>
 	</path>
 	
 	<path id="test.run.classpath">
@@ -77,6 +81,7 @@
 				
 	<target name="compile.tests" depends="compile">
 		<javac srcdir="${test.src.dir}" destdir="${test.build.dir}">
+			<classpath refid="tests.lib"/>
 			<classpath>
 				<pathelement location="${main.build.dir}"/>
 			</classpath>

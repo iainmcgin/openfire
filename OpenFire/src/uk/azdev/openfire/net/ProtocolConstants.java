@@ -25,12 +25,16 @@ import java.net.InetSocketAddress;
  */
 public final class ProtocolConstants {
 	
+	
+
 	ProtocolConstants() {
 		throw new RuntimeException("ProtocolConstants is not meant to be instantiated");
 	}
 	
 	public static final String XFIRE_SERVER_NAME = "cs.xfire.com";
 	public static final int XFIRE_SERVER_PORT = 25999;
+	public static final int MAX_MESSAGE_SIZE = (1 << 16) - 1;
+	public static final int HEADER_SIZE = 4;
 	
 	/**
 	 * The first sequence of bytes sent to the server
