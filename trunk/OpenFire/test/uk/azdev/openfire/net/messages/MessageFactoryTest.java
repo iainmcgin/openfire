@@ -77,4 +77,9 @@ public class MessageFactoryTest {
 		assertTrue(factory.createMessage(KeepaliveMessage.KEEP_ALIVE_MESSAGE_ID) instanceof KeepaliveMessage);
 		assertTrue(factory.createMessage(BuddyGameInfoMessage.BUDDY_GAME_INFO_MESSAGE_ID) instanceof BuddyGameInfoMessage);
 	}
+	
+	@Test(expected=UnknownMessageTypeException.class)
+	public void testCreateUnknownMessageType() {
+		factory.createMessage(-1);
+	}
 }
