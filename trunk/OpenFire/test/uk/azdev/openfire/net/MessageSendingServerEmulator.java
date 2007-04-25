@@ -18,21 +18,39 @@
  */
 package uk.azdev.openfire.net;
 
-/**
- * Container for common constants used in the xfire protocol.
- */
-public final class ProtocolConstants {
+import java.io.IOException;
+import java.nio.channels.SocketChannel;
+import java.util.LinkedList;
+import java.util.List;
 
-	ProtocolConstants() {
-		throw new RuntimeException("ProtocolConstants is not meant to be instantiated");
+import uk.azdev.openfire.net.messages.IMessage;
+
+public class MessageSendingServerEmulator extends AbstractServerEmulator {
+
+	private List<IMessage> messagesToSend;
+	
+	public MessageSendingServerEmulator() throws IOException {
+		super();
+		messagesToSend = new LinkedList<IMessage>();
 	}
 	
-	public static final String XFIRE_SERVER_NAME = "cs.xfire.com";
-	public static final int XFIRE_SERVER_PORT = 25999;
+	public void addMessageToSend(IMessage message) {
+		messagesToSend.add(message);
+	}
 	
-	public static final int MAX_MESSAGE_SIZE = (1 << 16) - 1;
-	public static final int HEADER_SIZE = 4;
-	
-	public static final byte[] CLIENT_OPENING_STATEMENT = { 0x55, 0x41, 0x30, 0x31 }; // "UA01"
+	@Override
+	public void doWork(SocketChannel channel) throws IOException {
+		ChannelReader reader = new ChannelReader(channel);
+		reader.skipOpeningStatement();
 		
+		ChannelWriter writer = new ChannelWriter(channel);
+		writeMessages(writer);
+	}
+	
+	private void writeMessages(ChannelWriter writer) throws IOException {
+		for(IMessage message : messagesToSend) {
+			writer.writeMessage(message);
+		}
+	}
+
 }

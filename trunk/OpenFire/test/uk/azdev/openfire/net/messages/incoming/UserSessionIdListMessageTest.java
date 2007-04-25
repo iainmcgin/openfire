@@ -71,20 +71,12 @@ public class UserSessionIdListMessageTest {
 		ByteBuffer buffer = TestUtils.getByteBufferForResource(this.getClass(), "usersidlist.sampledata");
 		message.readMessageContent(buffer);
 		
-		Set<Long> userIdSet = message.getUserIdList();
-		assertEquals(9, userIdSet.size());
-		
-		for(long userId : userIdSet) {
-			assertEquals(EXPECTED_SID, message.getSessionIdForUser(userId));
-		}
+		verifyMessage(message);
 	}
 
 	@Test
 	public void testWriteMessageContent() throws IOException {
-		for(int i=1; i <= 9; i++) {
-			message.addUserMapping(i, EXPECTED_SID);
-		}
-		
+		message = createTestMessage();
 		TestUtils.checkMessageOutput(message, this.getClass(), "usersidlist.sampledata");
 	}
 	
@@ -95,6 +87,25 @@ public class UserSessionIdListMessageTest {
 		}
 		
 		assertEquals(EXPECTED_TOSTRING, message.toString());
+	}
+	
+	public static UserSessionIdListMessage createTestMessage() {
+		UserSessionIdListMessage message = new UserSessionIdListMessage();
+		
+		for(int i=1; i <= 9; i++) {
+			message.addUserMapping(i, EXPECTED_SID);
+		}
+		
+		return message;
+	}
+	
+	public static void verifyMessage(UserSessionIdListMessage message) {
+		Set<Long> userIdSet = message.getUserIdList();
+		assertEquals(9, userIdSet.size());
+		
+		for(long userId : userIdSet) {
+			assertEquals(EXPECTED_SID, message.getSessionIdForUser(userId));
+		}
 	}
 
 }

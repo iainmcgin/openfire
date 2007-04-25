@@ -48,18 +48,12 @@ public class ClientInformationMessageTest {
 		ByteBuffer buffer = TestUtils.getByteBufferForResource(this.getClass(), "clientinformation.sampledata");
 		message.readMessageContent(buffer);
 		
-		assertEquals("3.2.0.0", message.getVersion());
-		assertEquals(4, message.getSkinList().length);
-		assertEquals("Xfire", message.getSkinList()[0]);
-		assertEquals("standard", message.getSkinList()[1]);
-		assertEquals("Separator", message.getSkinList()[2]);
-		assertEquals("XF_URL", message.getSkinList()[3]);
+		verifyMessage(message);
 	}
 	
 	@Test
 	public void testWriteMessageContent() throws IOException {
-		message.setVersion("3.2.0.0");
-		message.setSkinList(new String[] { "Xfire", "standard", "Separator", "XF_URL" });
+		message = createTestMessage();
 		
 		TestUtils.checkMessageOutput(message, this.getClass(), "clientinformation.sampledata");
 	}
@@ -79,6 +73,24 @@ public class ClientInformationMessageTest {
 		message.setSkinList(new String[] { "Skin1", "Skin2" });
 		message.setVersion("1.2.3.4");
 		assertEquals("Client information message\n\tSkin list: Skin1 Skin2 \n\tVersion: 1.2.3.4", message.toString());
+	}
+	
+	public static ClientInformationMessage createTestMessage() {
+		ClientInformationMessage message = new ClientInformationMessage();
+		
+		message.setVersion("3.2.0.0");
+		message.setSkinList(new String[] { "Xfire", "standard", "Separator", "XF_URL" });
+		
+		return message;
+	}
+	
+	public static void verifyMessage(ClientInformationMessage message) {
+		assertEquals("3.2.0.0", message.getVersion());
+		assertEquals(4, message.getSkinList().length);
+		assertEquals("Xfire", message.getSkinList()[0]);
+		assertEquals("standard", message.getSkinList()[1]);
+		assertEquals("Separator", message.getSkinList()[2]);
+		assertEquals("XF_URL", message.getSkinList()[3]);
 	}
 
 }

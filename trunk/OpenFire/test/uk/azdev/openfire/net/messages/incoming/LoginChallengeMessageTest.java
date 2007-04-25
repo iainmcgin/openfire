@@ -48,7 +48,7 @@ public class LoginChallengeMessageTest {
 	public void testReadMessageContent() throws IOException {
 		ByteBuffer buffer = TestUtils.getByteBufferForResource(this.getClass(), "loginchallenge.sampledata");
 		message.readMessageContent(buffer);
-		assertEquals(EXPECTED_SALT, message.getSalt());
+		verifyMessage(message);
 	}
 
 	@Test
@@ -71,6 +71,17 @@ public class LoginChallengeMessageTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void testSetNullSalt() {
 		message.setSalt(null);
+	}
+	
+	public static LoginChallengeMessage createTestMessage() {
+		LoginChallengeMessage message = new LoginChallengeMessage();
+		message.setSalt(EXPECTED_SALT);
+		
+		return message;
+	}
+	
+	public static void verifyMessage(LoginChallengeMessage message) throws IOException {
+		assertEquals(EXPECTED_SALT, message.getSalt());
 	}
 
 }

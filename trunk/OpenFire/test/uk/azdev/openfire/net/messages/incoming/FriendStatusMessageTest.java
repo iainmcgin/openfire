@@ -30,23 +30,23 @@ import org.junit.Test;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.testutil.TestUtils;
 
-public class BuddyStatusMessageTest {
+public class FriendStatusMessageTest {
 
-	private BuddyStatusMessage message;
+	private FriendStatusMessage message;
 	
 	@Before
 	public void setUp() throws Exception {
-		message = new BuddyStatusMessage();
+		message = new FriendStatusMessage();
 	}
 
 	@Test
 	public void testGetMessageId() {
-		assertEquals(BuddyStatusMessage.BUDDY_STATUS_MESSAGE_ID, message.getMessageId());
+		assertEquals(FriendStatusMessage.FRIEND_STATUS_MESSAGE_ID, message.getMessageId());
 	}
 
 	@Test
 	public void testNewInstance() {
-		assertTrue(message.newInstance() instanceof BuddyStatusMessage);
+		assertTrue(message.newInstance() instanceof FriendStatusMessage);
 	}
 
 	private static final SessionId EXPECTED_SESSION_ID
@@ -55,7 +55,7 @@ public class BuddyStatusMessageTest {
 
 	@Test
 	public void testReadMessageContent() throws IOException {
-		ByteBuffer buffer = TestUtils.getByteBufferForResource(this.getClass(), "buddystatus.sampledata");
+		ByteBuffer buffer = TestUtils.getByteBufferForResource(this.getClass(), "friendstatus.sampledata");
 		message.readMessageContent(buffer);
 		
 		Set<SessionId> sessionIdSet = message.getSessionIdSet();
@@ -69,11 +69,11 @@ public class BuddyStatusMessageTest {
 	@Test
 	public void testWriteMessageContent() throws IOException {
 		message.addStatus(EXPECTED_SESSION_ID, "(AFK) Away From Keyboard");
-		TestUtils.checkMessageOutput(message, this.getClass(), "buddystatus.sampledata");
+		TestUtils.checkMessageOutput(message, this.getClass(), "friendstatus.sampledata");
 	}
 
 	private static final String EXPECTED_TOSTRING
-		= "Buddy Status Message\n"
+		= "Friend Status Message\n"
 		+ "\tStatuses:\n"
 		+ "\t01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10 -> \"(AFK) Away From Keyboard\"";
 	

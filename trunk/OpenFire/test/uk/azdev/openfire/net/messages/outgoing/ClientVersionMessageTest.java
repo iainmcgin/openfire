@@ -18,7 +18,8 @@
  */
 package uk.azdev.openfire.net.messages.outgoing;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -43,12 +44,12 @@ public class ClientVersionMessageTest {
 		ByteBuffer buffer = TestUtils.getByteBufferForResource(this.getClass(), "clientversion.sampledata");
 		message.readMessageContent(buffer);
 		
-		assertEquals(67L, message.getVersion());
+		verifyMessage(message);
 	}
 	
 	@Test
 	public void testWriteMessage() throws IOException {
-		message.setVersion(67);
+		message = createTestMessage();
 		TestUtils.checkMessageOutput(message, this.getClass(), "clientversion.sampledata");
 	}
 	
@@ -76,6 +77,17 @@ public class ClientVersionMessageTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void testSetHugeVersion() {
 		message.setVersion(BoundsUtil.MAX_INT32_VALUE + 1);
+	}	
+
+	public static ClientVersionMessage createTestMessage() {
+		ClientVersionMessage message = new ClientVersionMessage();
+		
+		message.setVersion(67);
+		return message;
+	}
+	
+	public static void verifyMessage(ClientVersionMessage message) {
+		assertEquals(67L, message.getVersion());
 	}
 
 }

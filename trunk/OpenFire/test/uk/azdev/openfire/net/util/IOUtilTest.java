@@ -94,5 +94,37 @@ public class IOUtilTest {
 		byte[] encoded = IOUtil.encodeString("testing 1 2 3");
 		assertEquals("testing 1 2 3", IOUtil.decodeString(encoded));
 	}
+	
+	@Test
+	public void testNextBytesMatchArray() {
+		byte[] testArray = new byte[] { 0x01, 0x02, 0x03, 0x04 };
+		ByteBuffer buffer = IOUtil.createBuffer(testArray.length);
+		buffer.put(testArray);
+		buffer.flip();
+		
+		assertTrue(IOUtil.nextBytesMatchArray(buffer, testArray));
+	}
+	
+	@Test
+	public void testNextBytesMatchArray_noMatch() {
+		byte[] expectedBytes = new byte[] { 0x04, 0x03, 0x02, 0x01 };
+		byte[] testArray = new byte[] { 0x01, 0x02, 0x03, 0x04 };
+		ByteBuffer buffer = IOUtil.createBuffer(testArray.length);
+		buffer.put(testArray);
+		buffer.flip();
+		
+		assertFalse(IOUtil.nextBytesMatchArray(buffer, expectedBytes));
+	}
+	
+	@Test
+	public void testNextBytesMatchArray_withTooFewBytesLeft() {
+		byte[] expectedBytes = new byte[] { 0x01, 0x02, 0x03, 0x04 };
+		byte[] testArray = new byte[] { 0x01, 0x02, 0x03 };
+		ByteBuffer buffer = IOUtil.createBuffer(testArray.length);
+		buffer.put(testArray);
+		buffer.flip();
+		
+		assertFalse(IOUtil.nextBytesMatchArray(buffer, expectedBytes));
+	}
 
 }
