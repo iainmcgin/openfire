@@ -1,5 +1,5 @@
 /*
- * JFire - a Java API to access the XFire instant messaging network.
+ * OpenFire - a Java API to access the XFire instant messaging network.
  * Copyright (C) 2007 Iain McGinniss
  * 
  * This library is free software; you can redistribute it and/or
