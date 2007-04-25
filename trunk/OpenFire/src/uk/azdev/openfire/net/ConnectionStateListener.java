@@ -18,7 +18,6 @@
  */
 package uk.azdev.openfire.net;
 
-import java.io.IOException;
 
 public interface ConnectionStateListener {
 	
