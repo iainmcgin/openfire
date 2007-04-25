@@ -31,7 +31,6 @@ import java.nio.charset.Charset;
 public class IOUtil {
 
 	private static final Charset CHARACTER_ENCODING = Charset.forName("UTF-8");
-	private static ByteBuffer shortBuffer = createBuffer(2);
 	
 	IOUtil() {
 		throw new RuntimeException("IOUtil is not meant to be instantiated");
@@ -46,23 +45,52 @@ public class IOUtil {
 	}
 	
 	public static int readUnsignedShort(ReadableByteChannel channel) throws IOException {
-		shortBuffer.rewind();
-		int numRead = channel.read(shortBuffer);
+		ByteBuffer readBuffer = createBuffer(2);
+		readBuffer.rewind();
+		readBuffer.limit(2);
+		int numRead = channel.read(readBuffer);
 		
 		if(numRead != 2) {
 			return -1;
 		}
 		
-		shortBuffer.rewind();
-		return readUnsignedShort(shortBuffer);
+		readBuffer.rewind();
+		return readUnsignedShort(readBuffer);
 	}
 	
 	public static int readUnsignedShort(ByteBuffer buffer) {
 		return buffer.getShort() & 0xFFFF;
 	}
 	
+	public static long readUnsignedInt(ReadableByteChannel channel) throws IOException {
+		ByteBuffer readBuffer = createBuffer(4);
+		readBuffer.rewind();
+		int numRead = channel.read(readBuffer);
+		
+		if(numRead != 4) {
+			return -1;
+		}
+		
+		readBuffer.rewind();
+		return readUnsignedInt(readBuffer);
+	}
+	
 	public static long readUnsignedInt(ByteBuffer buffer) {
 		return buffer.getInt() & 0xFFFFFFFFL;
+	}
+	
+	public static boolean nextBytesMatchArray(ByteBuffer buffer, byte[] bytes) {
+		if(buffer.remaining() != bytes.length) {
+			return false;
+		}
+		
+		for(byte b : bytes) {
+			if(buffer.get() != b) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	public static int getEncodedStringSize(String str) {

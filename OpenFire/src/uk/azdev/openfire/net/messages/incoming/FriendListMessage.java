@@ -31,9 +31,9 @@ import uk.azdev.openfire.net.attrvalues.StringKeyedAttributeMap;
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.StringMapBasedMessage;
 
-public class BuddyListMessage extends StringMapBasedMessage {
+public class FriendListMessage extends StringMapBasedMessage {
 
-	public static final int BUDDY_LIST_MESSAGE_ID = 131;
+	public static final int FRIEND_LIST_MESSAGE_ID = 131;
 	private static final String USER_ID_LIST_KEY = "userid";
 	private static final String USER_NAME_LIST_KEY = "friends";
 	private static final String USER_NICK_LIST_KEY = "nick";
@@ -42,7 +42,7 @@ public class BuddyListMessage extends StringMapBasedMessage {
 	private Map<Long, String> userIdToNameMap;
 	private Map<Long, String> userIdToNickMap;
 
-	public BuddyListMessage() {
+	public FriendListMessage() {
 		userIds = new ArrayList<Long>();
 		userIdToNameMap = new LinkedHashMap<Long, String>();
 		userIdToNickMap = new LinkedHashMap<Long, String>();
@@ -80,11 +80,11 @@ public class BuddyListMessage extends StringMapBasedMessage {
 	}
 
 	public int getMessageId() {
-		return BUDDY_LIST_MESSAGE_ID;
+		return FRIEND_LIST_MESSAGE_ID;
 	}
 
 	public IMessage newInstance() {
-		return new BuddyListMessage();
+		return new FriendListMessage();
 	}
 
 	public List<Long> getUserIdList() {
@@ -109,7 +109,7 @@ public class BuddyListMessage extends StringMapBasedMessage {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		
-		buffer.append("Buddy List Message");
+		buffer.append("Friend List Message");
 		buffer.append("\n\tUsers:");
 		
 		for(long userId : userIds) {

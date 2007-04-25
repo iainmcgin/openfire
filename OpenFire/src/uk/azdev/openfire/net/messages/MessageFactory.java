@@ -21,9 +21,9 @@ package uk.azdev.openfire.net.messages;
 import java.util.HashMap;
 import java.util.Map;
 
-import uk.azdev.openfire.net.messages.incoming.BuddyGameInfoMessage;
-import uk.azdev.openfire.net.messages.incoming.BuddyListMessage;
-import uk.azdev.openfire.net.messages.incoming.BuddyStatusMessage;
+import uk.azdev.openfire.net.messages.incoming.FriendGameInfoMessage;
+import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
+import uk.azdev.openfire.net.messages.incoming.FriendStatusMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginChallengeMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginFailureMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
@@ -48,12 +48,12 @@ public class MessageFactory {
 		addMessageType(new LoginChallengeMessage());
 		addMessageType(new LoginSuccessMessage());
 		addMessageType(new LoginFailureMessage());
-		addMessageType(new BuddyListMessage());
+		addMessageType(new FriendListMessage());
 		addMessageType(new UserSessionIdListMessage());
 		addMessageType(new ClientConfigurationMessage());
-		addMessageType(new BuddyStatusMessage());
+		addMessageType(new FriendStatusMessage());
 		addMessageType(new KeepaliveMessage());
-		addMessageType(new BuddyGameInfoMessage());
+		addMessageType(new FriendGameInfoMessage());
 	}
 
 	private void addMessageType(IMessage message) {

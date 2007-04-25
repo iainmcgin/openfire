@@ -31,7 +31,7 @@ import uk.azdev.openfire.net.messages.UnknownStringMapBasedMessage;
 import uk.azdev.openfire.net.util.IOUtil;
 
 public class ChannelReader {
-
+	
 	private ByteBuffer messageBuffer;
 	private ReadableByteChannel channel;
 	private MessageFactory messageFactory;
@@ -40,6 +40,23 @@ public class ChannelReader {
 		this.channel = inputChannel;
 		messageBuffer = IOUtil.createBuffer(ProtocolConstants.MAX_MESSAGE_SIZE - ProtocolConstants.HEADER_SIZE);
 		messageFactory = createMessageFactory();
+	}
+	
+	public void skipOpeningStatement() throws IOException {
+		
+		messageBuffer.clear();
+		messageBuffer.limit(4);
+		int numRead = channel.read(messageBuffer);
+		if(numRead != 4) {
+			throw new IOException("Not enough bytes in stream for opening statement");
+		}
+		
+		messageBuffer.flip();
+		
+		if(!IOUtil.nextBytesMatchArray(messageBuffer, ProtocolConstants.CLIENT_OPENING_STATEMENT)) {
+			throw new IOException("Opening statement did not match expected");
+		}
+		
 	}
 	
 	public IMessage readMessage() throws IOException {

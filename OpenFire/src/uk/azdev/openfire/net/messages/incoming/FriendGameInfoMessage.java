@@ -36,18 +36,18 @@ import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.StringMapBasedMessage;
 import uk.azdev.openfire.net.util.IOUtil;
 
-public class BuddyGameInfoMessage extends StringMapBasedMessage {
+public class FriendGameInfoMessage extends StringMapBasedMessage {
 	
 	private static final String SESSION_ID_LIST_KEY = "sid";
 	private static final String GAME_ID_LIST_KEY = "gameid";
 	private static final String GAME_IP_LIST_KEY = "gip";
 	private static final String GAME_PORT_LIST_KEY = "gport";
 
-	public static final int BUDDY_GAME_INFO_MESSAGE_ID = 135;
+	public static final int FRIEND_GAME_INFO_MESSAGE_ID = 135;
 
 	private LinkedHashMap<SessionId, ActiveGameInfo> sidToGameInfoMap;
 	
-	public BuddyGameInfoMessage() {
+	public FriendGameInfoMessage() {
 		sidToGameInfoMap = new LinkedHashMap<SessionId, ActiveGameInfo>();
 	}
 	
@@ -108,11 +108,11 @@ public class BuddyGameInfoMessage extends StringMapBasedMessage {
 	}
 
 	public int getMessageId() {
-		return BUDDY_GAME_INFO_MESSAGE_ID;
+		return FRIEND_GAME_INFO_MESSAGE_ID;
 	}
 
 	public IMessage newInstance() {
-		return new BuddyGameInfoMessage();
+		return new FriendGameInfoMessage();
 	}
 	
 	public Set<SessionId> getSessionIdSet() {
@@ -131,7 +131,7 @@ public class BuddyGameInfoMessage extends StringMapBasedMessage {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		
-		buffer.append("Buddy Game Info Message");
+		buffer.append("Friend Game Info Message");
 		
 		for(Entry<SessionId, ActiveGameInfo> entry : sidToGameInfoMap.entrySet()) {
 			buffer.append("\n\t");

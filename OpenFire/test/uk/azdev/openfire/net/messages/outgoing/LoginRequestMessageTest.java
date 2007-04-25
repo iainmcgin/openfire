@@ -18,7 +18,8 @@
  */
 package uk.azdev.openfire.net.messages.outgoing;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -26,7 +27,6 @@ import java.nio.ByteBuffer;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.azdev.openfire.net.messages.outgoing.LoginRequestMessage;
 import uk.azdev.openfire.testutil.TestUtils;
 
 
@@ -41,12 +41,7 @@ public class LoginRequestMessageTest {
 	
 	@Test
 	public void testWriteLoginRequestMessage() throws IOException {
-		message.setFlags(0);
-		
-		message.setUsername("testuser");
-		message.setSalt("d3cd8b9eacb901fc153858786b047d1bb826ea75");
-		message.setPassword("testpass");
-		
+		message = createTestMessage();
 		TestUtils.checkMessageOutput(message, this.getClass(), "loginrequest.sampledata");
 	}
 	
@@ -55,12 +50,9 @@ public class LoginRequestMessageTest {
 		ByteBuffer messageBuffer = TestUtils.getByteBufferForResource(this.getClass(), "loginrequest.sampledata");
 		
 		message.readMessageContent(messageBuffer);
-		
-		assertEquals("testuser", message.getUsername());
-		assertEquals("25e1911c4a08f46e864f156335c54e68aed701f0", message.getSaltedPassword());
-		assertEquals(0L, message.getFlags());
+		verifyMessage(message);
 	}
-	
+
 	@Test
 	public void testMessageId() {
 		assertEquals(LoginRequestMessage.LOGIN_REQUEST_MESSAGE_ID, message.getMessageId());
@@ -90,6 +82,23 @@ public class LoginRequestMessageTest {
 	public void testSetHugeFlag() {
 		message = new LoginRequestMessage();
 		message.setFlags(9000000000L);
+	}
+
+	public static LoginRequestMessage createTestMessage() {
+		LoginRequestMessage message = new LoginRequestMessage();
+		
+		message.setFlags(0);
+		message.setUsername("testuser");
+		message.setSalt("d3cd8b9eacb901fc153858786b047d1bb826ea75");
+		message.setPassword("testpass");
+		
+		return message;
+	}
+	
+	public static void verifyMessage(LoginRequestMessage message) {
+		assertEquals("testuser", message.getUsername());
+		assertEquals("25e1911c4a08f46e864f156335c54e68aed701f0", message.getSaltedPassword());
+		assertEquals(0L, message.getFlags());
 	}
 
 }

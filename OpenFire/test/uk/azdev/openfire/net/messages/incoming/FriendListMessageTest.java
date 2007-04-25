@@ -29,10 +29,10 @@ import org.junit.Test;
 
 import uk.azdev.openfire.testutil.TestUtils;
 
-public class BuddyListMessageTest {
+public class FriendListMessageTest {
 
 	private static final String EXPECTED_TOSTRING 
-		= "Buddy List Message\n"
+		= "Friend List Message\n"
 		+ "\tUsers:\n"
 		+ "\t1 -> user1 \"user1Nick\"\n"
 		+ "\t2 -> user2 \"user2Nick\"\n"
@@ -45,26 +45,26 @@ public class BuddyListMessageTest {
 		+ "\t9 -> user9 \"user9Nick\"\n"
 		+ "\t10 -> user10 \"user10Nick\"";
 	
-	private BuddyListMessage message;
+	private FriendListMessage message;
 	
 	@Before
 	public void setUp() throws Exception {
-		message = new BuddyListMessage();
+		message = new FriendListMessage();
 	}
 
 	@Test
 	public void testGetMessageId() {
-		assertEquals(BuddyListMessage.BUDDY_LIST_MESSAGE_ID, message.getMessageId());
+		assertEquals(FriendListMessage.FRIEND_LIST_MESSAGE_ID, message.getMessageId());
 	}
 
 	@Test
 	public void testNewInstance() {
-		assertTrue(message.newInstance() instanceof BuddyListMessage);
+		assertTrue(message.newInstance() instanceof FriendListMessage);
 	}
 
 	@Test
 	public void testReadMessageContent() throws IOException {
-		ByteBuffer buffer = TestUtils.getByteBufferForResource(this.getClass(), "buddylist.sampledata");
+		ByteBuffer buffer = TestUtils.getByteBufferForResource(this.getClass(), "friendlist.sampledata");
 		message.readMessageContent(buffer);
 		
 		List<Long> userIdList = message.getUserIdList();
@@ -83,7 +83,7 @@ public class BuddyListMessageTest {
 			message.addUser(i, "user" + i, "user" + i + "Nick");
 		}
 		
-		TestUtils.checkMessageOutput(message, this.getClass(), "buddylist.sampledata");
+		TestUtils.checkMessageOutput(message, this.getClass(), "friendlist.sampledata");
 	}
 	
 	@Test

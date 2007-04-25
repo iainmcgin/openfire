@@ -33,7 +33,7 @@ import uk.azdev.openfire.common.ActiveGameInfo;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.testutil.TestUtils;
 
-public class BuddyGameInfoMessageTest {
+public class FriendGameInfoMessageTest {
 
 	private static final SessionId[] testSids =
 		new SessionId[] {
@@ -72,21 +72,21 @@ public class BuddyGameInfoMessageTest {
 		return new SessionId(sidBytes);
 	}
 	
-	public BuddyGameInfoMessage message;
+	public FriendGameInfoMessage message;
 	
 	@Before
 	public void setUp() throws Exception {
-		message = new BuddyGameInfoMessage();
+		message = new FriendGameInfoMessage();
 	}
 	
 	@Test
 	public void testMessageId() {
-		assertEquals(BuddyGameInfoMessage.BUDDY_GAME_INFO_MESSAGE_ID, message.getMessageId());
+		assertEquals(FriendGameInfoMessage.FRIEND_GAME_INFO_MESSAGE_ID, message.getMessageId());
 	}
 	
 	@Test
 	public void testNewInstance() {
-		assertTrue(message.newInstance() instanceof BuddyGameInfoMessage);
+		assertTrue(message.newInstance() instanceof FriendGameInfoMessage);
 	}
 	
 	@Test
@@ -96,7 +96,7 @@ public class BuddyGameInfoMessageTest {
 	
 	@Test
 	public void testReadMessageContent() throws IOException {
-		ByteBuffer buffer = TestUtils.getByteBufferForResource(this.getClass(), "buddygameinfo.sampledata");
+		ByteBuffer buffer = TestUtils.getByteBufferForResource(this.getClass(), "friendgameinfo.sampledata");
 		message.readMessageContent(buffer);
 		assertEquals(10, message.getSessionIdSet().size());
 		
@@ -118,11 +118,11 @@ public class BuddyGameInfoMessageTest {
 			message.addActiveGameInfo(testSids[i], testActiveGames[i]);
 		}
 		
-		TestUtils.checkMessageOutput(message, this.getClass(), "buddygameinfo.sampledata");
+		TestUtils.checkMessageOutput(message, this.getClass(), "friendgameinfo.sampledata");
 	}
 	
 	private static final String EXPECTED_TOSTRING
-		= "Buddy Game Info Message" +
+		= "Friend Game Info Message" +
 	      "\n\t00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F -> 4216 (no server info)" +
 		  "\n\t10 11 12 13 14 15 16 17 18 19 1A 1B 1C 1D 1E 1F -> 4216 (no server info)" +
 		  "\n\t20 21 22 23 24 25 26 27 28 29 2A 2B 2C 2D 2E 2F -> 4216 (no server info)" +

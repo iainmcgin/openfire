@@ -27,8 +27,6 @@ import uk.azdev.openfire.net.util.IOUtil;
 
 public class ChannelWriter {
 
-	private static final byte[] OPENING_STATEMENT = { 0x55, 0x41, 0x30, 0x31 }; // "UA01"
-	
 	private WritableByteChannel channel;
 	private ByteBuffer messageBuffer;
 
@@ -39,8 +37,8 @@ public class ChannelWriter {
 
 	public void writeOpeningStatement() throws IOException {
 		messageBuffer.rewind();
-		messageBuffer.limit(OPENING_STATEMENT.length);
-		messageBuffer.put(OPENING_STATEMENT);
+		messageBuffer.limit(ProtocolConstants.CLIENT_OPENING_STATEMENT.length);
+		messageBuffer.put(ProtocolConstants.CLIENT_OPENING_STATEMENT);
 		messageBuffer.rewind();
 		
 		channel.write(messageBuffer);

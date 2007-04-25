@@ -35,16 +35,16 @@ import uk.azdev.openfire.net.attrvalues.StringKeyedAttributeMap;
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.StringMapBasedMessage;
 
-public class BuddyStatusMessage extends StringMapBasedMessage {
+public class FriendStatusMessage extends StringMapBasedMessage {
 
-	public static final int BUDDY_STATUS_MESSAGE_ID = 154;
+	public static final int FRIEND_STATUS_MESSAGE_ID = 154;
 
 	private static final String SESSION_ID_LIST_KEY = "sid";
 	private static final String STATUS_LIST_KEY = "msg";
 
 	private Map<SessionId, String> sessionIdToStatusMap;
 	
-	public BuddyStatusMessage() {
+	public FriendStatusMessage() {
 		sessionIdToStatusMap = new LinkedHashMap<SessionId, String>();
 	}
 	
@@ -76,11 +76,11 @@ public class BuddyStatusMessage extends StringMapBasedMessage {
 	}
 
 	public int getMessageId() {
-		return BUDDY_STATUS_MESSAGE_ID;
+		return FRIEND_STATUS_MESSAGE_ID;
 	}
 
 	public IMessage newInstance() {
-		return new BuddyStatusMessage();
+		return new FriendStatusMessage();
 	}
 
 	public Set<SessionId> getSessionIdSet() {
@@ -98,7 +98,7 @@ public class BuddyStatusMessage extends StringMapBasedMessage {
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("Buddy Status Message");
+		buffer.append("Friend Status Message");
 		buffer.append("\n\tStatuses:");
 		
 		for(Entry<SessionId, String> entry : sessionIdToStatusMap.entrySet()) {

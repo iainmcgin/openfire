@@ -29,7 +29,7 @@ import org.junit.Test;
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.UnknownInt8MapBasedMessage;
 import uk.azdev.openfire.net.messages.UnknownStringMapBasedMessage;
-import uk.azdev.openfire.net.messages.incoming.BuddyListMessage;
+import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginChallengeMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
 import uk.azdev.openfire.testutil.TestUtils;
@@ -43,7 +43,7 @@ public class ChannelReaderTest {
 		
 		assertTrue(reader.readMessage() instanceof LoginChallengeMessage);
 		assertTrue(reader.readMessage() instanceof LoginSuccessMessage);
-		assertTrue(reader.readMessage() instanceof BuddyListMessage);
+		assertTrue(reader.readMessage() instanceof FriendListMessage);
 		
 		IMessage message = reader.readMessage();
 		assertTrue(message instanceof UnknownInt8MapBasedMessage);

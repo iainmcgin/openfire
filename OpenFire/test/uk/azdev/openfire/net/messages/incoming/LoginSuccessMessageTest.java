@@ -76,7 +76,42 @@ public class LoginSuccessMessageTest {
 	public void testReadMessageContent() throws IOException {
 		ByteBuffer buffer = TestUtils.getByteBufferForResource(this.getClass(), "loginsuccess.sampledata");
 		message.readMessageContent(buffer);
+		verifyMessage(message);
+	}
+
+	@Test
+	public void testWriteMessageContent() throws IOException {
+		message = createTestMessage();
+		TestUtils.checkMessageOutput(message, this.getClass(), "loginsuccess.sampledata");
+	}
+
+	@Test
+	public void testToString() throws UnknownHostException {
+		message = createTestMessage();
+		assertEquals(EXPECTED_TOSTRING, message.toString());
+	}
+	
+	public static LoginSuccessMessage createTestMessage() throws UnknownHostException {
+		LoginSuccessMessage message = new LoginSuccessMessage();
+		message.setUserId(4022250974L);
+		message.setSessionId(EXPECTED_SESSION_ID);
+		message.setNick("");
+		message.setStatus(15L);
+		message.setDlSet("");
+		message.setP2pSet("");
+		message.setClntSet("");
+		message.setMinRect(1L);
+		message.setMaxRect(1800L);
+		message.setCtry(826L);
+		message.setN1(TestUtils.createInet4Address("204.71.190.131"));
+		message.setN2(TestUtils.createInet4Address("204.71.190.132"));
+		message.setN3(TestUtils.createInet4Address("204.71.190.133"));
+		message.setPip(TestUtils.createInet4Address("207.46.232.182"));
 		
+		return message;
+	}
+	
+	public static void verifyMessage(LoginSuccessMessage message) {
 		assertEquals(4022250974L, message.getUserId());
 		assertEquals(EXPECTED_SESSION_ID, message.getSessionId());
 		assertEquals("", message.getNick());
@@ -92,36 +127,4 @@ public class LoginSuccessMessageTest {
 		assertEquals("/204.71.190.133", message.getN3().toString());
 		assertEquals("/207.46.232.182", message.getPip().toString());
 	}
-
-	@Test
-	public void testWriteMessageContent() throws IOException {
-		setAttributes();
-		
-		TestUtils.checkMessageOutput(message, this.getClass(), "loginsuccess.sampledata");
-	}
-
-	@Test
-	public void testToString() throws UnknownHostException {
-		setAttributes();
-		assertEquals(EXPECTED_TOSTRING, message.toString());
-	}
-	
-	private void setAttributes() throws UnknownHostException {
-		message.setUserId(4022250974L);
-		message.setSessionId(EXPECTED_SESSION_ID);
-		message.setNick("");
-		message.setStatus(15L);
-		message.setDlSet("");
-		message.setP2pSet("");
-		message.setClntSet("");
-		message.setMinRect(1L);
-		message.setMaxRect(1800L);
-		message.setCtry(826L);
-		message.setN1(TestUtils.createInet4Address("204.71.190.131"));
-		message.setN2(TestUtils.createInet4Address("204.71.190.132"));
-		message.setN3(TestUtils.createInet4Address("204.71.190.133"));
-		message.setPip(TestUtils.createInet4Address("207.46.232.182"));
-	}
-	
-	
 }

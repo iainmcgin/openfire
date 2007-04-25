@@ -1,5 +1,5 @@
 /*
- * OpenFire - a Java API to access the XFire instant messaging network.
+ * JFire - a Java API to access the XFire instant messaging network.
  * Copyright (C) 2007 Iain McGinniss
  * 
  * This library is free software; you can redistribute it and/or
@@ -18,21 +18,10 @@
  */
 package uk.azdev.openfire.net;
 
-/**
- * Container for common constants used in the xfire protocol.
- */
-public final class ProtocolConstants {
+import java.io.IOException;
 
-	ProtocolConstants() {
-		throw new RuntimeException("ProtocolConstants is not meant to be instantiated");
-	}
+public interface ConnectionStateListener {
 	
-	public static final String XFIRE_SERVER_NAME = "cs.xfire.com";
-	public static final int XFIRE_SERVER_PORT = 25999;
-	
-	public static final int MAX_MESSAGE_SIZE = (1 << 16) - 1;
-	public static final int HEADER_SIZE = 4;
-	
-	public static final byte[] CLIENT_OPENING_STATEMENT = { 0x55, 0x41, 0x30, 0x31 }; // "UA01"
-		
+	public void connectionError(Exception e);
+
 }
