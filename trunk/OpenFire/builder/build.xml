@@ -61,6 +61,7 @@
 			<batchtest todir="${test.results.dir}">
 				<fileset dir="${test.src.dir}">
 					<include name="**/*Test.java"/>
+					<exclude name="**/Abstract*.java"/>
 				</fileset>
 			</batchtest>
 			
