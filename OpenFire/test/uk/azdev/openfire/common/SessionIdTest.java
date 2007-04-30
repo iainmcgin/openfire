@@ -49,6 +49,18 @@ public class SessionIdTest {
 	}
 	
 	@Test
+	public void testCreateSessionIdByInt() {
+		SessionId sessionId = new SessionId(123456789);
+		byte[] bytes = sessionId.getBytes();
+		assertEquals((byte)0x15, bytes[15]);
+		assertEquals((byte)0xCD, bytes[14]);
+		assertEquals((byte)0x5B, bytes[13]);
+		assertEquals((byte)0x07, bytes[12]);
+		
+		assertEquals("00 00 00 00 00 00 00 00 00 00 00 00 07 5B CD 15", sessionId.toString());
+	}
+	
+	@Test
 	public void testGetBytes() {
 		SessionId sessionId = new SessionId(COUNTED_ARRAY);
 		byte[] bytes = sessionId.getBytes();

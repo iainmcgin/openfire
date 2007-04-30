@@ -33,6 +33,10 @@ public class Friend {
 	
 	private List<Friend> friends;
 	
+	public Friend(String userName) {
+		this(-1, userName, "");
+	}
+	
 	public Friend(long userId, String userName, String displayName) {
 		this.userId = userId;
 		this.userName = userName;
@@ -42,6 +46,10 @@ public class Friend {
 
 	public long getUserId() {
 		return userId;
+	}
+	
+	public void setUserId(long userId) {
+		this.userId = userId;
 	}
 	
 	public String getUserName() {
@@ -56,16 +64,20 @@ public class Friend {
 		this.displayName = displayName;
 	}
 
-	public String getStatusString() {
+	public String getStatus() {
 		return statusString;
 	}
 
-	public void setStatusString(String statusString) {
+	public void setStatus(String statusString) {
 		this.statusString = statusString;
 	}
 	
 	public List<Friend> getFriends() {
 		return friends;
+	}
+
+	public boolean isFriend(Friend friend) {
+		return friends.contains(friend);
 	}
 	
 	public void addFriend(Friend friend) {
@@ -90,5 +102,38 @@ public class Friend {
 	
 	public void setOffline() {
 		this.sessionId = null;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Friend) {
+			Friend f = (Friend)obj;
+			return f.getUserName().equals(this.getUserName());
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return (int)getUserId();
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Friend ");
+		buffer.append(userId);
+		if(userName != null) {
+			buffer.append(" ");
+			buffer.append(userName);
+		}
+
+		if(userName != null) {
+			buffer.append(" ");
+			buffer.append(displayName);
+		}
+		
+		return buffer.toString();
 	}
 }

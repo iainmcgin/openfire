@@ -39,6 +39,14 @@ public class SessionId {
 		System.arraycopy(bytes, 0, value, 0, bytes.length);
 	}
 	
+	public SessionId(int idAsInt) {
+		this();
+		value[15] = (byte)(idAsInt & 0xFF);
+		value[14] = (byte)((idAsInt >> 8) & 0xFF);
+		value[13] = (byte)((idAsInt >> 16) & 0xFF);
+		value[12] = (byte)(idAsInt >> 24);
+	}
+
 	public byte[] getBytes() {
 		return value;
 	}
@@ -74,5 +82,15 @@ public class SessionId {
 	@Override
 	public String toString() {
 		return IOUtil.printByteArray(value);
+	}
+
+	public boolean isZero() {
+		for(int i=0; i < value.length; i++) {
+			if(value[i] != 0) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }
