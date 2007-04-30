@@ -40,6 +40,8 @@ public class FriendTest {
 	@Test
 	public void testGetUserId() {
 		assertEquals(100L, friend.getUserId());
+		friend.setUserId(200L);
+		assertEquals(200L, friend.getUserId());
 	}
 
 	@Test
@@ -56,8 +58,8 @@ public class FriendTest {
 
 	@Test
 	public void testGetStatusString() {
-		friend.setStatusString("(AFK)");
-		assertEquals("(AFK)", friend.getStatusString());
+		friend.setStatus("(AFK)");
+		assertEquals("(AFK)", friend.getStatus());
 	}
 
 	@Test
@@ -113,6 +115,22 @@ public class FriendTest {
 		friend.setOffline();
 		assertFalse(friend.isOnline());
 		assertNull(friend.getSessionId());
+	}
+	
+	@Test
+	public void testEqualsAndHashCode() {
+		Friend a = new Friend(100L, "friendA", "Friend A");
+		Friend b = new Friend(100L, "friendA", "Friend A");
+		Friend c = new Friend(101L, "friendB", "Friend B");
+		
+		assertTrue(a.equals(b));
+		assertTrue(b.equals(a));
+		assertFalse(a.equals(c));
+		assertFalse(c.equals(a));
+		assertFalse(a.equals(new Object()));
+		
+		assertTrue(a.hashCode() == b.hashCode());
+		assertFalse(a.hashCode() == c.hashCode());
 	}
 
 }
