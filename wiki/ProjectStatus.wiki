@@ -1,12 +1,32 @@
 #summary The current status of this project.
 
 = OpenFire Project Status =
-This project is in the early stages of development, but I expect to have a basic level of support for the XFire protocol by April 2007.
 
-The requirements for this project are being driven by the LAN party I attend (http://www.gumpcom.com) and the intention is that stable releases of the software will emerge shortly before each LAN party, giving a schedule as follows:
+The project is currently working towards it's first release, with the foundations for communication with the XFire server in place.
 
-|| *Release Number* || *Expected Date*||
-|| v0.25            || 2007-04-12     ||
-|| v0.5             || 2007-06        ||
-|| v0.75            || 2007-08        ||
-|| v1.0             || 2007-10        ||
+== Planned Release Dates ==
+
+Release dates will largely follow the intended dates for the LAN party I attend, which is acting as the customer for this project. As such, expected release dates are:
+
+|| *Release* || *Plannned Date*     ||
+|| R1        || 12th July 2007      ||
+|| R2        || 6th September 2007  ||
+|| R3        || 14th December 2007  ||
+|| R4        || 13th February 2008  ||
+|| R5        || 10th April 2008     ||
+
+Features for all these releases are not yet
+
+== R1 Release Plan ==
+
+|| *Task* || *Status* || *Target/Actual completion date* ||
+|| Ability to parse and generate XFire protocol messages || Complete ||  March 23rd 2007 ||
+|| Classes to manage a TCP/IP connection for sending/receiving messages to the XFire server || Complete || April 27th 2007 ||
+|| Representation and maintenance of the buddy list || In Progress || May 15th 2007 ||
+|| Successfully establish and control a connection with the XFire server || Pending || May 25th 2007 ||
+|| Ability to communicate over UDP with other XFire clients|| Pending || 8th June 2007 ||
+|| Representation and maintenance of conversations with other XFire users || Pending || 15th June 2007 ||
+|| Introduction of friend "classes", offline-configured || Pending || 22nd June 2007 ||
+|| Basic "admin to user" message relay || Pending || 29th June 2007 ||
+|| "user to on-duty admin" relay || Pending || 6th July 2007 ||
+|| Auto-accept invites || Pending || 11th July 2007 ||
