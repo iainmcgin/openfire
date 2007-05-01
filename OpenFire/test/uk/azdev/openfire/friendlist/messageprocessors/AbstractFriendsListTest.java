@@ -23,11 +23,10 @@ import org.junit.Before;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
-import uk.azdev.openfire.friendlist.Self;
 
 public abstract class AbstractFriendsListTest {
 
-	protected Self self;
+	protected Friend self;
 	
 	protected Friend alice;
 	protected Friend bob;
@@ -41,7 +40,7 @@ public abstract class AbstractFriendsListTest {
 	
 	@Before
 	public void setUp() {
-		self = new Self("me");
+		self = new Friend("me");
 		
 		alice = new Friend(100, "alice", "Alice");
 		bob = new Friend(101, "bob", "Bob");

@@ -18,20 +18,20 @@
  */
 package uk.azdev.openfire.friendlist.messageprocessors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
-import uk.azdev.openfire.friendlist.Self;
 import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
 
 public class FriendsListMessageProcessorTest {
 	
 	@Test
 	public void testProcessMessage() {
-		Self self = new Self("testUser");
+		Friend self = new Friend("testUser");
 		FriendsList friendsList = new FriendsList(self);
 		FriendListMessage message = new FriendListMessage();
 		message.addUser(100, "friend1", "Friend 1");
@@ -53,7 +53,7 @@ public class FriendsListMessageProcessorTest {
 		assertEquals(userName, friend.getUserName());
 		assertEquals(displayName, friend.getDisplayName());
 		
-		Self self = friendsList.getSelf();
+		Friend self = friendsList.getSelf();
 		assertTrue(self.isFriend(friend));
 		assertTrue(friend.isFriend(self));
 	}
