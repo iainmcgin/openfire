@@ -25,7 +25,7 @@ import org.junit.Test;
 import uk.azdev.openfire.net.messages.incoming.FriendStatusMessage;
 
 
-public class FriendsStatusMessageProcessorTest extends AbstractFriendsListTest {
+public class FriendStatusMessageProcessorTest extends AbstractFriendsListTest {
 
 	@Test
 	public void testProcessMessage() {
@@ -37,7 +37,7 @@ public class FriendsStatusMessageProcessorTest extends AbstractFriendsListTest {
 		message.addStatus(bobSid, "At work");
 		message.addStatus(carolSid, "Out to Lunch");
 		
-		FriendsStatusMessageProcessor processor = new FriendsStatusMessageProcessor();
+		FriendStatusMessageProcessor processor = new FriendStatusMessageProcessor();
 		processor.processMessage(friendsList, message);
 		
 		assertEquals("AFK", alice.getStatus());

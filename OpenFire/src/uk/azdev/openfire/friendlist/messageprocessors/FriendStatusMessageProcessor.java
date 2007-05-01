@@ -25,7 +25,7 @@ import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.messages.incoming.FriendStatusMessage;
 
-public class FriendsStatusMessageProcessor {
+public class FriendStatusMessageProcessor {
 
 	public void processMessage(FriendsList friendsList, FriendStatusMessage message) {
 		Set<SessionId> sessionIds = message.getSessionIdSet();

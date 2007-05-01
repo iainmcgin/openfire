@@ -24,7 +24,7 @@ import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
 
-public class FriendsListMessageProcessor {
+public class FriendListMessageProcessor {
 	
 	public void processMessage(FriendsList friendsList, FriendListMessage message) {
 		
