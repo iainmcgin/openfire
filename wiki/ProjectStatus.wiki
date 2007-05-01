@@ -2,11 +2,13 @@
 
 = OpenFire Project Status =
 
-The project is currently working towards it's first release, with the foundations for communication with the XFire server in place.
+The project is currently working towards it's first release, with the foundations 
+for communication with the XFire server in place.
 
 == Planned Release Dates ==
 
-Release dates will largely follow the intended dates for the LAN party I attend, which is acting as the customer for this project. As such, expected release dates are:
+Release dates will largely follow the intended dates for the LAN party I attend, 
+which is acting as the customer for this project. As such, expected release dates are:
 
 || *Release* || *Plannned Date*     ||
 || R1        || 12th July 2007      ||
@@ -15,7 +17,9 @@ Release dates will largely follow the intended dates for the LAN party I attend,
 || R4        || 13th February 2008  ||
 || R5        || 10th April 2008     ||
 
-Features for all these releases are not yet
+Features for all these releases have not yet been planned - many requirements will
+only be discovered once the first release have been completed and the customer
+has had a chance to play with it.
 
 == R1 Release Plan ==
 
