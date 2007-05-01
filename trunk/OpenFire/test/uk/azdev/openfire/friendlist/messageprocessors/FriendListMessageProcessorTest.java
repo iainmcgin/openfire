@@ -27,7 +27,7 @@ import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
 
-public class FriendsListMessageProcessorTest {
+public class FriendListMessageProcessorTest {
 	
 	@Test
 	public void testProcessMessage() {
@@ -38,7 +38,7 @@ public class FriendsListMessageProcessorTest {
 		message.addUser(101, "friend2", "Friend 2");
 		message.addUser(102, "friend3", "Friend 3");
 		
-		FriendsListMessageProcessor processor = new FriendsListMessageProcessor();
+		FriendListMessageProcessor processor = new FriendListMessageProcessor();
 		processor.processMessage(friendsList, message);
 		
 		checkForFriend(friendsList, 100, "friend1", "Friend 1");
