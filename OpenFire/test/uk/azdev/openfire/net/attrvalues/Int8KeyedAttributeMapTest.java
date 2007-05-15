@@ -69,13 +69,13 @@ public class Int8KeyedAttributeMapTest {
 		assertEquals(2, map.numAttributes());
 		assertTrue(map.hasAttribute(0x4F));
 		
-		List<String> strings = map.getAttributeValueAsStringList(0x4F);
+		List<String> strings = map.getAttributeValueAsList(0x4F, new StringAttributeValue());
 		assertEquals(3, strings.size());
 		assertEquals("ab", strings.get(0));
 		assertEquals("cde", strings.get(1));
 		assertEquals("x", strings.get(2));
 		
-		List<Long> ints = map.getAttributeValueAsInt32List(0x50);
+		List<Long> ints = map.getAttributeValueAsList(0x50, new Int32AttributeValue());
 		assertEquals(4, ints.size());
 		assertEquals(1L, ints.get(0));
 		assertEquals(2L, ints.get(1));

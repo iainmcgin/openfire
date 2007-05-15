@@ -51,7 +51,7 @@ public class FriendStatusMessage extends StringMapBasedMessage {
 	@Override
 	protected void interpretAttributeMap(StringKeyedAttributeMap map) {
 		ListAttributeValue sessionIdListValue = ((ListAttributeValue)map.getAttributeValue(SESSION_ID_LIST_KEY));
-		List<String> statusList = map.getAttributeValueAsStringList(STATUS_LIST_KEY);
+		List<String> statusList = map.getAttributeValueAsList(STATUS_LIST_KEY, new StringAttributeValue());
 		
 		Iterator<AttributeValue<?>> sessionIdIter = sessionIdListValue.getValue().iterator();
 		Iterator<String> statusIter = statusList.iterator();

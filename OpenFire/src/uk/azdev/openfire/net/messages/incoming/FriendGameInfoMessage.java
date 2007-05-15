@@ -53,9 +53,9 @@ public class FriendGameInfoMessage extends StringMapBasedMessage {
 	
 	@Override
 	protected void interpretAttributeMap(StringKeyedAttributeMap map) {
-		List<SessionId> sessionIds = map.getAttributeValueAsSessionIdList(SESSION_ID_LIST_KEY);
-		List<Long> gameIds = map.getAttributeValueAsInt32List(GAME_ID_LIST_KEY);
-		List<Long> gameIps = map.getAttributeValueAsInt32List(GAME_IP_LIST_KEY);
+		List<SessionId> sessionIds = map.getAttributeValueAsList(SESSION_ID_LIST_KEY, new SessionIdAttributeValue());
+		List<Long> gameIds = map.getAttributeValueAsList(GAME_ID_LIST_KEY, new Int32AttributeValue());
+		List<Long> gameIps = map.getAttributeValueAsList(GAME_IP_LIST_KEY, new Int32AttributeValue());
 		List<Integer> gamePorts = map.getAttributeValueAsInt16List(GAME_PORT_LIST_KEY);
 
 		Iterator<SessionId> sidIter = sessionIds.iterator();

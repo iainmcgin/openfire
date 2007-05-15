@@ -45,7 +45,7 @@ public class KeepaliveMessage extends StringMapBasedMessage {
 	@Override
 	protected void interpretAttributeMap(StringKeyedAttributeMap map) {
 		value = map.getInt32AttributeValue(VALUE_KEY);
-		statsList = map.getAttributeValueAsInt32List(STATS_KEY);
+		statsList = map.getAttributeValueAsList(STATS_KEY, new Int32AttributeValue());
 	}
 
 	@Override
