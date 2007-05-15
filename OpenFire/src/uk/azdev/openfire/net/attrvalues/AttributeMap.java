@@ -93,27 +93,25 @@ public abstract class AttributeMap<K> {
 		return inet4AddrList;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public <T> List<T> getAttributeValueAsList(K key, AttributeValue<T> expectedAttrType) {
-		List<AttributeValue<?>> listValueContents = getListAttributeValueContents(key, expectedAttrType.getTypeId());
-		
-		ArrayList<T> sidList = new ArrayList<T>(listValueContents.size());
-		for(AttributeValue<?> v : listValueContents) {
-			Object val = v.getValue();
-			// this erasure cast is a necessary evil to get the type of list we want
-			sidList.add((T)val);
-		}
-		
-		return sidList;
-	}
-
-	private List<AttributeValue<?>> getListAttributeValueContents(K key, int expectedItemType) {
+	private ListAttributeValue getListAttributeValue(K key) {
 		AttributeValue<?> value = getAttributeValue(key);
 		if(!(value instanceof ListAttributeValue)) {
 			throw new IllegalArgumentException("key <" + key + "> does not map to a list value");
 		}
+		
+		return (ListAttributeValue) value;
+	}
 
-		ListAttributeValue listValue = (ListAttributeValue) value;
+	public <T> List<T> getAttributeValueAsList(K key, AttributeValue<T> expectedAttrType) {
+		try {
+			return getListAttributeValue(key).getListContents(expectedAttrType);
+		} catch(IllegalArgumentException e) {
+			throw new IllegalArgumentException("key <" + key + "> does not map to a list with item type \"" + expectedAttrType.getTypeId() + "\"");
+		}
+	}
+
+	private List<AttributeValue<?>> getListAttributeValueContents(K key, int expectedItemType) {
+		ListAttributeValue listValue = getListAttributeValue(key);
 		
 		if(listValue.getItemType() != expectedItemType) {
 			throw new IllegalArgumentException("key <" + key + "> does not map to a list with item type \"" + expectedItemType + "\"");

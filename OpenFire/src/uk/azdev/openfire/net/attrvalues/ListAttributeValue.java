@@ -23,6 +23,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import uk.azdev.openfire.net.util.UnrolledListAttributeValue;
+import uk.azdev.openfire.net.util.UnrolledListAttributeValueIterator;
+
 import static uk.azdev.openfire.net.util.IOUtil.*;
 
 /**
@@ -48,6 +51,37 @@ public class ListAttributeValue implements AttributeValue<List<AttributeValue<?>
 	
 	public List<AttributeValue<?>> getValue() {
 		return valueList;
+	}
+	
+// ***** implementation that allocates a new list with all the types in it
+// ***** this is unnecessarily slow when the main use case for these lists is to iterate over them
+//	@SuppressWarnings("unchecked")
+//	public <T> List<T> getListContents(AttributeValue<T> expectedAttrType) {
+//		
+//		if(getItemType() != expectedAttrType.getTypeId()) {
+//			throw new IllegalArgumentException("list is not of type \"" + expectedAttrType.getTypeId() + "\"");
+//		}
+//		
+//		ArrayList<T> sidList = new ArrayList<T>(valueList.size());
+//		for(AttributeValue<?> v : valueList) {
+//			Object val = v.getValue();
+//			// this erasure cast is a necessary evil to get the type of list we want
+//			sidList.add((T)val);
+//		}
+//		
+//		return sidList;
+//	}
+	
+	public <T> List<T> getListContents(AttributeValue<T> expectedAttrType) {
+		if(getItemType() != expectedAttrType.getTypeId()) {
+			throw new IllegalArgumentException("list is not of type \"" + expectedAttrType.getTypeId() + "\"");
+		}
+		
+		return new UnrolledListAttributeValue<T>(this);
+	}
+	
+	public <T> Iterator<T> getRealValueIterator(AttributeValue<T> expectedAttrType) {
+		return new UnrolledListAttributeValueIterator<T>(this);
 	}
 	
 	/**
