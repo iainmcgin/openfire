@@ -25,13 +25,13 @@ import uk.azdev.openfire.common.SessionId;
 
 public class FriendsList {
 
-	private Friend graphRoot;
+	private Friend self;
 	
 	private Map<Long, Friend> friendsById;
 	private Map<SessionId, Friend> onlineFriends;
 	
 	public FriendsList(Friend self) {
-		graphRoot = self;
+		this.self = self;
 		friendsById = new HashMap<Long, Friend>();
 		onlineFriends = new HashMap<SessionId, Friend>();
 	}
@@ -46,7 +46,7 @@ public class FriendsList {
 	}
 	
 	public void addDirectFriend(Friend friend) {
-		addFriend(friend, graphRoot);
+		addFriend(friend, self);
 	}
 
 	public Friend getFriend(long userId) {
@@ -54,7 +54,7 @@ public class FriendsList {
 	}
 
 	public Friend getSelf() {
-		return graphRoot;
+		return self;
 	}
 
 	public void setFriendOnline(long userId, SessionId sessionIdForUser) {
