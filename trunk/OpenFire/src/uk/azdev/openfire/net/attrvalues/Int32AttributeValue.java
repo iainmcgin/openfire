@@ -34,7 +34,7 @@ import uk.azdev.openfire.net.util.IOUtil;
  * @author Iain
  *
  */
-public class Int32AttributeValue implements AttributeValue {
+public class Int32AttributeValue implements AttributeValue<Long> {
 
 	public static final int TYPE_ID = 2;
 	private long value;
@@ -51,7 +51,7 @@ public class Int32AttributeValue implements AttributeValue {
 		setValueAsIPv4Address(inetAddress);
 	}
 
-	public long getValue() {
+	public Long getValue() {
 		return value;
 	}
 	
@@ -84,7 +84,7 @@ public class Int32AttributeValue implements AttributeValue {
 		buffer.putInt((int)value);
 	}
 
-	public AttributeValue newInstance() {
+	public Int32AttributeValue newInstance() {
 		return new Int32AttributeValue();
 	}
 

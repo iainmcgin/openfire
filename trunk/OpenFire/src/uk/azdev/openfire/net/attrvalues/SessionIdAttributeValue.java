@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 
 import uk.azdev.openfire.common.SessionId;
 
-public class SessionIdAttributeValue implements AttributeValue {
+public class SessionIdAttributeValue implements AttributeValue<SessionId> {
 
 	public static final int TYPE_ID = 3;
 
@@ -39,8 +39,8 @@ public class SessionIdAttributeValue implements AttributeValue {
 	public SessionIdAttributeValue(byte[] sessionId) {
 		this(new SessionId(sessionId));
 	}
-
-	public SessionId getSessionId() {
+	
+	public SessionId getValue() {
 		return sessionId;
 	}
 	
@@ -56,7 +56,7 @@ public class SessionIdAttributeValue implements AttributeValue {
 		return TYPE_ID;
 	}
 
-	public AttributeValue newInstance() {
+	public SessionIdAttributeValue newInstance() {
 		return new SessionIdAttributeValue();
 	}
 
@@ -72,7 +72,7 @@ public class SessionIdAttributeValue implements AttributeValue {
 
 	@Override
 	public String toString() {
-		return "SID:<" + sessionId.toString() + ">";
+		return sessionId.toString();
 	}
 	
 }

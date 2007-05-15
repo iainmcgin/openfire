@@ -23,10 +23,10 @@ import java.util.Map;
 
 public class AttributeValueFactory {
 	
-	private Map<Integer, AttributeValue> typeMap;
+	private Map<Integer, AttributeValue<?>> typeMap;
 	
 	public AttributeValueFactory() {
-		typeMap = new HashMap<Integer, AttributeValue>();
+		typeMap = new HashMap<Integer, AttributeValue<?>>();
 		addType(new StringAttributeValue());
 		addType(new Int32AttributeValue());
 		addType(new ListAttributeValue());
@@ -36,12 +36,12 @@ public class AttributeValueFactory {
 		addType(new Int8KeyedMapAttributeValue());
 	}
 
-	private void addType(AttributeValue value) {
+	private void addType(AttributeValue<?> value) {
 		typeMap.put(value.getTypeId(), value);
 	}
 	
-	public AttributeValue createAttributeValue(int type) {
-		AttributeValue attrType = typeMap.get(type);
+	public AttributeValue<?> createAttributeValue(int type) {
+		AttributeValue<?> attrType = typeMap.get(type);
 		if(attrType == null) {
 			throw new UnknownAttributeValueTypeException(type);
 		}

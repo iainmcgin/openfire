@@ -20,21 +20,25 @@ package uk.azdev.openfire.net.attrvalues;
 
 import java.nio.ByteBuffer;
 
-import static uk.azdev.openfire.net.util.IOUtil.*;
+import uk.azdev.openfire.common.DId;
 
 /**
  * The "did" attribute value, which comes packaged as part of
  * message type 400. It's purpose is, at present, unknown.
  */
-public class DidAttributeValue implements AttributeValue {
+public class DidAttributeValue implements AttributeValue<DId> {
 
 	public static final int TYPE_ID = 6;
 	private static final int DID_SIZE = 21;
 	
-	private byte[] value;
+	private DId value;
 	
 	public DidAttributeValue() {
-		value = new byte[DID_SIZE];
+		value = new DId();
+	}
+	
+	public DId getValue() {
+		return value;
 	}
 	
 	public int getSize() {
@@ -45,21 +49,23 @@ public class DidAttributeValue implements AttributeValue {
 		return TYPE_ID;
 	}
 
-	public AttributeValue newInstance() {
+	public DidAttributeValue newInstance() {
 		return new DidAttributeValue();
 	}
 
 	public void readValue(ByteBuffer buffer) {
-		buffer.get(value);
+		byte[] bytes = new byte[DId.DID_SIZE];
+		buffer.get(bytes);
+		value = new DId(bytes);
 	}
 
 	public void writeValue(ByteBuffer buffer) {
-		buffer.put(value);
+		buffer.put(value.getBytes());
 	}
 	
 	@Override
 	public String toString() {
-		return "DID:<" + printByteArray(value) + ">";
+		return value.toString();
 	}
 
 }

@@ -66,7 +66,7 @@ public class ListAttributeValueTest {
 	@Test
 	public void testInitialState() {
 		assertEquals(StringAttributeValue.TYPE_ID, value.getItemType());
-		assertEquals(0, value.getList().size());
+		assertEquals(0, value.getValue().size());
 	}
 	
 	@Test
@@ -77,12 +77,12 @@ public class ListAttributeValueTest {
 		
 		value.readValue(buffer);
 		assertEquals(StringAttributeValue.TYPE_ID, value.getItemType());
-		assertEquals(2, value.getList().size());
+		assertEquals(2, value.getValue().size());
 		
-		StringAttributeValue firstValue = (StringAttributeValue) value.getList().get(0);
+		StringAttributeValue firstValue = (StringAttributeValue) value.getValue().get(0);
 		assertEquals("testing", firstValue.getValue());
 		
-		StringAttributeValue secondValue = (StringAttributeValue) value.getList().get(1);
+		StringAttributeValue secondValue = (StringAttributeValue) value.getValue().get(1);
 		assertEquals("test", secondValue.getValue());
 	}
 	
@@ -125,7 +125,7 @@ public class ListAttributeValueTest {
 		TestableListAttributeValue inValue = new TestableListAttributeValue();
 		inValue.readValue(buffer);
 		assertEquals(TestAttributeValue.TEST_TYPE_ID, inValue.getItemType());
-		assertEquals(3, inValue.getList().size());
+		assertEquals(3, inValue.getValue().size());
 	}
 	
 	@Test
@@ -142,7 +142,7 @@ public class ListAttributeValueTest {
 		inValue.readValue(buffer);
 		
 		assertEquals(Int32AttributeValue.TYPE_ID, inValue.getItemType());
-		assertEquals(40000, inValue.getList().size());
+		assertEquals(40000, inValue.getValue().size());
 	}
 	
 	@Test
@@ -183,7 +183,7 @@ public class ListAttributeValueTest {
 	
 	protected class TestAttributeValueFactory extends AttributeValueFactory {
 		@Override
-		public AttributeValue createAttributeValue(int type) {
+		public AttributeValue<?> createAttributeValue(int type) {
 			if(type == TestAttributeValue.TEST_TYPE_ID) {
 				return new TestAttributeValue();
 			}

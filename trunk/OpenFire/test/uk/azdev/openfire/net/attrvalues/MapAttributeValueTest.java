@@ -48,6 +48,6 @@ public class MapAttributeValueTest {
 	
 	@Test
 	public void testNewInstance() {
-		assertTrue(value.newInstance() instanceof StringKeyedMapAttributeValue);
+		assertTrue(value.newInstance().getClass() == StringKeyedMapAttributeValue.class);
 	}
 }

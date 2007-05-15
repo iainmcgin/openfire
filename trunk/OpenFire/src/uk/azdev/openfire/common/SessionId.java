@@ -18,79 +18,35 @@
  */
 package uk.azdev.openfire.common;
 
-import uk.azdev.openfire.net.util.IOUtil;
+public class SessionId extends ByteArrayBasedId {
 
-public class SessionId {
-	
 	public static final int SESSION_ID_SIZE = 16;
-
-	private byte[] value;
 	
 	public SessionId() {
-		value = new byte[SESSION_ID_SIZE];
-	}
-	
-	public SessionId(byte[] bytes) {
-		this();
-		if(bytes.length != SESSION_ID_SIZE) {
-			throw new IllegalArgumentException("byte[] provided was not of correct size");
-		}
-		
-		System.arraycopy(bytes, 0, value, 0, bytes.length);
+		super();
 	}
 	
 	public SessionId(int idAsInt) {
-		this();
-		value[15] = (byte)(idAsInt & 0xFF);
-		value[14] = (byte)((idAsInt >> 8) & 0xFF);
-		value[13] = (byte)((idAsInt >> 16) & 0xFF);
-		value[12] = (byte)(idAsInt >> 24);
+		super(idAsInt);
 	}
-
-	public byte[] getBytes() {
-		return value;
+	
+	public SessionId(byte[] bytes) {
+		super(bytes);
 	}
 	
 	@Override
-	public boolean equals(Object o) {
-		if(!(o instanceof SessionId)) {
-			return false;
-		}
-		
-		SessionId sessionId = (SessionId)o;
-		for(int i=0; i < SESSION_ID_SIZE; i++) {
-			if(value[i] != sessionId.value[i]) {
-				return false;
-			}
-		}
-		
-		return true;
-	}
-	
-	@Override
-	public int hashCode() {
-		return getInt(value, 0) ^ getInt(value, 4) ^ getInt(value, 8) ^ getInt(value, 12);
-	}
-	
-	private int getInt(byte[] bytes, int offset) {
-		return  bytes[offset] << 24
-		      | bytes[offset+1] << 16
-		      | bytes[offset+2] << 8
-		      | bytes[offset+3];
+	public int getArraySize() {
+		return SESSION_ID_SIZE;
 	}
 	
 	@Override
 	public String toString() {
-		return IOUtil.printByteArray(value);
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("SID:<");
+		buffer.append(super.toString());
+		buffer.append(">");
+		
+		return buffer.toString();
 	}
 
-	public boolean isZero() {
-		for(int i=0; i < value.length; i++) {
-			if(value[i] != 0) {
-				return false;
-			}
-		}
-		
-		return true;
-	}
 }

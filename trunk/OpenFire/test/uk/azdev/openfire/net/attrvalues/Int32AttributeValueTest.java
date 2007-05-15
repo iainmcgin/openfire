@@ -97,7 +97,7 @@ public class Int32AttributeValueTest {
 
 	@Test
 	public void testNewInstance() {
-		assertTrue(value.newInstance() instanceof Int32AttributeValue);
+		assertTrue(value.newInstance().getClass() == Int32AttributeValue.class);
 	}
 	
 	@Test

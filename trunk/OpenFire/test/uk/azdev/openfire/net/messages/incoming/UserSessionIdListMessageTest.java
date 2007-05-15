@@ -34,15 +34,15 @@ public class UserSessionIdListMessageTest {
 
 	private static final String EXPECTED_TOSTRING 
 		= "User Session ID List Message\n"
-		+ "\t1 -> 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10\n"
-		+ "\t2 -> 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10\n"
-		+ "\t3 -> 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10\n"
-		+ "\t4 -> 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10\n"
-		+ "\t5 -> 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10\n"
-		+ "\t6 -> 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10\n"
-		+ "\t7 -> 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10\n"
-		+ "\t8 -> 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10\n"
-		+ "\t9 -> 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10";
+		+ "\t1 -> SID:<01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10>\n"
+		+ "\t2 -> SID:<01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10>\n"
+		+ "\t3 -> SID:<01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10>\n"
+		+ "\t4 -> SID:<01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10>\n"
+		+ "\t5 -> SID:<01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10>\n"
+		+ "\t6 -> SID:<01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10>\n"
+		+ "\t7 -> SID:<01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10>\n"
+		+ "\t8 -> SID:<01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10>\n"
+		+ "\t9 -> SID:<01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10>";
 
 	private UserSessionIdListMessage message;
 	

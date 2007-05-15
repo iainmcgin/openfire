@@ -20,7 +20,7 @@ package uk.azdev.openfire.net.attrvalues;
 
 import java.nio.ByteBuffer;
 
-public interface AttributeValue {
+public interface AttributeValue<T> {
 	
 	public int getTypeId();
 	public int getSize();
@@ -28,6 +28,8 @@ public interface AttributeValue {
 	public void readValue(ByteBuffer buffer);
 	public void writeValue(ByteBuffer buffer);
 	
-	public AttributeValue newInstance();
+	public AttributeValue<T> newInstance();
+	
+	public T getValue();
 
 }

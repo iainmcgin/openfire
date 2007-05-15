@@ -28,7 +28,7 @@ import static uk.azdev.openfire.net.util.IOUtil.*;
 /**
  * Represents a variable length list of uniformly typed items.
  */
-public class ListAttributeValue implements AttributeValue {
+public class ListAttributeValue implements AttributeValue<List<AttributeValue<?>>> {
 
 	private static final int ITEM_TYPE_SIZE = 1;
 	private static final int NUM_ITEMS_SIZE = 2;
@@ -38,15 +38,15 @@ public class ListAttributeValue implements AttributeValue {
 	public static final int MAX_ITEM_TYPE_ID = (1 << 8) - 1;
 	public static final int MAX_LIST_SIZE = (1 << 16) - 1;
 	
-	private List<AttributeValue> valueList;
+	private List<AttributeValue<?>> valueList;
 	private int itemType;
 	
 	public ListAttributeValue() {
-		valueList = new LinkedList<AttributeValue>();
+		valueList = new LinkedList<AttributeValue<?>>();
 		itemType = StringAttributeValue.TYPE_ID;
 	}
 	
-	public List<AttributeValue> getList() {
+	public List<AttributeValue<?>> getValue() {
 		return valueList;
 	}
 	
@@ -59,14 +59,14 @@ public class ListAttributeValue implements AttributeValue {
 	 * an item to a non-empty list which has a different type id (i.e.
 	 * adding an integer value to a list of strings).
 	 */
-	public void addValue(AttributeValue value) {
+	public void addValue(AttributeValue<?> value) {
 		checkAddValuePreconditions(value);
 		
 		itemType = value.getTypeId();
 		valueList.add(value);
 	}
 
-	private void checkAddValuePreconditions(AttributeValue value) {
+	private void checkAddValuePreconditions(AttributeValue<?> value) {
 		if(valueList.size() == MAX_LIST_SIZE) {
 			throw new MaxListSizeExceededException();
 		}
@@ -78,7 +78,7 @@ public class ListAttributeValue implements AttributeValue {
 	public int getSize() {
 		int size = ITEM_TYPE_SIZE + NUM_ITEMS_SIZE;
 		
-		for(AttributeValue attrVal : valueList) {
+		for(AttributeValue<?> attrVal : valueList) {
 			size += attrVal.getSize();
 		}
 		
@@ -100,7 +100,7 @@ public class ListAttributeValue implements AttributeValue {
 		AttributeValueFactory valueFactory = getValueFactory();
 		
 		for(int i=0; i < numItems; i++) {
-			AttributeValue value = valueFactory.createAttributeValue(itemType);
+			AttributeValue<?> value = valueFactory.createAttributeValue(itemType);
 			value.readValue(buffer);
 			valueList.add(value);
 		}
@@ -114,12 +114,12 @@ public class ListAttributeValue implements AttributeValue {
 		buffer.put((byte)itemType);
 		buffer.putShort((short)valueList.size());
 		
-		for(AttributeValue value : valueList) {
+		for(AttributeValue<?> value : valueList) {
 			value.writeValue(buffer);
 		}
 	}
 
-	public AttributeValue newInstance() {
+	public ListAttributeValue newInstance() {
 		return new ListAttributeValue();
 	}
 	
@@ -128,9 +128,9 @@ public class ListAttributeValue implements AttributeValue {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("{ ");
 		
-		Iterator<AttributeValue> iter = valueList.iterator();
+		Iterator<AttributeValue<?>> iter = valueList.iterator();
 		while(iter.hasNext()) {
-			AttributeValue value = iter.next();
+			AttributeValue<?> value = iter.next();
 			buffer.append(value);
 			if(iter.hasNext()) {
 				buffer.append(", ");

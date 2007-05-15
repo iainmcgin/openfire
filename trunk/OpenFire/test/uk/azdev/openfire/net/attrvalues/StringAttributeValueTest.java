@@ -104,7 +104,7 @@ public class StringAttributeValueTest {
 
 	@Test
 	public void testNewInstance() {
-		assertTrue(value.newInstance() instanceof StringAttributeValue);
+		assertTrue(value.newInstance().getClass() == StringAttributeValue.class);
 	}
 
 	@Test(expected=IllegalArgumentException.class)

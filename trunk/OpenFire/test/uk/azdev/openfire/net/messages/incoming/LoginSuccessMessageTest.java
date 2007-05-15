@@ -41,7 +41,7 @@ public class LoginSuccessMessageTest {
 	private static final String EXPECTED_TOSTRING
 		= "Login Success Message\n" +
 		  "\tUser id: 4022250974\n" +
-		  "\tSession id: 01 86 72 57 F0 94 83 45 96 DA 5B 4B 9A 44 41 35\n" +
+		  "\tSession id: SID:<01 86 72 57 F0 94 83 45 96 DA 5B 4B 9A 44 41 35>\n" +
 		  "\tNick: \n" +
 		  "\tStatus: 15\n" +
 		  "\tDlset: \n" +
