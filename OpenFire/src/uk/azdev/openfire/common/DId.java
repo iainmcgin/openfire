@@ -16,26 +16,26 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire.net.attrvalues;
+package uk.azdev.openfire.common;
 
-public class Int8KeyedMapAttributeValue extends MapAttributeValue<Int8KeyedAttributeMap> {
+/**
+ * Representation of a "did" value, which is sent in one particular message.
+ */
+public class DId extends ByteArrayBasedId {
 
-	public static final int TYPE_ID = 9;
-	
-	@Override
-	protected Int8KeyedAttributeMap createNewMap() {
-		return new Int8KeyedAttributeMap();
+	public static final int DID_SIZE = 21;
+
+	public DId() {
+		super();
 	}
 	
-	@Override
-	public int getTypeId() {
-		return TYPE_ID;
+	public DId(byte[] bytes) {
+		super(bytes);
 	}
-
+	
 	@Override
-	public Int8KeyedMapAttributeValue newInstance() {
-		return new Int8KeyedMapAttributeValue();
+	public int getArraySize() {
+		return DID_SIZE;
 	}
-
 	
 }

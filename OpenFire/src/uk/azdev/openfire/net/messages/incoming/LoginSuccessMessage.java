@@ -64,7 +64,7 @@ public class LoginSuccessMessage extends StringMapBasedMessage {
 	@Override
 	protected void interpretAttributeMap(StringKeyedAttributeMap map) {
 		userId = map.getInt32AttributeValue(USER_ID_KEY);
-		sessionId = ((SessionIdAttributeValue)map.getAttributeValue(SESSION_ID_KEY)).getSessionId();
+		sessionId = ((SessionIdAttributeValue)map.getAttributeValue(SESSION_ID_KEY)).getValue();
 		nick = map.getStringAttributeValue(NICK_KEY);
 		status = map.getInt32AttributeValue(STATUS_KEY);
 		dlSet = map.getStringAttributeValue(DLSET_KEY);

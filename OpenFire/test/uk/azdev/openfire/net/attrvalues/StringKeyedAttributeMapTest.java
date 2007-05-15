@@ -55,10 +55,10 @@ public class StringKeyedAttributeMapTest {
 		
 		assertEquals(1, map.numAttributes());
 		assertTrue(map.hasAttribute("mainattr"));
-		AttributeValue value = map.getAttributeValue("mainattr");
+		AttributeValue<?> value = map.getAttributeValue("mainattr");
 		assertTrue(value instanceof StringKeyedMapAttributeValue);
 		
-		StringKeyedAttributeMap stringMap = ((StringKeyedMapAttributeValue)value).getMap();
+		StringKeyedAttributeMap stringMap = ((StringKeyedMapAttributeValue)value).getValue();
 		assertEquals(3, stringMap.numAttributes());
 		assertTrue(stringMap.hasAttribute("abc"));
 		assertEquals(1L, stringMap.getInt32AttributeValue("abc"));
@@ -73,7 +73,7 @@ public class StringKeyedAttributeMapTest {
 		byte[] expectedBytes = TestUtils.getByteArrayForResource(this.getClass(), "map_within_map.sampledata");
 		
 		StringKeyedMapAttributeValue value = new StringKeyedMapAttributeValue();
-		StringKeyedAttributeMap stringMap = value.getMap();
+		StringKeyedAttributeMap stringMap = value.getValue();
 		stringMap.addAttribute("abc", 1);
 		stringMap.addAttribute("xyz", "test");
 		stringMap.addAttribute("omg", 1337L);

@@ -20,7 +20,7 @@ package uk.azdev.openfire.net.attrvalues;
 
 import java.nio.ByteBuffer;
 
-public abstract class MapAttributeValue<MapType extends AttributeMap<?>> implements AttributeValue {
+public abstract class MapAttributeValue<MapType extends AttributeMap<?>> implements AttributeValue<MapType> {
 
 	private MapType map;
 
@@ -32,7 +32,7 @@ public abstract class MapAttributeValue<MapType extends AttributeMap<?>> impleme
 		return map.getSize();
 	}
 	
-	public MapType getMap() {
+	public MapType getValue() {
 		return map;
 	}
 
@@ -45,7 +45,7 @@ public abstract class MapAttributeValue<MapType extends AttributeMap<?>> impleme
 	}
 	
 	protected abstract MapType createNewMap();
-	public abstract AttributeValue newInstance();
+	public abstract MapAttributeValue<MapType> newInstance();
 	public abstract int getTypeId();
 	
 	@Override

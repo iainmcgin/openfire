@@ -33,7 +33,7 @@ public class StringKeyedMapAttributeValue extends MapAttributeValue<StringKeyedA
 	}
 
 	@Override
-	public AttributeValue newInstance() {
+	public StringKeyedMapAttributeValue newInstance() {
 		return new StringKeyedMapAttributeValue();
 	}
 }

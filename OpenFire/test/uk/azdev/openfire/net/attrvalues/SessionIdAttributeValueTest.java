@@ -51,11 +51,11 @@ public class SessionIdAttributeValueTest {
 	
 	@Test
 	public void testSetValue() {
-		assertEquals("initial value incorrect", INITIAL_SID, value.getSessionId());
+		assertEquals("initial value incorrect", INITIAL_SID, value.getValue());
 		
 		value.setSessionId(SAMPLE_ATTR);
-		assertNotSame(value.getSessionId().getBytes(), SAMPLE_ATTR);
-		assertEquals("set value incorrect", SAMPLE_ATTR, value.getSessionId());
+		assertNotSame(value.getValue().getBytes(), SAMPLE_ATTR);
+		assertEquals("set value incorrect", SAMPLE_ATTR, value.getValue());
 	}
 
 	@Test
@@ -76,7 +76,7 @@ public class SessionIdAttributeValueTest {
 		buffer.rewind();
 		
 		value.readValue(buffer);
-		assertEquals("read SID does not match", SAMPLE_ATTR, value.getSessionId());
+		assertEquals("read SID does not match", SAMPLE_ATTR, value.getValue());
 	}
 
 	@Test
@@ -89,13 +89,13 @@ public class SessionIdAttributeValueTest {
 		SessionIdAttributeValue readValue = new SessionIdAttributeValue();
 		readValue.readValue(buffer);
 		
-		assertNotSame(readValue.getSessionId(), SAMPLE_ATTR);
-		assertEquals("read after write does not match", SAMPLE_ATTR, readValue.getSessionId());
+		assertNotSame(readValue.getValue(), SAMPLE_ATTR);
+		assertEquals("read after write does not match", SAMPLE_ATTR, readValue.getValue());
 	}
 
 	@Test
 	public void testNewInstance() {
-		assertTrue(value.newInstance() instanceof SessionIdAttributeValue);
+		assertTrue(value.newInstance().getClass() == SessionIdAttributeValue.class);
 	}
 	
 	@Test

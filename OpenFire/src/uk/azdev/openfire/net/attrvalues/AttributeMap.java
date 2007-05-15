@@ -36,12 +36,12 @@ public abstract class AttributeMap<K> {
 	private static final int NUM_ATTRS_SIZE = 1;
 	private static final int ATTR_TYPE_SIZE = 1;
 	
-	private Map<K, AttributeValue> attributeMap;
+	private Map<K, AttributeValue<?>> attributeMap;
 	
 	public AttributeMap() {
 		// we care about the order of the items in the map,
 		// to make them match precisely the order xfire produces
-		attributeMap = new LinkedHashMap<K, AttributeValue>();
+		attributeMap = new LinkedHashMap<K, AttributeValue<?>>();
 	}
 	
 	public int numAttributes() {
@@ -52,7 +52,7 @@ public abstract class AttributeMap<K> {
 		return attributeMap.containsKey(key);
 	}
 	
-	public AttributeValue getAttributeValue(K key) {
+	public AttributeValue<?> getAttributeValue(K key) {
 		if(!hasAttribute(key)) {
 			throw new IllegalArgumentException("no attribute with key <" + key + "> found");
 		}
@@ -63,7 +63,7 @@ public abstract class AttributeMap<K> {
 	 * Convenience method for fetching string values.
 	 */
 	public String getStringAttributeValue(K key) {
-		AttributeValue value = getAttributeValue(key);
+		AttributeValue<?> value = getAttributeValue(key);
 		if(!(value instanceof StringAttributeValue)) {
 			throw new IllegalArgumentException("key <" + key + "> does not map to a string value");
 		}
@@ -72,34 +72,18 @@ public abstract class AttributeMap<K> {
 	}
 	
 	public List<String> getAttributeValueAsStringList(K key) {
-		List<AttributeValue> listValueContents = getListAttributeValueContents(key, StringAttributeValue.TYPE_ID);
-		
-		ArrayList<String> stringList = new ArrayList<String>(listValueContents.size());
-		for(AttributeValue v : listValueContents) {
-			String s = ((StringAttributeValue)v).getValue();
-			stringList.add(s);
-		}
-		
-		return stringList;
+		return getAttributeValueAsList(key, new StringAttributeValue());
 	}
 	
 	public List<Long> getAttributeValueAsInt32List(K key) {
-		List<AttributeValue> listValueContents = getListAttributeValueContents(key, Int32AttributeValue.TYPE_ID);
-		
-		ArrayList<Long> int32List = new ArrayList<Long>(listValueContents.size());
-		for(AttributeValue v : listValueContents) {
-			Long l = ((Int32AttributeValue)v).getValue();
-			int32List.add(l);
-		}
-		
-		return int32List;
+		return getAttributeValueAsList(key, new Int32AttributeValue());
 	}
 	
 	public List<Integer> getAttributeValueAsInt16List(K key) {
-		List<AttributeValue> listValueContents = getListAttributeValueContents(key, Int32AttributeValue.TYPE_ID);
+		List<AttributeValue<?>> listValueContents = getListAttributeValueContents(key, Int32AttributeValue.TYPE_ID);
 		
 		ArrayList<Integer> int16List = new ArrayList<Integer>(listValueContents.size());
-		for(AttributeValue v : listValueContents) {
+		for(AttributeValue<?> v : listValueContents) {
 			Long l = ((Int32AttributeValue)v).getValue();
 			int16List.add((int)l.longValue());
 		}
@@ -108,10 +92,10 @@ public abstract class AttributeMap<K> {
 	}
 	
 	public List<Inet4Address> getAttributeValueAsInet4AddressList(K key) {
-		List<AttributeValue> listValueContents = getListAttributeValueContents(key, Int32AttributeValue.TYPE_ID);
+		List<AttributeValue<?>> listValueContents = getListAttributeValueContents(key, Int32AttributeValue.TYPE_ID);
 		
 		ArrayList<Inet4Address> inet4AddrList = new ArrayList<Inet4Address>(listValueContents.size());
-		for(AttributeValue v : listValueContents) {
+		for(AttributeValue<?> v : listValueContents) {
 			Inet4Address addr = ((Int32AttributeValue)v).getValueAsInetAddress();
 			inet4AddrList.add(addr);
 		}
@@ -120,19 +104,37 @@ public abstract class AttributeMap<K> {
 	}
 	
 	public List<SessionId> getAttributeValueAsSessionIdList(K key) {
-		List<AttributeValue> listValueContents = getListAttributeValueContents(key, SessionIdAttributeValue.TYPE_ID);
+		return getAttributeValueAsList(key, new SessionIdAttributeValue());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> List<T> getAttributeValueAsList(K key, AttributeValue<T> expectedAttrType) {
 		
-		ArrayList<SessionId> sidList = new ArrayList<SessionId>(listValueContents.size());
-		for(AttributeValue v : listValueContents) {
-			SessionId sid = ((SessionIdAttributeValue)v).getSessionId();
-			sidList.add(sid);
+		AttributeValue<?> value = getAttributeValue(key);
+		if(!(value instanceof ListAttributeValue)) {
+			throw new IllegalArgumentException("key <" + key + "> does not map to a list value");
+		}
+
+		ListAttributeValue listValue = (ListAttributeValue) value;
+		
+		if(listValue.getItemType() != expectedAttrType.getTypeId()) {
+			throw new IllegalArgumentException("key <" + key + "> does not map to a list with item type \"" + expectedAttrType.getTypeId() + "\"");
+		}
+		
+		List<AttributeValue<?>> listValueContents = listValue.getValue();
+		
+		ArrayList<T> sidList = new ArrayList<T>(listValueContents.size());
+		for(AttributeValue<?> v : listValueContents) {
+			Object val = v.getValue();
+			// this erasure cast is a necessary evil to get the type of list we want
+			sidList.add((T)val);
 		}
 		
 		return sidList;
 	}
 
-	private List<AttributeValue> getListAttributeValueContents(K key, int expectedItemType) {
-		AttributeValue value = getAttributeValue(key);
+	private List<AttributeValue<?>> getListAttributeValueContents(K key, int expectedItemType) {
+		AttributeValue<?> value = getAttributeValue(key);
 		if(!(value instanceof ListAttributeValue)) {
 			throw new IllegalArgumentException("key <" + key + "> does not map to a list value");
 		}
@@ -143,7 +145,7 @@ public abstract class AttributeMap<K> {
 			throw new IllegalArgumentException("key <" + key + "> does not map to a list with item type \"" + expectedItemType + "\"");
 		}
 		
-		List<AttributeValue> listValueContents = listValue.getList();
+		List<AttributeValue<?>> listValueContents = listValue.getValue();
 		return listValueContents;
 	}
 	
@@ -151,7 +153,7 @@ public abstract class AttributeMap<K> {
 	 * Convenience method for fetching int32 values
 	 */
 	public long getInt32AttributeValue(K key) {
-		AttributeValue value = getAttributeValue(key);
+		AttributeValue<?> value = getAttributeValue(key);
 		if(!(value instanceof Int32AttributeValue)) {
 			throw new IllegalArgumentException("key <" + key + "> does not map to an int32 value");
 		}
@@ -159,7 +161,7 @@ public abstract class AttributeMap<K> {
 		return ((Int32AttributeValue)value).getValue();
 	}
 	
-	public void addAttribute(K key, AttributeValue value) {
+	public void addAttribute(K key, AttributeValue<?> value) {
 		checkAddAttributePreconditions(key, value);
 		attributeMap.put(key, value);
 	}
@@ -178,7 +180,7 @@ public abstract class AttributeMap<K> {
 		addAttribute(key, new Int32AttributeValue(value));
 	}
 	
-	private void checkAddAttributePreconditions(K key, AttributeValue value) {
+	private void checkAddAttributePreconditions(K key, AttributeValue<?> value) {
 		if(attributeMap.size() == MAX_ATTRIBUTES) {
 			throw new TooManyAttributesException("maximum number of attributes exceeded");
 		}
@@ -201,16 +203,16 @@ public abstract class AttributeMap<K> {
 		
 		for(int i=0; i < numAttrs; i++) {
 			K key = readKey(buffer);
-			AttributeValue value = readAttributeValue(buffer);
+			AttributeValue<?> value = readAttributeValue(buffer);
 			addAttribute(key, value);
 		}
 	}
 	
-	private AttributeValue readAttributeValue(ByteBuffer buffer) {
+	private AttributeValue<?> readAttributeValue(ByteBuffer buffer) {
 		int attrType = buffer.get() & 0xFF;
 		
 		AttributeValueFactory factory = new AttributeValueFactory();
-		AttributeValue value = factory.createAttributeValue(attrType);
+		AttributeValue<?> value = factory.createAttributeValue(attrType);
 		value.readValue(buffer);
 		return value;
 	}
@@ -218,20 +220,20 @@ public abstract class AttributeMap<K> {
 	public void write(ByteBuffer buffer) {
 		buffer.put((byte)numAttributes());
 		
-		for(Entry<K, AttributeValue> entry : attributeMap.entrySet()) {
+		for(Entry<K, AttributeValue<?>> entry : attributeMap.entrySet()) {
 			writeKey(buffer, entry.getKey());
 			writeAttributeValue(buffer, entry.getValue());
 		}
 	}
 	
-	private void writeAttributeValue(ByteBuffer buffer, AttributeValue value) {
+	private void writeAttributeValue(ByteBuffer buffer, AttributeValue<?> value) {
 		buffer.put((byte)value.getTypeId());
 		value.writeValue(buffer);
 	}
 
 	public int getSize() {
 		int size = NUM_ATTRS_SIZE;
-		for(Entry<K, AttributeValue> entry : attributeMap.entrySet()) {
+		for(Entry<K, AttributeValue<?>> entry : attributeMap.entrySet()) {
 			size += getKeySize(entry.getKey());
 			size += ATTR_TYPE_SIZE + entry.getValue().getSize();
 		}
@@ -244,7 +246,7 @@ public abstract class AttributeMap<K> {
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		for(Entry<K, AttributeValue> entry : attributeMap.entrySet()) {
+		for(Entry<K, AttributeValue<?>> entry : attributeMap.entrySet()) {
 			buffer.append(entry.getKey());
 			buffer.append(" = ");
 			buffer.append(entry.getValue());

@@ -20,12 +20,12 @@ package uk.azdev.openfire.net.messages.incoming;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
 import uk.azdev.openfire.common.SessionId;
-import uk.azdev.openfire.net.attrvalues.AttributeValue;
 import uk.azdev.openfire.net.attrvalues.Int32AttributeValue;
 import uk.azdev.openfire.net.attrvalues.ListAttributeValue;
 import uk.azdev.openfire.net.attrvalues.SessionIdAttributeValue;
@@ -56,15 +56,15 @@ public class UserSessionIdListMessage extends StringMapBasedMessage {
 	
 	@Override
 	protected void interpretAttributeMap(StringKeyedAttributeMap map) {
-		ListAttributeValue userIdList = (ListAttributeValue) map.getAttributeValue(USER_ID_LIST_KEY);
-		ListAttributeValue sessionIdList = (ListAttributeValue) map.getAttributeValue(SESSION_ID_LIST_KEY);
+		List<Long> userIdList = map.getAttributeValueAsList(USER_ID_LIST_KEY, new Int32AttributeValue());
+		List<SessionId> sessionIdList = map.getAttributeValueAsList(SESSION_ID_LIST_KEY, new SessionIdAttributeValue());
 		
-		Iterator<AttributeValue> userIdIter = userIdList.getList().iterator();
-		Iterator<AttributeValue> sessionIdIter = sessionIdList.getList().iterator();
+		Iterator<Long> userIdIter = userIdList.iterator();
+		Iterator<SessionId> sessionIdIter = sessionIdList.iterator();
 		
 		while(userIdIter.hasNext()) {
-			long userId = ((Int32AttributeValue)userIdIter.next()).getValue();
-			SessionId sessionId = ((SessionIdAttributeValue)sessionIdIter.next()).getSessionId();
+			long userId = userIdIter.next();
+			SessionId sessionId = sessionIdIter.next();
 			userIdToSessionIdMap.put(userId, sessionId);
 		}
 	}

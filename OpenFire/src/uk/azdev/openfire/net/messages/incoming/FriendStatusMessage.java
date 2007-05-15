@@ -53,12 +53,12 @@ public class FriendStatusMessage extends StringMapBasedMessage {
 		ListAttributeValue sessionIdListValue = ((ListAttributeValue)map.getAttributeValue(SESSION_ID_LIST_KEY));
 		List<String> statusList = map.getAttributeValueAsStringList(STATUS_LIST_KEY);
 		
-		Iterator<AttributeValue> sessionIdIter = sessionIdListValue.getList().iterator();
+		Iterator<AttributeValue<?>> sessionIdIter = sessionIdListValue.getValue().iterator();
 		Iterator<String> statusIter = statusList.iterator();
 		while(sessionIdIter.hasNext()) {
 			SessionIdAttributeValue sidValue = (SessionIdAttributeValue)sessionIdIter.next();
 			String status = statusIter.next();
-			sessionIdToStatusMap.put(sidValue.getSessionId(), status);
+			sessionIdToStatusMap.put(sidValue.getValue(), status);
 		}
 	}
 

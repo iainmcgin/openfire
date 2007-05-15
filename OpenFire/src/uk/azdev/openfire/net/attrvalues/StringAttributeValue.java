@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 
 import static uk.azdev.openfire.net.util.IOUtil.*;
 
-public class StringAttributeValue implements AttributeValue {
+public class StringAttributeValue implements AttributeValue<String> {
 
 	public static final int TYPE_ID = 1;
 	
@@ -77,7 +77,7 @@ public class StringAttributeValue implements AttributeValue {
 		buffer.put(encodeString(value));
 	}
 
-	public AttributeValue newInstance() {
+	public StringAttributeValue newInstance() {
 		return new StringAttributeValue();
 	}
 
