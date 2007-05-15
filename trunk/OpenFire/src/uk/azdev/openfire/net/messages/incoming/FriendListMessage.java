@@ -50,10 +50,10 @@ public class FriendListMessage extends StringMapBasedMessage {
 	
 	@Override
 	protected void interpretAttributeMap(StringKeyedAttributeMap map) {
-		userIds = map.getAttributeValueAsInt32List(USER_ID_LIST_KEY);
+		userIds = map.getAttributeValueAsList(USER_ID_LIST_KEY, new Int32AttributeValue());
 		
-		List<String> userNames = map.getAttributeValueAsStringList(USER_NAME_LIST_KEY);
-		List<String> userNicks = map.getAttributeValueAsStringList(USER_NICK_LIST_KEY);
+		List<String> userNames = map.getAttributeValueAsList(USER_NAME_LIST_KEY, new StringAttributeValue());
+		List<String> userNicks = map.getAttributeValueAsList(USER_NICK_LIST_KEY, new StringAttributeValue());
 		
 		Iterator<String> userNamesIter = userNames.iterator();
 		Iterator<String> userNicksIter = userNicks.iterator();

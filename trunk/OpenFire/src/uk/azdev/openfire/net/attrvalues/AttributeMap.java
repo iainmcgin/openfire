@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import uk.azdev.openfire.common.SessionId;
-
 import static uk.azdev.openfire.net.util.IOUtil.*;
 
 public abstract class AttributeMap<K> {
@@ -71,21 +69,13 @@ public abstract class AttributeMap<K> {
 		return ((StringAttributeValue)value).getValue();
 	}
 	
-	public List<String> getAttributeValueAsStringList(K key) {
-		return getAttributeValueAsList(key, new StringAttributeValue());
-	}
-	
-	public List<Long> getAttributeValueAsInt32List(K key) {
-		return getAttributeValueAsList(key, new Int32AttributeValue());
-	}
-	
 	public List<Integer> getAttributeValueAsInt16List(K key) {
 		List<AttributeValue<?>> listValueContents = getListAttributeValueContents(key, Int32AttributeValue.TYPE_ID);
 		
 		ArrayList<Integer> int16List = new ArrayList<Integer>(listValueContents.size());
 		for(AttributeValue<?> v : listValueContents) {
 			Long l = ((Int32AttributeValue)v).getValue();
-			int16List.add((int)l.longValue());
+			int16List.add(l.intValue());
 		}
 		
 		return int16List;
@@ -103,25 +93,9 @@ public abstract class AttributeMap<K> {
 		return inet4AddrList;
 	}
 	
-	public List<SessionId> getAttributeValueAsSessionIdList(K key) {
-		return getAttributeValueAsList(key, new SessionIdAttributeValue());
-	}
-	
 	@SuppressWarnings("unchecked")
 	public <T> List<T> getAttributeValueAsList(K key, AttributeValue<T> expectedAttrType) {
-		
-		AttributeValue<?> value = getAttributeValue(key);
-		if(!(value instanceof ListAttributeValue)) {
-			throw new IllegalArgumentException("key <" + key + "> does not map to a list value");
-		}
-
-		ListAttributeValue listValue = (ListAttributeValue) value;
-		
-		if(listValue.getItemType() != expectedAttrType.getTypeId()) {
-			throw new IllegalArgumentException("key <" + key + "> does not map to a list with item type \"" + expectedAttrType.getTypeId() + "\"");
-		}
-		
-		List<AttributeValue<?>> listValueContents = listValue.getValue();
+		List<AttributeValue<?>> listValueContents = getListAttributeValueContents(key, expectedAttrType.getTypeId());
 		
 		ArrayList<T> sidList = new ArrayList<T>(listValueContents.size());
 		for(AttributeValue<?> v : listValueContents) {

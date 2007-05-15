@@ -118,7 +118,7 @@ public class StringKeyedAttributeMapTest {
 		value.addValue(new Int32AttributeValue(0));
 		map.addAttribute("test", value);
 		
-		map.getAttributeValueAsStringList("test");
+		map.getAttributeValueAsList("test", new StringAttributeValue());
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -127,13 +127,13 @@ public class StringKeyedAttributeMapTest {
 		value.addValue(new StringAttributeValue("value"));
 		map.addAttribute("test", value);
 		
-		map.getAttributeValueAsInt32List("test");
+		map.getAttributeValueAsList("test", new Int32AttributeValue());
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testGetList_withNonListValue() {
 		map.addAttribute("test", new Int32AttributeValue(0));
-		map.getAttributeValueAsStringList("test");
+		map.getAttributeValueAsList("test", new StringAttributeValue());
 	}
 	
 	@Test(expected=DuplicateAttributeException.class)

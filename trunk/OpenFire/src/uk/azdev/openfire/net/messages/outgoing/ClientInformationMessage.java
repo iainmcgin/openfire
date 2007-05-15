@@ -34,8 +34,8 @@ public class ClientInformationMessage extends StringMapBasedMessage {
 	
 	@Override
 	protected void interpretAttributeMap(StringKeyedAttributeMap map) {
-		skinList = map.getAttributeValueAsStringList("skin").toArray(new String[0]);
-		version = map.getAttributeValueAsInt32List("version").toArray(new Long[0]);
+		skinList = map.getAttributeValueAsList("skin", new StringAttributeValue()).toArray(new String[0]);
+		version = map.getAttributeValueAsList("version", new Int32AttributeValue()).toArray(new Long[0]);
 	}
 
 	@Override
