@@ -19,7 +19,9 @@
 package uk.azdev.openfire.friendlist;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import uk.azdev.openfire.common.SessionId;
 
@@ -30,25 +32,39 @@ public class FriendsList {
 	private Map<Long, Friend> friendsById;
 	private Map<SessionId, Friend> onlineFriends;
 	
+	private Map<Friend, Set<Friend>> friendConnections;
+	
 	public FriendsList(Friend self) {
 		this.self = self;
 		friendsById = new HashMap<Long, Friend>();
 		onlineFriends = new HashMap<SessionId, Friend>();
+		friendConnections = new HashMap<Friend, Set<Friend>>();
+		addFriend(self);
 	}
 
 	public boolean containsFriend(long userId) {
 		return friendsById.containsKey(userId);
 	}
-
-	public void addFriend(Friend newFriend, Friend connectedFriend) {
-		friendsById.put(newFriend.getUserId(), newFriend);
-		connectedFriend.addFriend(newFriend);
+	
+	private void addOrUpdateFriend(Friend friend) {
+		if(friendsById.containsKey(friend.getUserId())) {
+			Friend origFriend = friendsById.get(friend.getUserId());
+			origFriend.update(friend);
+		} else {
+			friendsById.put(friend.getUserId(), friend);
+			friendConnections.put(friend, new HashSet<Friend>());
+		}
 	}
 	
-	public void addDirectFriend(Friend friend) {
-		addFriend(friend, self);
+	public void addFriend(Friend newFriend) {
+		addOrUpdateFriend(newFriend);
 	}
 
+	public void addFriend(Friend newFriend, Friend connectedFriend) {
+		addOrUpdateFriend(newFriend);
+		connect(newFriend, connectedFriend.getUserId());
+	}
+	
 	public Friend getFriend(long userId) {
 		return friendsById.get(userId);
 	}
@@ -73,5 +89,40 @@ public class FriendsList {
 		onlineFriends.remove(oldSid);
 		friend.setOffline();
 	}
+
+	public void connect(Friend friend, long friendId) {
+		Friend connectedFriend = getOrCreateNew(friendId);
+		
+		if(friendConnections.get(friend).contains(connectedFriend)) {
+			return;
+		}
+		
+		Set<Friend> connections; 
+		if(friendConnections.containsKey(friend)) {
+			connections = friendConnections.get(friend);
+		} else {
+			connections = new HashSet<Friend>();
+			friendConnections.put(friend, connections);
+		}
+		
+		connections.add(connectedFriend);
+		
+		connect(connectedFriend, friend.getUserId());
+	}
 	
+	private Friend getOrCreateNew(Long friendId) {
+		Friend friend;
+		if(friendsById.containsKey(friendId)) {
+			friend = friendsById.get(friendId);
+		} else {
+			friend = new Friend(friendId);
+			addFriend(friend);
+		}
+		
+		return friend;
+	}
+	
+	public boolean areConnected(Friend a, Friend b) {
+		return friendConnections.get(a).contains(b);
+	}
 }

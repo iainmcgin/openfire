@@ -51,9 +51,9 @@ public abstract class AbstractFriendsListTest {
 		carolSid = new SessionId(3000);
 		
 		friendsList = new FriendsList(self);
-		friendsList.addDirectFriend(alice);
-		friendsList.addDirectFriend(bob);
-		friendsList.addDirectFriend(carol);
+		friendsList.addFriend(alice, friendsList.getSelf());
+		friendsList.addFriend(bob, friendsList.getSelf());
+		friendsList.addFriend(carol, friendsList.getSelf());
 	}
 	
 	public void setFriendsLoggedIn() {

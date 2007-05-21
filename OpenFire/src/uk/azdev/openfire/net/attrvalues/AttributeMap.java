@@ -18,15 +18,14 @@
  */
 package uk.azdev.openfire.net.attrvalues;
 
-import java.net.Inet4Address;
+import static uk.azdev.openfire.net.util.IOUtil.readUnsignedByte;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import static uk.azdev.openfire.net.util.IOUtil.*;
 
 public abstract class AttributeMap<K> {
 
@@ -79,18 +78,6 @@ public abstract class AttributeMap<K> {
 		}
 		
 		return int16List;
-	}
-	
-	public List<Inet4Address> getAttributeValueAsInet4AddressList(K key) {
-		List<AttributeValue<?>> listValueContents = getListAttributeValueContents(key, Int32AttributeValue.TYPE_ID);
-		
-		ArrayList<Inet4Address> inet4AddrList = new ArrayList<Inet4Address>(listValueContents.size());
-		for(AttributeValue<?> v : listValueContents) {
-			Inet4Address addr = ((Int32AttributeValue)v).getValueAsInetAddress();
-			inet4AddrList.add(addr);
-		}
-		
-		return inet4AddrList;
 	}
 	
 	private ListAttributeValue getListAttributeValue(K key) {

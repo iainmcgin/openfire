@@ -53,35 +53,12 @@ public class ListAttributeValue implements AttributeValue<List<AttributeValue<?>
 		return valueList;
 	}
 	
-// ***** implementation that allocates a new list with all the types in it
-// ***** this is unnecessarily slow when the main use case for these lists is to iterate over them
-//	@SuppressWarnings("unchecked")
-//	public <T> List<T> getListContents(AttributeValue<T> expectedAttrType) {
-//		
-//		if(getItemType() != expectedAttrType.getTypeId()) {
-//			throw new IllegalArgumentException("list is not of type \"" + expectedAttrType.getTypeId() + "\"");
-//		}
-//		
-//		ArrayList<T> sidList = new ArrayList<T>(valueList.size());
-//		for(AttributeValue<?> v : valueList) {
-//			Object val = v.getValue();
-//			// this erasure cast is a necessary evil to get the type of list we want
-//			sidList.add((T)val);
-//		}
-//		
-//		return sidList;
-//	}
-	
 	public <T> List<T> getListContents(AttributeValue<T> expectedAttrType) {
 		if(getItemType() != expectedAttrType.getTypeId()) {
 			throw new IllegalArgumentException("list is not of type \"" + expectedAttrType.getTypeId() + "\"");
 		}
 		
 		return new UnrolledListAttributeValue<T>(this);
-	}
-	
-	public <T> Iterator<T> getRealValueIterator(AttributeValue<T> expectedAttrType) {
-		return new UnrolledListAttributeValueIterator<T>(this);
 	}
 	
 	/**
