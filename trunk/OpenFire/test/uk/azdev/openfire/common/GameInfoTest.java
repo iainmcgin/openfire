@@ -36,13 +36,14 @@ public class GameInfoTest {
 	}
 	
 	@Test
-	public void testEquals() throws Exception {
+	public void testEqualsAndHashcode() throws Exception {
 		GameInfo a = new GameInfo(1L, "Test Game", "tg");
 		GameInfo b = new GameInfo(2L, "Different game", "dg");
 		GameInfo c = new GameInfo(1L, "Test Game with different name", "tgblah");
 		
 		assertTrue(a.equals(c));
 		assertTrue(c.equals(a));
+		assertTrue(a.hashCode() == c.hashCode());
 		assertFalse(a.equals(b));
 		assertFalse(a.equals(new Object()));
 	}

@@ -22,18 +22,19 @@ import java.util.List;
 
 import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
-import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
+import uk.azdev.openfire.net.messages.incoming.FriendOfFriendListMessage;
 
-public class FriendListMessageProcessor {
-	
-	public void processMessage(FriendsList friendsList, FriendListMessage message) {
+public class FriendOfFriendListMessageProcessor {
+
+	public void processMessage(FriendsList friendsList, FriendOfFriendListMessage message) {
 		
-		List<Long> userIds = message.getUserIdList();
+		List<Friend> friends = message.getSecondDegreeOfSeparation();
 		
-		for(long userId : userIds) {
-			if(!friendsList.containsFriend(userId)) {
-				Friend friend = new Friend(userId, message.getUsernameForId(userId), message.getUserNickForId(userId));
-				friendsList.addFriend(friend, friendsList.getSelf());
+		for(Friend friend : friends) {
+			friendsList.addFriend(friend);
+			List<Long> connections = message.getThirdDegreeOfSeparationFor(friend.getUserId());
+			for(Long thirdDegree : connections) {
+				friendsList.connect(friend, thirdDegree);
 			}
 		}
 	}

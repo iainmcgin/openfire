@@ -20,8 +20,6 @@ package uk.azdev.openfire.friendlist;
 
 import static org.junit.Assert.*;
 
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -60,37 +58,6 @@ public class FriendTest {
 	public void testGetStatusString() {
 		friend.setStatus("(AFK)");
 		assertEquals("(AFK)", friend.getStatus());
-	}
-
-	@Test
-	public void testGetFriends() {
-		assertEquals(0, friend.getFriends().size());
-		Friend friendA = new Friend(101L, "friendA", "Friend A");
-		Friend friendB = new Friend(102L, "friendB", "Friend B");
-		
-		friend.addFriend(friendA);
-		friend.addFriend(friendB);
-		
-		List<Friend> friends = friend.getFriends();
-		assertEquals(2, friends.size());
-		assertTrue(friends.contains(friendA));
-		assertTrue(friends.contains(friendB));
-	}
-	
-	@Test
-	public void testAddFriendIsMutual() {
-		Friend friendA = new Friend(101L, "friendA", "Friend A");
-		
-		assertEquals(0, friend.getFriends().size());
-		assertEquals(0, friendA.getFriends().size());
-		
-		friend.addFriend(friendA);
-		
-		assertEquals(1, friend.getFriends().size());
-		assertEquals(1, friendA.getFriends().size());
-		
-		assertTrue(friend.getFriends().contains(friendA));
-		assertTrue(friendA.getFriends().contains(friend));
 	}
 
 	@Test

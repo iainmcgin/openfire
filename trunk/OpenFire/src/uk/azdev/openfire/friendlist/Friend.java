@@ -18,9 +18,6 @@
  */
 package uk.azdev.openfire.friendlist;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import uk.azdev.openfire.common.SessionId;
 
 public class Friend {
@@ -31,17 +28,19 @@ public class Friend {
 	private String statusString;
 	private SessionId sessionId;
 	
-	private List<Friend> friends;
-	
 	public Friend(String userName) {
 		this(-1, userName, "");
 	}
 	
-	public Friend(long userId, String userName, String displayName) {
+	public Friend(long userId) {
 		this.userId = userId;
+	}
+	
+	public Friend(long userId, String userName, String displayName) {
+		this(userId);
+		
 		this.userName = userName;
 		this.displayName = displayName;
-		friends = new ArrayList<Friend>();
 	}
 
 	public long getUserId() {
@@ -72,22 +71,6 @@ public class Friend {
 		this.statusString = statusString;
 	}
 	
-	public List<Friend> getFriends() {
-		return friends;
-	}
-
-	public boolean isFriend(Friend friend) {
-		return friends.contains(friend);
-	}
-	
-	public void addFriend(Friend friend) {
-		if(friends.contains(friend)) {
-			return;
-		}
-		friends.add(friend);
-		friend.addFriend(this);
-	}
-	
 	public boolean isOnline() {
 		return sessionId != null;
 	}
@@ -104,11 +87,29 @@ public class Friend {
 		this.sessionId = null;
 	}
 	
+	public void update(Friend friend) {
+		if(friend.userName != null) {
+			this.userName = friend.userName;
+		}
+		
+		if(friend.displayName != null) {
+			this.displayName = friend.displayName;
+		}
+		
+		if(friend.statusString != null) {
+			this.statusString = friend.statusString;
+		}
+
+		if(friend.sessionId != null) {
+			this.sessionId = friend.sessionId;
+		}
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof Friend) {
 			Friend f = (Friend)obj;
-			return f.getUserName().equals(this.getUserName());
+			return f.getUserId() == this.getUserId();
 		}
 		
 		return false;

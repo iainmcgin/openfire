@@ -54,8 +54,8 @@ public class FriendListMessageProcessorTest {
 		assertEquals(displayName, friend.getDisplayName());
 		
 		Friend self = friendsList.getSelf();
-		assertTrue(self.isFriend(friend));
-		assertTrue(friend.isFriend(self));
+		assertTrue(friendsList.areConnected(self, friend));
+		assertTrue(friendsList.areConnected(friend, self));
 	}
 
 }
