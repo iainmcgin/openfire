@@ -41,7 +41,7 @@ public class UnrolledListAttributeValueIterator<T> implements Iterator<T> {
 	}
 
 	public void remove() {
-		realIter.remove();
+		throw new IllegalStateException("unrolled list iterators don't allow modification");
 	}
 
 }
