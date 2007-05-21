@@ -91,7 +91,7 @@ public class Int8KeyedAttributeMapTest {
 		assertEquals(testBytes.length, map.getSize());
 		ByteBuffer output = IOUtil.createBuffer(map.getSize());
 		map.write(output);
-		output.rewind();
+		output.flip();
 		TestUtils.checkBytes(testBytes, output);
 	}
 	

@@ -73,7 +73,7 @@ public class SessionIdAttributeValueTest {
 		ByteBuffer buffer = IOUtil.createBuffer(SAMPLE_ATTR.getBytes().length);
 		
 		buffer.put(SAMPLE_ATTR.getBytes());
-		buffer.rewind();
+		buffer.flip();
 		
 		value.readValue(buffer);
 		assertEquals("read SID does not match", SAMPLE_ATTR, value.getValue());
@@ -85,7 +85,7 @@ public class SessionIdAttributeValueTest {
 		ByteBuffer buffer = IOUtil.createBuffer(value.getSize());
 		value.writeValue(buffer);
 		
-		buffer.rewind();
+		buffer.flip();
 		SessionIdAttributeValue readValue = new SessionIdAttributeValue();
 		readValue.readValue(buffer);
 		

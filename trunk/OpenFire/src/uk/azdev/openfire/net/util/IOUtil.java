@@ -46,7 +46,6 @@ public class IOUtil {
 	
 	public static int readUnsignedShort(ReadableByteChannel channel) throws IOException {
 		ByteBuffer readBuffer = createBuffer(2);
-		readBuffer.rewind();
 		readBuffer.limit(2);
 		int numRead = channel.read(readBuffer);
 		
@@ -54,7 +53,7 @@ public class IOUtil {
 			return -1;
 		}
 		
-		readBuffer.rewind();
+		readBuffer.flip();
 		return readUnsignedShort(readBuffer);
 	}
 	
@@ -64,14 +63,13 @@ public class IOUtil {
 	
 	public static long readUnsignedInt(ReadableByteChannel channel) throws IOException {
 		ByteBuffer readBuffer = createBuffer(4);
-		readBuffer.rewind();
 		int numRead = channel.read(readBuffer);
 		
 		if(numRead != 4) {
 			return -1;
 		}
 		
-		readBuffer.rewind();
+		readBuffer.flip();
 		return readUnsignedInt(readBuffer);
 	}
 	

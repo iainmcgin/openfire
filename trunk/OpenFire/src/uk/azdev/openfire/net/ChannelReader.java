@@ -96,7 +96,7 @@ public class ChannelReader {
 			return false;
 		}
 		
-		messageBuffer.rewind();
+		messageBuffer.flip();
 		return true;
 	}
 	

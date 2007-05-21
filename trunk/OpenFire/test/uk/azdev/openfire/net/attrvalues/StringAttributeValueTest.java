@@ -72,7 +72,7 @@ public class StringAttributeValueTest {
 		ByteBuffer buffer = IOUtil.createBuffer(SAMPLE_ATTR.length);
 		
 		buffer.put(SAMPLE_ATTR);
-		buffer.rewind();
+		buffer.flip();
 		
 		value.readValue(buffer);
 		assertEquals(TEST_STRING, value.getValue());
@@ -93,7 +93,7 @@ public class StringAttributeValueTest {
 		
 		ByteBuffer buffer = IOUtil.createBuffer(value.getSize());
 		value.writeValue(buffer);
-		buffer.rewind();
+		buffer.flip();
 		
 		StringAttributeValue inValue = new StringAttributeValue();
 		inValue.readValue(buffer);

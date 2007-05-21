@@ -42,7 +42,7 @@ public class TestUtils {
 	public static ByteBuffer createBufferFromArray(byte[] bytes) {
 		ByteBuffer buffer = IOUtil.createBuffer(bytes.length);
 		buffer.put(bytes);
-		buffer.rewind();
+		buffer.flip();
 		
 		return buffer;
 	}
@@ -55,7 +55,7 @@ public class TestUtils {
 		ByteBuffer buffer = IOUtil.createBuffer(resourceSize);
 		resourceChannel.read(buffer);
 		resourceChannel.close();
-		buffer.rewind();
+		buffer.flip();
 		return buffer;
 	}
 	

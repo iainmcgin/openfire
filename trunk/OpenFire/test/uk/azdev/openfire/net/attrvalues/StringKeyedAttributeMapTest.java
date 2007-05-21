@@ -82,7 +82,7 @@ public class StringKeyedAttributeMapTest {
 		
 		ByteBuffer buffer = IOUtil.createBuffer(map.getSize());
 		map.write(buffer);
-		buffer.rewind();
+		buffer.flip();
 		TestUtils.checkBytes(expectedBytes, buffer);
 	}
 	

@@ -39,7 +39,7 @@ public class ChannelWriter {
 		messageBuffer.rewind();
 		messageBuffer.limit(ProtocolConstants.CLIENT_OPENING_STATEMENT.length);
 		messageBuffer.put(ProtocolConstants.CLIENT_OPENING_STATEMENT);
-		messageBuffer.rewind();
+		messageBuffer.flip();
 		
 		channel.write(messageBuffer);
 	}
@@ -50,7 +50,7 @@ public class ChannelWriter {
 		messageBuffer.putShort((short)(message.getMessageContentSize() + ProtocolConstants.HEADER_SIZE));
 		messageBuffer.putShort((short)message.getMessageId());
 		message.writeMessageContent(messageBuffer);
-		messageBuffer.rewind();
+		messageBuffer.flip();
 		
 		channel.write(messageBuffer);
 	}
