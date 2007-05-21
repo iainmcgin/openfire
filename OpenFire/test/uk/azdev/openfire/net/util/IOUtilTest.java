@@ -43,7 +43,7 @@ public class IOUtilTest {
 	public void testReadUnsignedByte() {
 		ByteBuffer buffer = IOUtil.createBuffer(1);
 		buffer.put((byte)250);
-		buffer.rewind();
+		buffer.flip();
 		assertEquals(250, IOUtil.readUnsignedByte(buffer));
 	}
 	
@@ -51,7 +51,7 @@ public class IOUtilTest {
 	public void testReadUnsignedShort() {
 		ByteBuffer buffer = IOUtil.createBuffer(2);
 		buffer.putShort((short)40000);
-		buffer.rewind();
+		buffer.flip();
 		assertEquals(40000, IOUtil.readUnsignedShort(buffer));
 	}
 	
@@ -85,7 +85,7 @@ public class IOUtilTest {
 	public void testReadUnsignedInt() {
 		ByteBuffer buffer = IOUtil.createBuffer(4);
 		buffer.putInt((int)3000000000L);
-		buffer.rewind();
+		buffer.flip();
 		assertEquals(3000000000L, IOUtil.readUnsignedInt(buffer));
 	}
 	

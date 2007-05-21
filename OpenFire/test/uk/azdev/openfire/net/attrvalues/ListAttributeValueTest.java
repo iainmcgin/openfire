@@ -73,7 +73,7 @@ public class ListAttributeValueTest {
 	public void testReadValue() {
 		ByteBuffer buffer = IOUtil.createBuffer(SAMPLE_ATTR.length);
 		buffer.put(SAMPLE_ATTR);
-		buffer.rewind();
+		buffer.flip();
 		
 		value.readValue(buffer);
 		assertEquals(StringAttributeValue.TYPE_ID, value.getItemType());
@@ -98,7 +98,7 @@ public class ListAttributeValueTest {
 		value.writeValue(buffer);
 		
 		byte[] bytes = new byte[INT_LIST.length];
-		buffer.rewind();
+		buffer.flip();
 		buffer.get(bytes);
 		
 		checkArray(INT_LIST, bytes);
@@ -120,7 +120,7 @@ public class ListAttributeValueTest {
 		
 		ByteBuffer buffer = IOUtil.createBuffer(testValue.getSize());
 		testValue.writeValue(buffer);
-		buffer.rewind();
+		buffer.flip();
 		
 		TestableListAttributeValue inValue = new TestableListAttributeValue();
 		inValue.readValue(buffer);
@@ -136,7 +136,7 @@ public class ListAttributeValueTest {
 		
 		ByteBuffer buffer = IOUtil.createBuffer(value.getSize());
 		value.writeValue(buffer);
-		buffer.rewind();
+		buffer.flip();
 		
 		TestableListAttributeValue inValue = new TestableListAttributeValue();
 		inValue.readValue(buffer);

@@ -76,7 +76,7 @@ public class Int32AttributeValueTest {
 		ByteBuffer buffer = IOUtil.createBuffer(SAMPLE_ATTR.length);
 		
 		buffer.put(SAMPLE_ATTR);
-		buffer.rewind();
+		buffer.flip();
 		
 		value.readValue(buffer);
 		assertEquals(1000000L, value.getValue());
@@ -88,7 +88,7 @@ public class Int32AttributeValueTest {
 		ByteBuffer buffer = IOUtil.createBuffer(value.getSize());
 		value.writeValue(buffer);
 		
-		buffer.rewind();
+		buffer.flip();
 		Int32AttributeValue readValue = new Int32AttributeValue();
 		readValue.readValue(buffer);
 		
