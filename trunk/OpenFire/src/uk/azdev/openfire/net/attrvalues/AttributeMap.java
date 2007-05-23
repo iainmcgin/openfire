@@ -21,7 +21,6 @@ package uk.azdev.openfire.net.attrvalues;
 import static uk.azdev.openfire.net.util.IOUtil.readUnsignedByte;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,28 +55,21 @@ public abstract class AttributeMap<K> {
 		return attributeMap.get(key);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public <T> T getAttributeValue(K key, AttributeValue<T> expectedType) {
+		AttributeValue<?> value = getAttributeValue(key);
+		if(value.getTypeId() != expectedType.getTypeId()) {
+			throw new IllegalArgumentException("Attribute value for key \"" + key + "\" does not map to a value of type \"" + expectedType.getTypeId() + "\"");
+		}
+		
+		return (T)value.getValue();
+	}
+	
 	/**
 	 * Convenience method for fetching string values.
 	 */
 	public String getStringAttributeValue(K key) {
-		AttributeValue<?> value = getAttributeValue(key);
-		if(!(value instanceof StringAttributeValue)) {
-			throw new IllegalArgumentException("key <" + key + "> does not map to a string value");
-		}
-		
-		return ((StringAttributeValue)value).getValue();
-	}
-	
-	public List<Integer> getAttributeValueAsInt16List(K key) {
-		List<AttributeValue<?>> listValueContents = getListAttributeValueContents(key, Int32AttributeValue.TYPE_ID);
-		
-		ArrayList<Integer> int16List = new ArrayList<Integer>(listValueContents.size());
-		for(AttributeValue<?> v : listValueContents) {
-			Long l = ((Int32AttributeValue)v).getValue();
-			int16List.add(l.intValue());
-		}
-		
-		return int16List;
+		return getAttributeValue(key, new StringAttributeValue());
 	}
 	
 	private ListAttributeValue getListAttributeValue(K key) {
@@ -95,17 +87,6 @@ public abstract class AttributeMap<K> {
 		} catch(IllegalArgumentException e) {
 			throw new IllegalArgumentException("key <" + key + "> does not map to a list with item type \"" + expectedAttrType.getTypeId() + "\"");
 		}
-	}
-
-	private List<AttributeValue<?>> getListAttributeValueContents(K key, int expectedItemType) {
-		ListAttributeValue listValue = getListAttributeValue(key);
-		
-		if(listValue.getItemType() != expectedItemType) {
-			throw new IllegalArgumentException("key <" + key + "> does not map to a list with item type \"" + expectedItemType + "\"");
-		}
-		
-		List<AttributeValue<?>> listValueContents = listValue.getValue();
-		return listValueContents;
 	}
 	
 	/**

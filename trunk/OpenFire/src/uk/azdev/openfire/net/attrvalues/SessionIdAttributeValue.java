@@ -36,10 +36,6 @@ public class SessionIdAttributeValue implements AttributeValue<SessionId> {
 		this.sessionId = sessionId;
 	}
 	
-	public SessionIdAttributeValue(byte[] sessionId) {
-		this(new SessionId(sessionId));
-	}
-	
 	public SessionId getValue() {
 		return sessionId;
 	}
