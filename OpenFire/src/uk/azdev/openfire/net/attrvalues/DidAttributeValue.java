@@ -37,6 +37,10 @@ public class DidAttributeValue implements AttributeValue<DId> {
 		value = new DId();
 	}
 	
+	public DidAttributeValue(DId did) {
+		value = did;
+	}
+
 	public DId getValue() {
 		return value;
 	}

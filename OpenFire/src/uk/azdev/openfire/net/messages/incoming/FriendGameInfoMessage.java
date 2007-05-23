@@ -22,6 +22,7 @@ import java.net.Inet4Address;
 import java.net.InetSocketAddress;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -56,7 +57,7 @@ public class FriendGameInfoMessage extends StringMapBasedMessage {
 		List<SessionId> sessionIds = map.getAttributeValueAsList(SESSION_ID_LIST_KEY, new SessionIdAttributeValue());
 		List<Long> gameIds = map.getAttributeValueAsList(GAME_ID_LIST_KEY, new Int32AttributeValue());
 		List<Long> gameIps = map.getAttributeValueAsList(GAME_IP_LIST_KEY, new Int32AttributeValue());
-		List<Integer> gamePorts = map.getAttributeValueAsInt16List(GAME_PORT_LIST_KEY);
+		List<Integer> gamePorts = getInt16ListFromMap(map, GAME_PORT_LIST_KEY);
 
 		Iterator<SessionId> sidIter = sessionIds.iterator();
 		Iterator<Long> gameIdsIter = gameIds.iterator();
@@ -69,6 +70,17 @@ public class FriendGameInfoMessage extends StringMapBasedMessage {
 			ActiveGameInfo gameInfo = new ActiveGameInfo(gameIdsIter.next(), socketAddr);
 			sidToGameInfoMap.put(sidIter.next(), gameInfo);
 		}
+	}
+
+	private List<Integer> getInt16ListFromMap(StringKeyedAttributeMap map, String game_port_list_key2) {
+		List<Long> portsAsInt32 = map.getAttributeValueAsList(GAME_PORT_LIST_KEY, new Int32AttributeValue());
+		List<Integer> portsAsInt16 = new LinkedList<Integer>();
+		
+		for(Long portAsInt32 : portsAsInt32) {
+			portsAsInt16.add(portAsInt32.intValue());
+		}
+		
+		return portsAsInt16;
 	}
 
 	private InetSocketAddress getSocketAddress(long address, Integer port) {
