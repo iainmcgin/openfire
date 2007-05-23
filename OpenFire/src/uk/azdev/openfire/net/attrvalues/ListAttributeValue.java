@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import uk.azdev.openfire.net.util.UnrolledListAttributeValue;
-import uk.azdev.openfire.net.util.UnrolledListAttributeValueIterator;
 
 import static uk.azdev.openfire.net.util.IOUtil.*;
 
