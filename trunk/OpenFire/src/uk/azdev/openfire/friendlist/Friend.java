@@ -29,7 +29,7 @@ public class Friend {
 	private SessionId sessionId;
 	
 	public Friend(String userName) {
-		this(-1, userName, "");
+		this(-1, userName, null);
 	}
 	
 	public Friend(long userId) {
@@ -88,7 +88,7 @@ public class Friend {
 	}
 	
 	public void update(Friend friend) {
-		if(friend.userName != null) {
+		if(this.userName == null && friend.userName != null) {
 			this.userName = friend.userName;
 		}
 		
@@ -123,17 +123,29 @@ public class Friend {
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("Friend ");
-		buffer.append(userId);
-		if(userName != null) {
-			buffer.append(" ");
+		buffer.append("Friend[uid=");
+		if(userId == -1) {
+			buffer.append("???");
+		} else {
+			buffer.append(userId);
+		}
+		buffer.append(", uName=");
+		if(userName == null) {
+			buffer.append("???");
+		} else {
 			buffer.append(userName);
 		}
 
-		if(userName != null) {
-			buffer.append(" ");
+		buffer.append(", display=");
+		if(displayName == null) {
+			buffer.append("???");
+		} else {
+			buffer.append('\"');
 			buffer.append(displayName);
+			buffer.append('\"');
 		}
+		
+		buffer.append(']');
 		
 		return buffer.toString();
 	}

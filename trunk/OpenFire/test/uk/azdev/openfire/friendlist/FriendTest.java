@@ -85,6 +85,58 @@ public class FriendTest {
 	}
 	
 	@Test
+	public void testUpdate() {
+		Friend updatedFriend = new Friend(100L, "testUser", "New Name");
+		updatedFriend.setOnline(new SessionId(10));
+		updatedFriend.setStatus("AFK");
+		friend.update(updatedFriend);
+		assertEquals("New Name", updatedFriend.getDisplayName());
+		assertEquals(new SessionId(10), friend.getSessionId());
+		assertEquals("AFK", friend.getStatus());
+	}
+	
+	@Test
+	public void testUpdate_ignoresChangeInId() {
+		Friend updatedFriend = new Friend(101L, "testUser", "Test User");
+		friend.update(updatedFriend);
+		assertEquals(100L, friend.getUserId());
+	}
+	
+	@Test
+	public void testUpdate_withFirstUserName() {
+		Friend origFriend = new Friend(100L, null, null);
+		Friend updatedFriend = new Friend(100L, "aUser", "A User");
+		origFriend.update(updatedFriend);
+		assertEquals("aUser", origFriend.getUserName());
+	}
+	
+	@Test
+	public void testUpdate_ignoresNewUserName() {
+		Friend updatedFriend = new Friend(100L, "newUserName", "Test User");
+		friend.update(updatedFriend);
+		assertEquals("testUser", friend.getUserName());
+	}
+	
+	@Test
+	public void testUpdate_ignoresNulls() {
+		Friend updatedFriend = new Friend(101L, null, null);
+		friend.update(updatedFriend);
+		assertEquals("testUser", friend.getUserName());
+		assertEquals("Test User", friend.getDisplayName());
+	}
+	
+	@Test
+	public void testToString() {
+		assertEquals("Friend[uid=100, uName=testUser, display=\"Test User\"]", friend.toString());
+		
+		Friend withNoUid = new Friend("user1");
+		assertEquals("Friend[uid=???, uName=user1, display=???]", withNoUid.toString());
+		
+		Friend withNoUserName = new Friend(100L);
+		assertEquals("Friend[uid=100, uName=???, display=???]", withNoUserName.toString());
+	}
+	
+	@Test
 	public void testEqualsAndHashCode() {
 		Friend a = new Friend(100L, "friendA", "Friend A");
 		Friend b = new Friend(100L, "friendA", "Friend A");
