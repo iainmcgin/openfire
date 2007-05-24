@@ -97,14 +97,7 @@ public class FriendsList {
 			return;
 		}
 		
-		Set<Friend> connections; 
-		if(friendConnections.containsKey(friend)) {
-			connections = friendConnections.get(friend);
-		} else {
-			connections = new HashSet<Friend>();
-			friendConnections.put(friend, connections);
-		}
-		
+		Set<Friend> connections = friendConnections.get(friend);
 		connections.add(connectedFriend);
 		
 		connect(connectedFriend, friend.getUserId());
