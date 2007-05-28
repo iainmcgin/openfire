@@ -37,8 +37,8 @@ public class FriendStatusMessageProcessorTest extends AbstractFriendsListTest {
 		message.addStatus(bobSid, "At work");
 		message.addStatus(carolSid, "Out to Lunch");
 		
-		FriendStatusMessageProcessor processor = new FriendStatusMessageProcessor();
-		processor.processMessage(friendsList, message);
+		FriendStatusMessageProcessor processor = new FriendStatusMessageProcessor(friendsList);
+		processor.processMessage(message);
 		
 		assertEquals("AFK", alice.getStatus());
 		assertEquals("At work", bob.getStatus());

@@ -36,8 +36,8 @@ public class UserSessionIdListMessageProcessorTest extends AbstractFriendsListTe
 		message.addUserMapping(bob.getUserId(), bobSid);
 		message.addUserMapping(carol.getUserId(), carolSid);
 		
-		UserSessionIdListMessageProcessor processor = new UserSessionIdListMessageProcessor();
-		processor.processMessage(friendsList, message);
+		UserSessionIdListMessageProcessor processor = new UserSessionIdListMessageProcessor(friendsList);
+		processor.processMessage(message);
 		
 		assertEquals(aliceSid, alice.getSessionId());
 		assertTrue(alice.isOnline());
@@ -54,8 +54,8 @@ public class UserSessionIdListMessageProcessorTest extends AbstractFriendsListTe
 		UserSessionIdListMessage message = new UserSessionIdListMessage();
 		message.addUserMapping(alice.getUserId(), new SessionId());
 		
-		UserSessionIdListMessageProcessor processor = new UserSessionIdListMessageProcessor();
-		processor.processMessage(friendsList, message);
+		UserSessionIdListMessageProcessor processor = new UserSessionIdListMessageProcessor(friendsList);
+		processor.processMessage(message);
 		
 		assertFalse(alice.isOnline());
 	}

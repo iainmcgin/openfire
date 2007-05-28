@@ -34,20 +34,20 @@ public class FriendListMessageProcessorTest {
 		Friend self = new Friend("testUser");
 		FriendsList friendsList = new FriendsList(self);
 		FriendListMessage message = new FriendListMessage();
-		message.addUser(100, "friend1", "Friend 1");
-		message.addUser(101, "friend2", "Friend 2");
-		message.addUser(102, "friend3", "Friend 3");
+		message.addUser(100L, "friend1", "Friend 1");
+		message.addUser(101L, "friend2", "Friend 2");
+		message.addUser(102L, "friend3", "Friend 3");
 		
-		FriendListMessageProcessor processor = new FriendListMessageProcessor();
-		processor.processMessage(friendsList, message);
+		FriendListMessageProcessor processor = new FriendListMessageProcessor(friendsList);
+		processor.processMessage(message);
 		
-		checkForFriend(friendsList, 100, "friend1", "Friend 1");
-		checkForFriend(friendsList, 101, "friend2", "Friend 2");
-		checkForFriend(friendsList, 102, "friend3", "Friend 3");
+		checkForFriend(friendsList, 100L, "friend1", "Friend 1");
+		checkForFriend(friendsList, 101L, "friend2", "Friend 2");
+		checkForFriend(friendsList, 102L, "friend3", "Friend 3");
 	}
 
 	private void checkForFriend(FriendsList friendsList, long userId, String userName, String displayName) {
-		assertTrue(friendsList.containsFriend(userId));
+		assertTrue("list does not contain friend \"" + userId + "\"", friendsList.containsFriend(userId));
 		Friend friend = friendsList.getFriend(userId);
 		assertEquals(userId, friend.getUserId());
 		assertEquals(userName, friend.getUserName());
