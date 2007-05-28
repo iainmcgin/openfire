@@ -21,12 +21,15 @@ package uk.azdev.openfire.net.messages;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.azdev.openfire.net.messages.incoming.DIdMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendGameInfoMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
+import uk.azdev.openfire.net.messages.incoming.FriendOfFriendListMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendStatusMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginChallengeMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginFailureMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
+import uk.azdev.openfire.net.messages.incoming.NewVersionAvailableMessage;
 import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientConfigurationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientInformationMessage;
@@ -54,6 +57,9 @@ public class MessageFactory {
 		addMessageType(new FriendStatusMessage());
 		addMessageType(new KeepaliveMessage());
 		addMessageType(new FriendGameInfoMessage());
+		addMessageType(new DIdMessage());
+		addMessageType(new FriendOfFriendListMessage());
+		addMessageType(new NewVersionAvailableMessage());
 	}
 
 	private void addMessageType(IMessage message) {

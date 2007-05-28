@@ -118,4 +118,8 @@ public class FriendsList {
 	public boolean areConnected(Friend a, Friend b) {
 		return friendConnections.get(a).contains(b);
 	}
+
+	public Set<Friend> getMyFriends() {
+		return friendConnections.get(self);
+	}
 }

@@ -37,7 +37,6 @@ public class ConnectionController implements ConnectionStateListener {
 	
 	public void start() throws UnknownHostException, IOException {
 		start(ProtocolConstants.XFIRE_SERVER_NAME, ProtocolConstants.XFIRE_SERVER_PORT);
-		
 	}
 	
 	public void start(String hostName, int port) throws UnknownHostException, IOException {

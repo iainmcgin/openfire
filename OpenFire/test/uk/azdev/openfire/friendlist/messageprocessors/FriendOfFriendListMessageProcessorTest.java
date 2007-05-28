@@ -61,8 +61,8 @@ public class FriendOfFriendListMessageProcessorTest {
 		message.addFriend(carol, carolsFriends);
 		message.addFriend(dave, davesFriends);
 		
-		FriendOfFriendListMessageProcessor processor = new FriendOfFriendListMessageProcessor();
-		processor.processMessage(list, message);
+		FriendOfFriendListMessageProcessor processor = new FriendOfFriendListMessageProcessor(list);
+		processor.processMessage(message);
 		
 		assertTrue(list.areConnected(alice, carol));
 		assertTrue(list.areConnected(bob, carol));
