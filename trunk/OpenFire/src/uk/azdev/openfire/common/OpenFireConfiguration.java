@@ -18,16 +18,129 @@
  */
 package uk.azdev.openfire.common;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
+
+import uk.azdev.openfire.net.ProtocolConstants;
+
 public class OpenFireConfiguration {
 	
 	private String xfireGamesIniPath = "xfire_games.ini";
+	private String username = "";
+	private String password = "";
+	private String longVersion = "3.2.0.0";
+	private long shortVersion = 75;
+	private String clientLanguage = "us";
+	private String[] skinList = { "XFire", "standard", "Separator", "XF_URL" }; 
+	private String activeSkin = "XFire";
+	private String activeTheme = "default";
+	private String partner = "";
+	private String xfireServerHostName = ProtocolConstants.XFIRE_SERVER_NAME;
+	private int xfireServerPortNum = ProtocolConstants.XFIRE_SERVER_PORT;
 	
 	public String getXfireGamesIniPath() {
 		return xfireGamesIniPath;
+	}
+	
+	public Reader getXfireGamesIni() {
+		try {
+			return new FileReader(xfireGamesIniPath);
+		} catch (FileNotFoundException e) {
+			// this should already have been checked when the config was parsed
+			throw new RuntimeException("XFire games ini file does not exist, but existence was already checked!");
+		}
 	}
 	
 	public void setXfireGamesIniPath(String xfireGamesIniPath) {
 		this.xfireGamesIniPath = xfireGamesIniPath;
 	}
 
+	public String getUsername() {
+		return username;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getLongVersion() {
+		return longVersion;
+	}
+	
+	public void setLongVersion(String longVersion) {
+		this.longVersion = longVersion;
+	}
+
+	public long getShortVersion() {
+		return shortVersion;
+	}
+	
+	public void setShortVersion(long shortVersion) {
+		this.shortVersion = shortVersion;
+	}
+
+	public String getClientLanguage() {
+		return clientLanguage;
+	}
+	
+	public void setClientLanguage(String clientLanguage) {
+		this.clientLanguage = clientLanguage;
+	}
+
+	public String getActiveSkin() {
+		return activeSkin;
+	}
+	
+	public void setActiveSkin(String activeSkin) {
+		this.activeSkin = activeSkin;
+	}
+
+	public String getActiveTheme() {
+		return activeTheme;
+	}
+	
+	public void setActiveTheme(String activeTheme) {
+		this.activeTheme = activeTheme;
+	}
+
+	public String getPartner() {
+		return partner;
+	}
+	
+	public void setPartner(String partner) {
+		this.partner = partner;
+	}
+
+	public String[] getSkinList() {
+		return skinList;
+	}
+	
+	public void setSkinList(String[] skinList) {
+		this.skinList = skinList;
+	}
+
+	public String getXfireServerHostName() {
+		return xfireServerHostName;
+	}
+	
+	public void setXfireServerHostName(String xfireServerHostName) {
+		this.xfireServerHostName = xfireServerHostName;
+	}
+	
+	public int getXfireServerPortNum() {
+		return xfireServerPortNum;
+	}
+	
+	public void setXfireServerPortNum(int xfireServerPortNum) {
+		this.xfireServerPortNum = xfireServerPortNum;
+	}
 }

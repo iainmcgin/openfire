@@ -18,33 +18,10 @@
  */
 package uk.azdev.openfire.friendlist.messageprocessors;
 
-import java.util.List;
-
-import uk.azdev.openfire.friendlist.Friend;
-import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.messages.IMessage;
-import uk.azdev.openfire.net.messages.incoming.FriendOfFriendListMessage;
 
-public class FriendOfFriendListMessageProcessor implements IMessageProcessor {
+public interface IMessageProcessor {
 
-	private FriendsList friendsList;
-	
-	public FriendOfFriendListMessageProcessor(FriendsList friendsList) {
-		this.friendsList = friendsList;
-	}
-	
-	public void processMessage(IMessage msg) {
-		FriendOfFriendListMessage message = (FriendOfFriendListMessage)msg;
-		
-		List<Friend> friends = message.getSecondDegreeOfSeparation();
-		
-		for(Friend friend : friends) {
-			friendsList.addFriend(friend);
-			List<Long> connections = message.getThirdDegreeOfSeparationFor(friend.getUserId());
-			for(Long thirdDegree : connections) {
-				friendsList.connect(friend, thirdDegree);
-			}
-		}
-	}
+	public void processMessage(IMessage message);
 	
 }

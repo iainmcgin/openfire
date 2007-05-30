@@ -18,33 +18,28 @@
  */
 package uk.azdev.openfire.friendlist.messageprocessors;
 
-import java.util.List;
-
-import uk.azdev.openfire.friendlist.Friend;
-import uk.azdev.openfire.friendlist.FriendsList;
+import uk.azdev.openfire.XFireConnection;
 import uk.azdev.openfire.net.messages.IMessage;
-import uk.azdev.openfire.net.messages.incoming.FriendOfFriendListMessage;
 
-public class FriendOfFriendListMessageProcessor implements IMessageProcessor {
-
-	private FriendsList friendsList;
+public class LoginFailureMessageProcessor implements IMessageProcessor {
 	
-	public FriendOfFriendListMessageProcessor(FriendsList friendsList) {
-		this.friendsList = friendsList;
+	private final XFireConnection connection;
+
+	public LoginFailureMessageProcessor(XFireConnection connection) {
+		this.connection = connection;
 	}
-	
-	public void processMessage(IMessage msg) {
-		FriendOfFriendListMessage message = (FriendOfFriendListMessage)msg;
-		
-		List<Friend> friends = message.getSecondDegreeOfSeparation();
-		
-		for(Friend friend : friends) {
-			friendsList.addFriend(friend);
-			List<Long> connections = message.getThirdDegreeOfSeparationFor(friend.getUserId());
-			for(Long thirdDegree : connections) {
-				friendsList.connect(friend, thirdDegree);
+
+	public void processMessage(IMessage message) {
+		new Thread(new Runnable() {
+
+			public void run() {
+				try {
+					connection.loginFailed();
+				} catch (Exception e) {
+					System.err.println("Error occurred while killing connection controller");
+					e.printStackTrace();
+				}
 			}
-		}
+		}).start();
 	}
-	
 }

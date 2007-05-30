@@ -16,33 +16,35 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire.friendlist.messageprocessors;
+package uk.azdev.openfire.common;
 
-import java.util.Set;
+public class XFireUpdate {
 
-import uk.azdev.openfire.friendlist.FriendsList;
-import uk.azdev.openfire.net.messages.IMessage;
-import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
-
-public class UserSessionIdListMessageProcessor implements IMessageProcessor {
-
-	private FriendsList friendsList;
-
-	public UserSessionIdListMessageProcessor(FriendsList friendsList) {
-		this.friendsList = friendsList;
+	private long versionNum;
+	private String updateDownloadUrl;
+	private long command;
+	private long fileId;
+	
+	public XFireUpdate(long versionNum, String updateDownloadUrl, long command, long fileId) {
+		this.versionNum = versionNum;
+		this.updateDownloadUrl = updateDownloadUrl;
+		this.command = command;
+		this.fileId = fileId;
 	}
 	
-	public void processMessage(IMessage msg) {
-		UserSessionIdListMessage message = (UserSessionIdListMessage)msg;
-		Set<Long> userIds = message.getUserIdList();
-		
-		for(long userId : userIds) {
-			if(message.getSessionIdForUser(userId).isZero()) {
-				friendsList.setFriendOffline(userId);
-			} else {
-				friendsList.setFriendOnline(userId, message.getSessionIdForUser(userId));
-			}
-		}
+	public long getVersionNum() {
+		return versionNum;
 	}
 	
+	public String getUpdateDownloadUrl() {
+		return updateDownloadUrl;
+	}
+	
+	public long getCommand() {
+		return command;
+	}
+	
+	public long getFileId() {
+		return fileId;
+	}
 }

@@ -23,11 +23,19 @@ import java.util.Set;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
+import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendStatusMessage;
 
-public class FriendStatusMessageProcessor {
+public class FriendStatusMessageProcessor implements IMessageProcessor {
 
-	public void processMessage(FriendsList friendsList, FriendStatusMessage message) {
+	private FriendsList friendsList;
+
+	public FriendStatusMessageProcessor(FriendsList friendsList) {
+		this.friendsList = friendsList;
+	}
+	
+	public void processMessage(IMessage msg) {
+		FriendStatusMessage message = (FriendStatusMessage)msg;
 		Set<SessionId> sessionIds = message.getSessionIdSet();
 		
 		for(SessionId sessionId : sessionIds) {
@@ -35,5 +43,4 @@ public class FriendStatusMessageProcessor {
 			friend.setStatus(message.getStatusForSessionId(sessionId));
 		}
 	}
-	
 }
