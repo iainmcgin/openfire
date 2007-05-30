@@ -25,22 +25,22 @@ import java.nio.channels.SocketChannel;
 
 import uk.azdev.openfire.net.messages.IMessage;
 
-public class ConnectionController implements ConnectionStateListener {
+public class ConnectionController implements ConnectionStateListener, IConnectionController {
 
 	private SocketChannel channel;
 	private IncomingMessagePump inPump;
 	private OutgoingMessagePump outPump;
+	private String xfireServerHostName;
+	private int xfireServerPortNum;
 	
-	public ConnectionController() {
+	public ConnectionController(String xfireServerHostName, int xfireServerPortNum) {
 		inPump = new IncomingMessagePump(this);
+		this.xfireServerHostName = xfireServerHostName;
+		this.xfireServerPortNum = xfireServerPortNum;
 	}
 	
 	public void start() throws UnknownHostException, IOException {
-		start(ProtocolConstants.XFIRE_SERVER_NAME, ProtocolConstants.XFIRE_SERVER_PORT);
-	}
-	
-	public void start(String hostName, int port) throws UnknownHostException, IOException {
-		channel = SocketChannel.open(new InetSocketAddress(hostName, port));
+		channel = SocketChannel.open(new InetSocketAddress(xfireServerHostName, xfireServerPortNum));
 		channel.configureBlocking(true);
 		
 		ChannelReader reader = new ChannelReader(channel);

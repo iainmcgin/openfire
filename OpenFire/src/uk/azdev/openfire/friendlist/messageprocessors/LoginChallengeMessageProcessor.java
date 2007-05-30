@@ -18,33 +18,32 @@
  */
 package uk.azdev.openfire.friendlist.messageprocessors;
 
-import java.util.List;
-
-import uk.azdev.openfire.friendlist.Friend;
-import uk.azdev.openfire.friendlist.FriendsList;
+import uk.azdev.openfire.common.OpenFireConfiguration;
+import uk.azdev.openfire.net.IConnectionController;
 import uk.azdev.openfire.net.messages.IMessage;
-import uk.azdev.openfire.net.messages.incoming.FriendOfFriendListMessage;
+import uk.azdev.openfire.net.messages.incoming.LoginChallengeMessage;
+import uk.azdev.openfire.net.messages.outgoing.LoginRequestMessage;
 
-public class FriendOfFriendListMessageProcessor implements IMessageProcessor {
+public class LoginChallengeMessageProcessor implements IMessageProcessor {
 
-	private FriendsList friendsList;
-	
-	public FriendOfFriendListMessageProcessor(FriendsList friendsList) {
-		this.friendsList = friendsList;
+	private IConnectionController controller;
+	private OpenFireConfiguration config;
+
+	public LoginChallengeMessageProcessor(IConnectionController controller, OpenFireConfiguration config) {
+		this.controller = controller;
+		this.config = config;
 	}
-	
+
 	public void processMessage(IMessage msg) {
-		FriendOfFriendListMessage message = (FriendOfFriendListMessage)msg;
+		LoginChallengeMessage message = (LoginChallengeMessage)msg;
+		String salt = message.getSalt();
 		
-		List<Friend> friends = message.getSecondDegreeOfSeparation();
+		LoginRequestMessage response = new LoginRequestMessage();
+		response.setUsername(config.getUsername());
+		response.setPassword(config.getPassword());
+		response.setFlags(0);
+		response.setSalt(salt);
 		
-		for(Friend friend : friends) {
-			friendsList.addFriend(friend);
-			List<Long> connections = message.getThirdDegreeOfSeparationFor(friend.getUserId());
-			for(Long thirdDegree : connections) {
-				friendsList.connect(friend, thirdDegree);
-			}
-		}
+		this.controller.sendMessage(response);
 	}
-	
 }

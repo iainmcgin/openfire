@@ -22,12 +22,19 @@ import java.util.List;
 
 import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
+import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
 
-public class FriendListMessageProcessor {
+public class FriendListMessageProcessor implements IMessageProcessor {
 	
-	public void processMessage(FriendsList friendsList, FriendListMessage message) {
-		
+	private FriendsList friendsList;
+	
+	public FriendListMessageProcessor(FriendsList friendsList) {
+		this.friendsList = friendsList;
+	}
+
+	public void processMessage(IMessage msg) {
+		FriendListMessage message = (FriendListMessage)msg;
 		List<Long> userIds = message.getUserIdList();
 		
 		for(long userId : userIds) {

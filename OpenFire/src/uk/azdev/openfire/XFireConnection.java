@@ -36,6 +36,7 @@ import uk.azdev.openfire.friendlist.messageprocessors.LoginSuccessMessageProcess
 import uk.azdev.openfire.friendlist.messageprocessors.NewVersionAvailableMessageProcessor;
 import uk.azdev.openfire.friendlist.messageprocessors.UserSessionIdListMessageProcessor;
 import uk.azdev.openfire.net.ConnectionController;
+import uk.azdev.openfire.net.IConnectionController;
 import uk.azdev.openfire.net.MessageListener;
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
@@ -52,7 +53,7 @@ import uk.azdev.openfire.net.messages.outgoing.ClientVersionMessage;
 public class XFireConnection implements MessageListener {
 
 	OpenFireConfiguration config;
-	ConnectionController controller;
+	IConnectionController controller;
 	
 	private Map<Integer,IMessageProcessor> processorMap;
 	private FriendsList friendList;
@@ -61,10 +62,11 @@ public class XFireConnection implements MessageListener {
 		this.config = config;
 		
 		friendList = new FriendsList(new Friend(config.getUsername()));
-		initProcessorMap();
 		
-		controller = new ConnectionController();
+		controller = new ConnectionController(config.getXfireServerHostName(), config.getXfireServerPortNum());
 		controller.addMessageListener(this);
+		
+		initProcessorMap();
 	}
 	
 	public void connect() throws UnknownHostException, IOException {
@@ -114,11 +116,11 @@ public class XFireConnection implements MessageListener {
 	}
 
 	public void loginFailed() throws InterruptedException, IOException {
-		controller.stop();
+		disconnect();
 	}
 	
 	public void reconnect() throws InterruptedException, IOException {
-		controller.stop();
-		controller.start();
+		disconnect();
+		connect();
 	}
 }

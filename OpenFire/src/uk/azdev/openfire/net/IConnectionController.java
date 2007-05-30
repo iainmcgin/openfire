@@ -16,33 +16,23 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire.friendlist.messageprocessors;
+package uk.azdev.openfire.net;
 
-import java.util.Set;
+import java.io.IOException;
+import java.net.UnknownHostException;
 
-import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.messages.IMessage;
-import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
 
-public class UserSessionIdListMessageProcessor implements IMessageProcessor {
+public interface IConnectionController {
 
-	private FriendsList friendsList;
+	public abstract void start() throws UnknownHostException, IOException;
 
-	public UserSessionIdListMessageProcessor(FriendsList friendsList) {
-		this.friendsList = friendsList;
-	}
-	
-	public void processMessage(IMessage msg) {
-		UserSessionIdListMessage message = (UserSessionIdListMessage)msg;
-		Set<Long> userIds = message.getUserIdList();
-		
-		for(long userId : userIds) {
-			if(message.getSessionIdForUser(userId).isZero()) {
-				friendsList.setFriendOffline(userId);
-			} else {
-				friendsList.setFriendOnline(userId, message.getSessionIdForUser(userId));
-			}
-		}
-	}
-	
+	public abstract void stop() throws InterruptedException, IOException;
+
+	public abstract void addMessageListener(MessageListener listener);
+
+	public abstract void removeMessageListener(MessageListener listener);
+
+	public abstract void sendMessage(IMessage message);
+
 }

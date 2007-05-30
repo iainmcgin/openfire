@@ -18,33 +18,28 @@
  */
 package uk.azdev.openfire.friendlist.messageprocessors;
 
-import java.util.List;
-
-import uk.azdev.openfire.friendlist.Friend;
-import uk.azdev.openfire.friendlist.FriendsList;
+import uk.azdev.openfire.common.OpenFireConfiguration;
+import uk.azdev.openfire.net.IConnectionController;
 import uk.azdev.openfire.net.messages.IMessage;
-import uk.azdev.openfire.net.messages.incoming.FriendOfFriendListMessage;
+import uk.azdev.openfire.net.messages.outgoing.ClientConfigurationMessage;
 
-public class FriendOfFriendListMessageProcessor implements IMessageProcessor {
+public class LoginSuccessMessageProcessor implements IMessageProcessor {
 
-	private FriendsList friendsList;
-	
-	public FriendOfFriendListMessageProcessor(FriendsList friendsList) {
-		this.friendsList = friendsList;
+	private final IConnectionController controller;
+	private final OpenFireConfiguration config;
+
+	public LoginSuccessMessageProcessor(IConnectionController controller, OpenFireConfiguration config) {
+		this.controller = controller;
+		this.config = config;
 	}
-	
-	public void processMessage(IMessage msg) {
-		FriendOfFriendListMessage message = (FriendOfFriendListMessage)msg;
+
+	public void processMessage(IMessage message) {
+		ClientConfigurationMessage clientConfig = new ClientConfigurationMessage();
+		clientConfig.setLanguage(config.getClientLanguage());
+		clientConfig.setActiveSkin(config.getActiveSkin());
+		clientConfig.setActiveTheme(config.getActiveTheme());
+		clientConfig.setPartner(config.getPartner());
 		
-		List<Friend> friends = message.getSecondDegreeOfSeparation();
-		
-		for(Friend friend : friends) {
-			friendsList.addFriend(friend);
-			List<Long> connections = message.getThirdDegreeOfSeparationFor(friend.getUserId());
-			for(Long thirdDegree : connections) {
-				friendsList.connect(friend, thirdDegree);
-			}
-		}
+		controller.sendMessage(clientConfig);
 	}
-	
 }

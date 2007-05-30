@@ -30,7 +30,6 @@ import java.util.concurrent.CountDownLatch;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -54,11 +53,6 @@ public class ConnectionControllerTest {
 	Mockery mockery = new JUnit4Mockery();
 	ConnectionController controller;
 	
-	@Before
-	public void setUp() throws Exception {
-		controller = new ConnectionController();
-	}
-	
 	@Test
 	public void testSendMessages() throws IOException, InterruptedException {
 		MessageReceivingServerEmulator emulator = new MessageReceivingServerEmulator();
@@ -66,7 +60,8 @@ public class ConnectionControllerTest {
 		
 		emulator.start();
 		
-		controller.start("127.0.0.1", boundPort);
+		controller = new ConnectionController("127.0.0.1", boundPort);
+		controller.start();
 		
 		controller.sendMessage(ClientInformationMessageTest.createTestMessage());
 		controller.sendMessage(ClientVersionMessageTest.createTestMessage());
@@ -106,8 +101,10 @@ public class ConnectionControllerTest {
 		listener.latch = new CountDownLatch(3);
 		listener.notifyTarget = messageMutex;
 		
+		controller = new ConnectionController("127.0.0.1", boundPort);
+		
 		controller.addMessageListener(listener);
-		controller.start("127.0.0.1", boundPort);
+		controller.start();
 		
 		listener.latch.await();
 		
