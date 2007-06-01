@@ -136,7 +136,7 @@ public class ListAttributeValue implements AttributeValue<List<AttributeValue<?>
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("{ ");
+		buffer.append("[ ");
 		
 		Iterator<AttributeValue<?>> iter = valueList.iterator();
 		while(iter.hasNext()) {
@@ -147,7 +147,7 @@ public class ListAttributeValue implements AttributeValue<List<AttributeValue<?>
 			}
 		}
 		
-		buffer.append(" }");
+		buffer.append(" ]");
 		
 		return buffer.toString();
 	}
