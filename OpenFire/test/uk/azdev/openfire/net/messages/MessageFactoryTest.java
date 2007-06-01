@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
 import uk.azdev.openfire.net.messages.incoming.DIdMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendGameInfoMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
@@ -65,6 +66,7 @@ public class MessageFactoryTest {
 		assertTrue(factory.isKnownMessageType(DIdMessage.DID_MESSAGE_TYPE_ID));
 		assertTrue(factory.isKnownMessageType(FriendOfFriendListMessage.FRIEND_OF_FRIEND_LIST_MESSAGE_TYPE));
 		assertTrue(factory.isKnownMessageType(NewVersionAvailableMessage.TYPE_ID));
+		assertTrue(factory.isKnownMessageType(ChatMessage.TYPE_ID));
 		assertFalse(factory.isKnownMessageType(-1));
 	}
 	
@@ -85,6 +87,7 @@ public class MessageFactoryTest {
 		assertTrue(factory.createMessage(DIdMessage.DID_MESSAGE_TYPE_ID) instanceof DIdMessage);
 		assertTrue(factory.createMessage(FriendOfFriendListMessage.FRIEND_OF_FRIEND_LIST_MESSAGE_TYPE) instanceof FriendOfFriendListMessage);
 		assertTrue(factory.createMessage(NewVersionAvailableMessage.TYPE_ID) instanceof NewVersionAvailableMessage);
+		assertTrue(factory.createMessage(ChatMessage.TYPE_ID) instanceof ChatMessage);
 	}
 	
 	@Test(expected=UnknownMessageTypeException.class)
