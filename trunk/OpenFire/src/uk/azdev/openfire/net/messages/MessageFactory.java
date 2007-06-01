@@ -21,6 +21,7 @@ package uk.azdev.openfire.net.messages;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
 import uk.azdev.openfire.net.messages.incoming.DIdMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendGameInfoMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
@@ -60,6 +61,7 @@ public class MessageFactory {
 		addMessageType(new DIdMessage());
 		addMessageType(new FriendOfFriendListMessage());
 		addMessageType(new NewVersionAvailableMessage());
+		addMessageType(new ChatMessage());
 	}
 
 	private void addMessageType(IMessage message) {
