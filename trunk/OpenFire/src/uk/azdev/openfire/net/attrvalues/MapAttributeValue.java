@@ -50,7 +50,7 @@ public abstract class MapAttributeValue<MapType extends AttributeMap<?>> impleme
 	
 	@Override
 	public String toString() {
-		return map.toString();
+		return "{\n" + map.toString() + "}";
 	}
 
 }
