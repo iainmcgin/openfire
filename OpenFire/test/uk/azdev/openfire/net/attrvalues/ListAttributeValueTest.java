@@ -151,7 +151,7 @@ public class ListAttributeValueTest {
 		value.addValue(new Int32AttributeValue(1));
 		value.addValue(new Int32AttributeValue(2));
 		
-		assertEquals("{ 0 (int32), 1 (int32), 2 (int32) }", value.toString());
+		assertEquals("[ 0 (int32), 1 (int32), 2 (int32) ]", value.toString());
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
