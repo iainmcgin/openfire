@@ -56,6 +56,10 @@ public class Friend {
 	}
 	
 	public String getDisplayName() {
+		if(displayName == null) {
+			return userName;
+		}
+		
 		return displayName;
 	}
 

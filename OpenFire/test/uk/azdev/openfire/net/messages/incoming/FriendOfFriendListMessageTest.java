@@ -59,6 +59,11 @@ public class FriendOfFriendListMessageTest {
 	private static final long[] FIONA_CONNECTIONS = { DAVE_UID, ELTON_UID };
 	private static final long[] GARY_CONNECTIONS =  { DAVE_UID, ELTON_UID };
 	
+	private static final Friend DAVE = new Friend(DAVE_UID, DAVE_UNAME, DAVE_DNAME);
+	private static final Friend ELTON = new Friend(ELTON_UID, ELTON_UNAME, ELTON_DNAME);
+	private static final Friend FIONA = new Friend(FIONA_UID, FIONA_UNAME, FIONA_DNAME);
+	private static final Friend GARY = new Friend(GARY_UID, GARY_UNAME, GARY_DNAME);
+	
 	private FriendOfFriendListMessage message;
 	
 	@Before
@@ -71,21 +76,21 @@ public class FriendOfFriendListMessageTest {
 		ByteBuffer buffer = TestUtils.getByteBufferForResource(this.getClass(), "friendoffriendlist.sampledata");
 		message.readMessageContent(buffer);
 		
-		assertEquals(4, message.getSecondDegreeOfSeparation().size());
-		Friend dave = message.getSecondDegreeOfSeparation().get(0);
-		Friend elton = message.getSecondDegreeOfSeparation().get(1);
-		Friend fiona = message.getSecondDegreeOfSeparation().get(2);
-		Friend gary = message.getSecondDegreeOfSeparation().get(3);
+		assertEquals(4, message.getFriendsOfFriends().size());
+		Friend dave = message.getFriendsOfFriends().get(0);
+		Friend elton = message.getFriendsOfFriends().get(1);
+		Friend fiona = message.getFriendsOfFriends().get(2);
+		Friend gary = message.getFriendsOfFriends().get(3);
 		
 		checkFriend(dave, DAVE_UID, DAVE_UNAME, DAVE_DNAME, new SessionId(DAVE_SID));
 		checkFriend(elton, ELTON_UID, ELTON_UNAME, ELTON_DNAME, new SessionId(ELTON_SID));
 		checkFriend(fiona, FIONA_UID, FIONA_UNAME, FIONA_DNAME, new SessionId(FIONA_SID));
 		checkFriend(gary, GARY_UID, GARY_UNAME, GARY_DNAME, new SessionId(GARY_SID));
 		
-		checkConnections(message.getThirdDegreeOfSeparationFor(dave.getUserId()), DAVE_CONNECTIONS);
-		checkConnections(message.getThirdDegreeOfSeparationFor(elton.getUserId()), ELTON_CONNECTIONS);
-		checkConnections(message.getThirdDegreeOfSeparationFor(fiona.getUserId()), FIONA_CONNECTIONS);
-		checkConnections(message.getThirdDegreeOfSeparationFor(gary.getUserId()), GARY_CONNECTIONS);
+		checkConnections(message.getFriendsInCommon(dave.getUserId()), DAVE_CONNECTIONS);
+		checkConnections(message.getFriendsInCommon(elton.getUserId()), ELTON_CONNECTIONS);
+		checkConnections(message.getFriendsInCommon(fiona.getUserId()), FIONA_CONNECTIONS);
+		checkConnections(message.getFriendsInCommon(gary.getUserId()), GARY_CONNECTIONS);
 	}
 
 	private void checkFriend(Friend f, long expectedUserId, String expectedUserName, String expectedDisplayName, SessionId expectedSessionId) {
@@ -140,6 +145,33 @@ public class FriendOfFriendListMessageTest {
 	@Test
 	public void testNewInstance() {
 		assertTrue(message.newInstance().getClass() == FriendOfFriendListMessage.class);
+	}
+	
+	private static final String EXPECTED_TO_STRING
+		= "Friend of Friend List Message\n" 
+		+ "\t" + DAVE + " -> " + DAVE_CONNECTIONS[0] + ", " + DAVE_CONNECTIONS[1] + "\n"
+        + "\t" + ELTON + " -> " + ELTON_CONNECTIONS[0] + ", " + ELTON_CONNECTIONS[1] + "\n"
+        + "\t" + FIONA + " -> " + FIONA_CONNECTIONS[0] + ", " + FIONA_CONNECTIONS[1] + "\n"
+        + "\t" + GARY + " -> " + GARY_CONNECTIONS[0] + ", " + GARY_CONNECTIONS[1] + "\n";
+		
+	
+	@Test
+	public void testToString() {
+		Friend dave = new Friend(DAVE_UID, DAVE_UNAME, DAVE_DNAME);
+		dave.setOnline(new SessionId(DAVE_SID));
+		Friend elton = new Friend(ELTON_UID, ELTON_UNAME, ELTON_DNAME);
+		elton.setOnline(new SessionId(ELTON_SID));
+		Friend fiona = new Friend(FIONA_UID, FIONA_UNAME, FIONA_DNAME);
+		fiona.setOnline(new SessionId(FIONA_SID));
+		Friend gary = new Friend(GARY_UID, GARY_UNAME, GARY_DNAME);
+		gary.setOnline(new SessionId(GARY_SID));
+		
+		message.addFriend(dave, toList(DAVE_CONNECTIONS));
+		message.addFriend(elton, toList(ELTON_CONNECTIONS));
+		message.addFriend(fiona, toList(FIONA_CONNECTIONS));
+		message.addFriend(gary, toList(GARY_CONNECTIONS));
+		
+		assertEquals(EXPECTED_TO_STRING, message.toString());
 	}
 
 }

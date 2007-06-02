@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import uk.azdev.openfire.common.OpenFireConfiguration;
-import uk.azdev.openfire.net.IConnectionController;
+import uk.azdev.openfire.net.IMessageSender;
 import uk.azdev.openfire.net.messages.incoming.LoginChallengeMessage;
 
 @RunWith(JMock.class)
@@ -46,7 +46,7 @@ public class LoginChallengeMessageProcessorTest {
 		message.setSalt("d3cd8b9eacb901fc153858786b047d1bb826ea75");
 		
 		final String expectedSaltedPass = "25e1911c4a08f46e864f156335c54e68aed701f0";
-		final IConnectionController controller = context.mock(IConnectionController.class);
+		final IMessageSender controller = context.mock(IMessageSender.class);
 		context.checking(new Expectations() {{
 			one(controller).sendMessage(with(new HasPropertyWithValue<LoginChallengeMessage>("saltedPassword", equal(expectedSaltedPass))));
 		}});

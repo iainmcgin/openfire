@@ -18,33 +18,23 @@
  */
 package uk.azdev.openfire.friendlist.messageprocessors;
 
-import java.util.List;
-
-import uk.azdev.openfire.friendlist.Friend;
-import uk.azdev.openfire.friendlist.FriendsList;
+import uk.azdev.openfire.XFireConnection;
+import uk.azdev.openfire.conversations.Conversation;
 import uk.azdev.openfire.net.messages.IMessage;
-import uk.azdev.openfire.net.messages.incoming.FriendOfFriendListMessage;
+import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
 
-public class FriendOfFriendListMessageProcessor implements IMessageProcessor {
+public class ChatMessageProcessor implements IMessageProcessor {
 
-	private FriendsList friendsList;
+	private XFireConnection connection;
 	
-	public FriendOfFriendListMessageProcessor(FriendsList friendsList) {
-		this.friendsList = friendsList;
+	public ChatMessageProcessor(XFireConnection connection) {
+		this.connection = connection;
 	}
 	
 	public void processMessage(IMessage msg) {
-		FriendOfFriendListMessage message = (FriendOfFriendListMessage)msg;
-		
-		List<Friend> friends = message.getFriendsOfFriends();
-		
-		for(Friend friendOfFriend : friends) {
-			friendsList.addFriend(friendOfFriend);
-			List<Long> sharedFriends = message.getFriendsInCommon(friendOfFriend.getUserId());
-			for(Long sharedFriendId : sharedFriends) {
-				friendsList.connect(friendOfFriend, sharedFriendId);
-			}
-		}
+		ChatMessage message = (ChatMessage)msg;
+		Conversation conversation = connection.getConversation(message.getSessionId());
+		conversation.receiveMessage(message);
 	}
-	
+
 }

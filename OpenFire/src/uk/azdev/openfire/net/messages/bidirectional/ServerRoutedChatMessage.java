@@ -16,35 +16,27 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire.friendlist.messageprocessors;
+package uk.azdev.openfire.net.messages.bidirectional;
 
-import java.util.List;
-
-import uk.azdev.openfire.friendlist.Friend;
-import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.messages.IMessage;
-import uk.azdev.openfire.net.messages.incoming.FriendOfFriendListMessage;
 
-public class FriendOfFriendListMessageProcessor implements IMessageProcessor {
+public class ServerRoutedChatMessage extends ChatMessage {
 
-	private FriendsList friendsList;
+	public static final int SR_TYPE_ID = 133;
 	
-	public FriendOfFriendListMessageProcessor(FriendsList friendsList) {
-		this.friendsList = friendsList;
+	@Override
+	public int getMessageId() {
+		return SR_TYPE_ID;
 	}
 	
-	public void processMessage(IMessage msg) {
-		FriendOfFriendListMessage message = (FriendOfFriendListMessage)msg;
-		
-		List<Friend> friends = message.getFriendsOfFriends();
-		
-		for(Friend friendOfFriend : friends) {
-			friendsList.addFriend(friendOfFriend);
-			List<Long> sharedFriends = message.getFriendsInCommon(friendOfFriend.getUserId());
-			for(Long sharedFriendId : sharedFriends) {
-				friendsList.connect(friendOfFriend, sharedFriendId);
-			}
-		}
+	@Override
+	public IMessage newInstance() {
+		return new ServerRoutedChatMessage();
+	}
+	
+	@Override
+	public String toString() {
+		return "Server Routed " + super.toString();
 	}
 	
 }

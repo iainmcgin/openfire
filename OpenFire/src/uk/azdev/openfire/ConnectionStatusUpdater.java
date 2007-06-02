@@ -16,30 +16,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire.friendlist.messageprocessors;
+package uk.azdev.openfire;
 
-import uk.azdev.openfire.ConnectionStatusUpdater;
-import uk.azdev.openfire.net.messages.IMessage;
+public interface ConnectionStatusUpdater {
 
-public class LoginFailureMessageProcessor implements IMessageProcessor {
+	public void loginFailed();
 	
-	private final ConnectionStatusUpdater statusUpdater;
-
-	public LoginFailureMessageProcessor(ConnectionStatusUpdater statusUpdater) {
-		this.statusUpdater = statusUpdater;
-	}
-
-	public void processMessage(IMessage message) {
-		new Thread(new Runnable() {
-
-			public void run() {
-				try {
-					statusUpdater.loginFailed();
-				} catch (Exception e) {
-					System.err.println("Error occurred while killing connection controller");
-					e.printStackTrace();
-				}
-			}
-		}).start();
-	}
 }

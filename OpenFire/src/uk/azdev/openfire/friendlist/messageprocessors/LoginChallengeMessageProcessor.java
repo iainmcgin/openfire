@@ -19,18 +19,18 @@
 package uk.azdev.openfire.friendlist.messageprocessors;
 
 import uk.azdev.openfire.common.OpenFireConfiguration;
-import uk.azdev.openfire.net.IConnectionController;
+import uk.azdev.openfire.net.IMessageSender;
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginChallengeMessage;
 import uk.azdev.openfire.net.messages.outgoing.LoginRequestMessage;
 
 public class LoginChallengeMessageProcessor implements IMessageProcessor {
 
-	private IConnectionController controller;
+	private IMessageSender messageSender;
 	private OpenFireConfiguration config;
 
-	public LoginChallengeMessageProcessor(IConnectionController controller, OpenFireConfiguration config) {
-		this.controller = controller;
+	public LoginChallengeMessageProcessor(IMessageSender messageSender, OpenFireConfiguration config) {
+		this.messageSender = messageSender;
 		this.config = config;
 	}
 
@@ -44,6 +44,6 @@ public class LoginChallengeMessageProcessor implements IMessageProcessor {
 		response.setFlags(0);
 		response.setSalt(salt);
 		
-		this.controller.sendMessage(response);
+		messageSender.sendMessage(response);
 	}
 }
