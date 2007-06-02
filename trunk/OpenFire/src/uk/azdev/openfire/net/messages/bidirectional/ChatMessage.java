@@ -158,4 +158,35 @@ public class ChatMessage extends StringMapBasedMessage {
 	public IMessage newInstance() {
 		return new ChatMessage();
 	}
+	
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		
+		buffer.append("Chat Message\n");
+		buffer.append("\tPeer SID: ");
+		buffer.append(sid);
+		buffer.append("\n\tType: ");
+		switch((int)messageType) {
+		case CONTENT_MESSAGE_TYPE:
+			buffer.append("Content\n");
+			buffer.append("\tMessage index: ");
+			buffer.append(messageIndex);
+			buffer.append("\n\tMessage: \"");
+			buffer.append(message);
+			buffer.append("\"");
+			break;
+		case USER_TYPING_MESSAGE_TYPE:
+			buffer.append("Typing\n");
+			buffer.append("\tMessage index: ");
+			buffer.append(messageIndex);
+			buffer.append("\n\tTyping val: ");
+			buffer.append(typingVal);
+			break;
+		default:
+			buffer.append("Unknown\n");
+		}
+		
+		return buffer.toString();
+	}
 }

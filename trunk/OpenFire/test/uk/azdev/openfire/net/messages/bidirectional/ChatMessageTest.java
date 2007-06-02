@@ -94,5 +94,32 @@ public class ChatMessageTest {
 	public void testNewInstance() {
 		assertTrue(message.newInstance().getClass() == ChatMessage.class);
 	}
+	
+	private static final Object EXPECTED_TO_STRING_CONTENT_MSG
+		= "Chat Message\n" +
+		  "\tPeer SID: SID:<01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10>\n" +
+		  "\tType: Content\n" +
+		  "\tMessage index: 2\n" +
+		  "\tMessage: \"a hoy hoy\"";
+	@Test
+	public void testToString_withContentMessage() {
+		message.setSessionId(new SessionId(EXPECTED_SID));
+		message.setContentPayload(2L, "a hoy hoy");
+		assertEquals(EXPECTED_TO_STRING_CONTENT_MSG, message.toString());
+	}
+	
+	private static final Object EXPECTED_TO_STRING_TYPING_MSG
+	= "Chat Message\n" +
+	  "\tPeer SID: SID:<01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10>\n" +
+	  "\tType: Typing\n" +
+	  "\tMessage index: 1\n" +
+	  "\tTyping val: 1";
+	
+	@Test
+	public void testToString_withTypingMessage() {
+		message.setSessionId(new SessionId(EXPECTED_SID));
+		message.setTypingPayload(1L, 1L);
+		assertEquals(EXPECTED_TO_STRING_TYPING_MSG, message.toString());
+	}
 
 }

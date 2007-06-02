@@ -18,6 +18,7 @@
  */
 package uk.azdev.openfire.friendlist;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -121,5 +122,9 @@ public class FriendsList {
 
 	public Set<Friend> getMyFriends() {
 		return friendConnections.get(self);
+	}
+	
+	public Collection<Friend> getAllFriends() {
+		return friendsById.values();
 	}
 }

@@ -19,27 +19,34 @@
 package uk.azdev.openfire.friendlist.messageprocessors;
 
 import uk.azdev.openfire.common.OpenFireConfiguration;
-import uk.azdev.openfire.net.IConnectionController;
+import uk.azdev.openfire.friendlist.Friend;
+import uk.azdev.openfire.net.IMessageSender;
 import uk.azdev.openfire.net.messages.IMessage;
+import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientConfigurationMessage;
 
 public class LoginSuccessMessageProcessor implements IMessageProcessor {
 
-	private final IConnectionController controller;
-	private final OpenFireConfiguration config;
+	private IMessageSender messageSender;
+	private OpenFireConfiguration config;
+	private Friend self;
 
-	public LoginSuccessMessageProcessor(IConnectionController controller, OpenFireConfiguration config) {
-		this.controller = controller;
+	public LoginSuccessMessageProcessor(IMessageSender messageSender, Friend self, OpenFireConfiguration config) {
+		this.messageSender = messageSender;
 		this.config = config;
+		this.self = self;
 	}
 
-	public void processMessage(IMessage message) {
+	public void processMessage(IMessage msg) {
+		LoginSuccessMessage message = (LoginSuccessMessage)msg;
+		self.setOnline(message.getSessionId());
+		
 		ClientConfigurationMessage clientConfig = new ClientConfigurationMessage();
 		clientConfig.setLanguage(config.getClientLanguage());
 		clientConfig.setActiveSkin(config.getActiveSkin());
 		clientConfig.setActiveTheme(config.getActiveTheme());
 		clientConfig.setPartner(config.getPartner());
 		
-		controller.sendMessage(clientConfig);
+		messageSender.sendMessage(clientConfig);
 	}
 }

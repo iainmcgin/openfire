@@ -53,6 +53,14 @@ public class FriendTest {
 		friend.setDisplayName("New display name");
 		assertEquals("New display name", friend.getDisplayName());
 	}
+	
+	@Test
+	public void testGetDisplayName_withNoAliasSet() {
+		Friend f = new Friend("testFriend");
+		assertEquals("testFriend", f.getDisplayName());
+		f.setDisplayName("Test Friend");
+		assertEquals("Test Friend", f.getDisplayName());
+	}
 
 	@Test
 	public void testGetStatusString() {

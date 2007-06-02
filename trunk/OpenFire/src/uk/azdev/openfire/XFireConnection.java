@@ -24,8 +24,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.azdev.openfire.common.OpenFireConfiguration;
+import uk.azdev.openfire.common.SessionId;
+import uk.azdev.openfire.conversations.Conversation;
 import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
+import uk.azdev.openfire.friendlist.messageprocessors.ChatMessageProcessor;
 import uk.azdev.openfire.friendlist.messageprocessors.FriendListMessageProcessor;
 import uk.azdev.openfire.friendlist.messageprocessors.FriendOfFriendListMessageProcessor;
 import uk.azdev.openfire.friendlist.messageprocessors.FriendStatusMessageProcessor;
@@ -37,8 +40,11 @@ import uk.azdev.openfire.friendlist.messageprocessors.NewVersionAvailableMessage
 import uk.azdev.openfire.friendlist.messageprocessors.UserSessionIdListMessageProcessor;
 import uk.azdev.openfire.net.ConnectionController;
 import uk.azdev.openfire.net.IConnectionController;
+import uk.azdev.openfire.net.IMessageSender;
 import uk.azdev.openfire.net.MessageListener;
 import uk.azdev.openfire.net.messages.IMessage;
+import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
+import uk.azdev.openfire.net.messages.bidirectional.ServerRoutedChatMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendOfFriendListMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendStatusMessage;
@@ -50,13 +56,17 @@ import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientInformationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientVersionMessage;
 
-public class XFireConnection implements MessageListener {
+public class XFireConnection implements MessageListener, IMessageSender, ConnectionStatusUpdater {
 
-	OpenFireConfiguration config;
-	IConnectionController controller;
+	private OpenFireConfiguration config;
+	private IConnectionController controller;
+	private KeepaliveTimer timer;
 	
 	private Map<Integer,IMessageProcessor> processorMap;
 	private FriendsList friendList;
+	
+	private Map<SessionId, Conversation> activeConversations;
+	
 	
 	public XFireConnection(OpenFireConfiguration config) {
 		this.config = config;
@@ -65,16 +75,20 @@ public class XFireConnection implements MessageListener {
 		
 		controller = new ConnectionController(config.getXfireServerHostName(), config.getXfireServerPortNum());
 		controller.addMessageListener(this);
+		timer = new KeepaliveTimer(this);
+		activeConversations = new HashMap<SessionId, Conversation>();
 		
 		initProcessorMap();
 	}
 	
 	public void connect() throws UnknownHostException, IOException {
 		controller.start();
+		timer.start();
 		sendClientInfo();
 	}
 	
 	public void disconnect() throws InterruptedException, IOException {
+		timer.stop();
 		controller.stop();
 	}
 	
@@ -88,21 +102,23 @@ public class XFireConnection implements MessageListener {
 		processorMap.put(FriendOfFriendListMessage.FRIEND_OF_FRIEND_LIST_MESSAGE_TYPE, new FriendOfFriendListMessageProcessor(friendList));
 		processorMap.put(FriendStatusMessage.FRIEND_STATUS_MESSAGE_ID, new FriendStatusMessageProcessor(friendList));
 		processorMap.put(UserSessionIdListMessage.USER_SESSION_ID_LIST_MESSAGE_ID, new UserSessionIdListMessageProcessor(friendList));
-		processorMap.put(LoginChallengeMessage.LOGIN_CHALLENGE_MESSAGE_ID, new LoginChallengeMessageProcessor(controller, config));
-		processorMap.put(LoginSuccessMessage.LOGIN_SUCCESS_MESSAGE_ID, new LoginSuccessMessageProcessor(controller, config));
+		processorMap.put(LoginChallengeMessage.LOGIN_CHALLENGE_MESSAGE_ID, new LoginChallengeMessageProcessor(this, config));
+		processorMap.put(LoginSuccessMessage.LOGIN_SUCCESS_MESSAGE_ID, new LoginSuccessMessageProcessor(this, friendList.getSelf(), config));
 		processorMap.put(LoginFailureMessage.LOGIN_FAILURE_MESSAGE_ID, new LoginFailureMessageProcessor(this));
 		processorMap.put(NewVersionAvailableMessage.TYPE_ID, new NewVersionAvailableMessageProcessor(this, config));
+		processorMap.put(ServerRoutedChatMessage.SR_TYPE_ID, new ChatMessageProcessor(this));
+		processorMap.put(ChatMessage.TYPE_ID, new ChatMessageProcessor(this));
 	}
 	
 	private void sendClientInfo() {
 		ClientInformationMessage clInfo = new ClientInformationMessage();
 		clInfo.setVersion(config.getLongVersion());
 		clInfo.setSkinList(config.getSkinList());
-		controller.sendMessage(clInfo);
+		sendMessage(clInfo);
 		
 		ClientVersionMessage clVersion = new ClientVersionMessage();
 		clVersion.setVersion(config.getShortVersion());
-		controller.sendMessage(clVersion);
+		sendMessage(clVersion);
 	}
 	
 	public void messageReceived(IMessage message) {
@@ -115,12 +131,36 @@ public class XFireConnection implements MessageListener {
 		controller.addMessageListener(listener);
 	}
 
-	public void loginFailed() throws InterruptedException, IOException {
-		disconnect();
+	public void loginFailed() {
+		try {
+			disconnect();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void reconnect() throws InterruptedException, IOException {
 		disconnect();
 		connect();
+	}
+
+	public void sendMessage(IMessage message) {
+		controller.sendMessage(message);
+		timer.resetTimer();
+	}
+
+	public Conversation getConversation(SessionId peerSid) {
+		
+		if(!activeConversations.containsKey(peerSid)) {
+			Friend peer = friendList.getOnlineFriend(peerSid);
+			Conversation conversation = new Conversation(friendList.getSelf(), peer, this);
+			activeConversations.put(peerSid, conversation);
+		}
+		
+		return activeConversations.get(peerSid);
 	}
 }

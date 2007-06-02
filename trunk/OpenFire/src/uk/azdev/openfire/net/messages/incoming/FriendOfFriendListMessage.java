@@ -46,14 +46,14 @@ public class FriendOfFriendListMessage extends StringMapBasedMessage {
 	public static final int FRIEND_OF_FRIEND_LIST_MESSAGE_TYPE = 136;
 	
 	// friends of friends
-	private List<Friend> secondDegreeOfSeparation;
+	private List<Friend> friendsOfFriends;
 	
 	// friends of friends of friends
-	private Map<Long, List<Long>> thirdDegreeOfSeparation;
+	private Map<Long, List<Long>> friendsInCommon;
 	
 	public FriendOfFriendListMessage() {
-		secondDegreeOfSeparation = new LinkedList<Friend>();
-		thirdDegreeOfSeparation = new HashMap<Long, List<Long>>();
+		friendsOfFriends = new LinkedList<Friend>();
+		friendsInCommon = new HashMap<Long, List<Long>>();
 	}
 	
 	@Override
@@ -79,10 +79,10 @@ public class FriendOfFriendListMessage extends StringMapBasedMessage {
 			Friend friend = new Friend(userId, userName, displayName);
 			friend.setOnline(sessionId);
 			
-			secondDegreeOfSeparation.add(friend);
+			friendsOfFriends.add(friend);
 			
 			List<Long> otherFriends = extractThirdDegree(friendsListIter.next());
-			thirdDegreeOfSeparation.put(userId, otherFriends);
+			friendsInCommon.put(userId, otherFriends);
 		}
 	}
 
@@ -111,14 +111,14 @@ public class FriendOfFriendListMessage extends StringMapBasedMessage {
 		ListAttributeValue nickList = new ListAttributeValue();
 		ListAttributeValue connectionsList = new ListAttributeValue();
 		
-		for(Friend f : secondDegreeOfSeparation) {
+		for(Friend f : friendsOfFriends) {
 			uidList.addValue(new Int32AttributeValue(f.getUserId()));
 			sidList.addValue(new SessionIdAttributeValue(f.getSessionId()));
 			nameList.addValue(new StringAttributeValue(f.getUserName()));
 			nickList.addValue(new StringAttributeValue(f.getDisplayName()));
 			
 			ListAttributeValue friendList = new ListAttributeValue();
-			for(Long friendId : getThirdDegreeOfSeparationFor(f.getUserId())) {
+			for(Long friendId : getFriendsInCommon(f.getUserId())) {
 				friendList.addValue(new Int32AttributeValue(friendId));
 			}
 			
@@ -140,16 +140,44 @@ public class FriendOfFriendListMessage extends StringMapBasedMessage {
 		return new FriendOfFriendListMessage();
 	}
 
-	public List<Friend> getSecondDegreeOfSeparation() {
-		return secondDegreeOfSeparation;
+	public List<Friend> getFriendsOfFriends() {
+		return friendsOfFriends;
 	}
 	
-	public List<Long> getThirdDegreeOfSeparationFor(long userId) {
-		return thirdDegreeOfSeparation.get(userId);
+	public List<Long> getFriendsInCommon(long userId) {
+		return friendsInCommon.get(userId);
 	}
 
 	public void addFriend(Friend friend, List<Long> friendConnections) {
-		secondDegreeOfSeparation.add(friend);
-		thirdDegreeOfSeparation.put(friend.getUserId(), friendConnections);
+		friendsOfFriends.add(friend);
+		friendsInCommon.put(friend.getUserId(), friendConnections);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		
+		buffer.append("Friend of Friend List Message\n");
+		
+		for(Friend friend : friendsOfFriends) {
+			
+			buffer.append("\t");
+			buffer.append(friend.toString());
+			buffer.append(" -> ");
+			
+			List<Long> friends = friendsInCommon.get(friend.getUserId());
+			Iterator<Long> friendsIter = friends.iterator();
+			while(friendsIter.hasNext()) {
+				buffer.append(friendsIter.next());
+				
+				if(friendsIter.hasNext()) {
+					buffer.append(", ");
+				}
+			}
+			
+			buffer.append("\n");
+		}
+		
+		return buffer.toString();
 	}
 }
