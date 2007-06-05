@@ -31,6 +31,10 @@ public abstract class ConnectionThread implements Runnable {
 	
 	public ConnectionThread() {
 		this.listeners = new ArrayList<ConnectionStateListener>();
+		reset();
+	}
+	
+	public void reset() {
 		plannedStop = false;
 	}
 	
@@ -51,6 +55,9 @@ public abstract class ConnectionThread implements Runnable {
 	public void run() {
 		try {
 			doProcessing();
+			if(!plannedStop) {
+				throw new RuntimeException("unexpected termination of connection thread");
+			}
 		} catch(Exception e) {
 			notifyConnectionError(e);
 		}
