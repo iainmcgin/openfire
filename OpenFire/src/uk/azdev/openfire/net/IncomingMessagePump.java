@@ -20,20 +20,16 @@ package uk.azdev.openfire.net;
 
 import java.io.IOException;
 import java.nio.channels.AsynchronousCloseException;
-import java.util.LinkedList;
-import java.util.List;
 
 import uk.azdev.openfire.net.messages.IMessage;
 
 public class IncomingMessagePump extends ConnectionThread {
 
-	private List<MessageListener> messageListeners;
+	private boolean stopOnNoMessagesLeft;
 	private ChannelReader reader;
 	
-	public IncomingMessagePump(ConnectionStateListener listener) {
-		super(listener);
-		
-		messageListeners = new LinkedList<MessageListener>();
+	public IncomingMessagePump(boolean stopOnNoMessagesLeft) {
+		this.stopOnNoMessagesLeft = stopOnNoMessagesLeft;
 	}
 	
 	public void setReader(ChannelReader reader) {
@@ -43,34 +39,18 @@ public class IncomingMessagePump extends ConnectionThread {
 	@Override
 	public void doProcessing() throws IOException {
 		try {
-			IMessage message;
-			while((message = reader.readMessage()) != null) {
-				dispatchToListeners(message);
-			}
+			do {
+				IMessage message = reader.readMessage();
+				if(message != null) {
+					dispatchMessageToListeners(message);
+				} else if(stopOnNoMessagesLeft) {
+					return;
+				}
+			} while(!plannedStop);
 		} catch(AsynchronousCloseException e) {
 			if(!plannedStop) {
 				throw e;
 			}
-		}
-	}
-	
-	private void dispatchToListeners(IMessage message) {
-		synchronized(messageListeners) {
-			for(MessageListener messageListener : messageListeners) {
-				messageListener.messageReceived(message);
-			}
-		}
-	}
-	
-	public void addListener(MessageListener messageListener) {
-		synchronized(messageListeners) {
-			messageListeners.add(messageListener);
-		}
-	}
-	
-	public void removeListener(MessageListener messageListener) {
-		synchronized(messageListeners) {
-			messageListeners.remove(messageListener);
 		}
 	}
 }

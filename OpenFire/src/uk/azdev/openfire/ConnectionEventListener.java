@@ -16,12 +16,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire.net;
+package uk.azdev.openfire;
 
-import uk.azdev.openfire.net.messages.IMessage;
+import uk.azdev.openfire.common.SessionId;
 
-public interface MessageListener {
+public interface ConnectionEventListener {
 
-	public void messageReceived(IMessage message);
+	public void conversationUpdate(SessionId sessionId);
+	public void friendsListUpdated();
+	public void loginFailed();
+	public void disconnected();
+	public void connectionError();
 	
 }

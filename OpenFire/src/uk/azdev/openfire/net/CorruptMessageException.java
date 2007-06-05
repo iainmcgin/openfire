@@ -19,18 +19,13 @@
 package uk.azdev.openfire.net;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 
-import uk.azdev.openfire.net.messages.IMessage;
+public class CorruptMessageException extends IOException {
 
-public interface IConnectionController {
+	private static final long serialVersionUID = 1L;
 
-	public abstract void start() throws UnknownHostException, IOException;
-
-	public abstract void stop() throws InterruptedException, IOException;
-
-	public abstract void addStateListener(ConnectionStateListener listener);
-
-	public abstract void sendMessage(IMessage message);
-
+	public CorruptMessageException(String details) {
+		super(details);
+	}
+	
 }

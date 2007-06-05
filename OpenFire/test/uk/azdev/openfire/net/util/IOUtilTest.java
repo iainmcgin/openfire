@@ -63,17 +63,27 @@ public class IOUtilTest {
 	}
 	
 	@Test
-	public void testReadUnsignedShort_tooFewBytes() throws IOException {
+	public void testReadUnsignedShort_tooFewBytes() {
 		byte[] testBytes = { 0x10 };
 		ReadableByteChannel channel = createChannel(testBytes);
-		assertEquals(-1, IOUtil.readUnsignedShort(channel));
+		try {
+			IOUtil.readUnsignedShort(channel);
+			fail();
+		} catch(IOException e) {
+			assertEquals("insufficient but non-zero amount of bytes left in channel", e.getMessage());
+		}
 	}
 	
 	@Test
-	public void testReadUnsignedShort_noBytes() throws IOException {
+	public void testReadUnsignedShort_noBytes() {
 		byte[] testBytes = { };
 		ReadableByteChannel channel = createChannel(testBytes);
-		assertEquals(-1, IOUtil.readUnsignedShort(channel));
+		try {
+			IOUtil.readUnsignedShort(channel);
+			fail();
+		} catch(IOException e) {
+			assertEquals("no more bytes left in channel to read", e.getMessage());
+		}
 	}
 
 	private ReadableByteChannel createChannel(byte[] testBytes) {

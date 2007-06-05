@@ -129,22 +129,19 @@ public class StoredSessionReader {
 		}
 		
 		ByteBuffer buffer = IOUtil.createBuffer(numBytesToStrip);
-		int numRead = channel.read(buffer);
-		if(numRead != numBytesToStrip) {
-			throw new RuntimeException("number of bytes to strip exceeds channel length");
-		}
+		IOUtil.readAllBytesOrFail(channel, buffer, numBytesToStrip);
 	}
 	
 	private static void readAllMessages(ChannelReader reader, File messageOutputRoot) {
-		IMessage message;
+		
 		try {
-			while((message = reader.readMessage()) != null) {
+			while(true) {
+				IMessage message = reader.readMessage(); 
 				System.out.println(message);
 				System.out.println();
 				
 				writeMessageData(message, messageOutputRoot);
 			}
-			System.out.println("Done.");
 		} catch (IOException e) {
 			System.err.println("Error occurred while attempting to read message");
 			e.printStackTrace();
