@@ -25,7 +25,7 @@ import java.nio.channels.SocketChannel;
 
 import uk.azdev.openfire.net.messages.IMessage;
 
-public class ConnectionController implements ConnectionStateListener, IConnectionController {
+public class ConnectionController implements IConnectionController {
 
 	private SocketChannel channel;
 	private IncomingMessagePump inPump;
@@ -34,7 +34,8 @@ public class ConnectionController implements ConnectionStateListener, IConnectio
 	private int xfireServerPortNum;
 	
 	public ConnectionController(String xfireServerHostName, int xfireServerPortNum) {
-		inPump = new IncomingMessagePump(this);
+		inPump = new IncomingMessagePump(false);
+		outPump = new OutgoingMessagePump();
 		this.xfireServerHostName = xfireServerHostName;
 		this.xfireServerPortNum = xfireServerPortNum;
 	}
@@ -47,7 +48,7 @@ public class ConnectionController implements ConnectionStateListener, IConnectio
 		inPump.setReader(reader);
 		
 		ChannelWriter writer = new ChannelWriter(channel);
-		outPump = new OutgoingMessagePump(writer, this);
+		outPump.setWriter(writer);
 		
 		inPump.start("InPump");
 		outPump.start("OutPump");
@@ -62,12 +63,9 @@ public class ConnectionController implements ConnectionStateListener, IConnectio
 		outPump.waitForExit();
 	}
 	
-	public void addMessageListener(MessageListener listener) {
-		inPump.addListener(listener);
-	}
-	
-	public void removeMessageListener(MessageListener listener) {
-		inPump.removeListener(listener);
+	public void addStateListener(ConnectionStateListener listener) {
+		inPump.addStateListener(listener);
+		outPump.addStateListener(listener);
 	}
 	
 	public void sendMessage(IMessage message) {

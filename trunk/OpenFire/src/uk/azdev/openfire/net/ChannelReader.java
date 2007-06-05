@@ -43,16 +43,7 @@ public class ChannelReader {
 	}
 	
 	public void skipOpeningStatement() throws IOException {
-		
-		messageBuffer.clear();
-		messageBuffer.limit(4);
-		int numRead = channel.read(messageBuffer);
-		if(numRead != 4) {
-			throw new IOException("Not enough bytes in stream for opening statement");
-		}
-		
-		messageBuffer.flip();
-		
+		IOUtil.readAllBytesOrFail(channel, messageBuffer, ProtocolConstants.CLIENT_OPENING_STATEMENT.length);
 		if(!IOUtil.nextBytesMatchArray(messageBuffer, ProtocolConstants.CLIENT_OPENING_STATEMENT)) {
 			throw new IOException("Opening statement did not match expected");
 		}
@@ -61,17 +52,15 @@ public class ChannelReader {
 	
 	public IMessage readMessage() throws IOException {
 		
-		int messageSize = readUnsignedShort(channel);
-		int messageType = readUnsignedShort(channel);
-		if(messageSize == -1 || messageType == -1) {
+		if(!IOUtil.readAllBytesOrNone(channel, messageBuffer, 2)) {
 			return null;
 		}
+		
+		int messageSize = readUnsignedShort(messageBuffer);
+		int messageType = readUnsignedShort(channel);
 		
 		int messageContentsSize = messageSize - ProtocolConstants.HEADER_SIZE;
-		
-		if(!readMessageContents(messageContentsSize)) {
-			return null;
-		}
+		IOUtil.readAllBytesOrFail(channel, messageBuffer, messageContentsSize);
 		
 		if(messageFactory.isKnownMessageType(messageType)) {
 			IMessage message = messageFactory.createMessage(messageType);
@@ -82,22 +71,10 @@ public class ChannelReader {
 		// attempt to read as a generic message
 		IMessage unknownMessage = attemptUnknownMessageRead(messageType);
 		if(unknownMessage == null) {
-			throw new IOException("Unparseable message found on stream");
+			throw new CorruptMessageException("Unparseable message of type \"" + messageType + "\"found on stream");
 		}
 		
 		return unknownMessage;
-	}
-	
-	private boolean readMessageContents(int messageContentsSize) throws IOException {
-		messageBuffer.rewind();
-		messageBuffer.limit(messageContentsSize);
-		int bytesRead = channel.read(messageBuffer);
-		if(bytesRead != messageContentsSize) {
-			return false;
-		}
-		
-		messageBuffer.flip();
-		return true;
 	}
 	
 	private IMessage attemptUnknownMessageRead(int messageType) {

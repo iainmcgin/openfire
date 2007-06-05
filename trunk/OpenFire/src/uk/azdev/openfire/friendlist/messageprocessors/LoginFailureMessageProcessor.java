@@ -33,12 +33,7 @@ public class LoginFailureMessageProcessor implements IMessageProcessor {
 		new Thread(new Runnable() {
 
 			public void run() {
-				try {
-					statusUpdater.loginFailed();
-				} catch (Exception e) {
-					System.err.println("Error occurred while killing connection controller");
-					e.printStackTrace();
-				}
+				statusUpdater.loginFailed();
 			}
 		}).start();
 	}

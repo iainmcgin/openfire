@@ -18,6 +18,14 @@
 	<property name="3rdparty.test.lib.dir" location="3rdparty_test"/>
 	
 	<property name="coverage" value="true"/>
+	<property name="optimize" value="false"/>
+	
+	<property name="release.version" value="DEVEL"/>
+	<property name="keystore" value="keys"/>
+	<property name="keystore.pass" value=""/>
+	<property name="key.alias" value=""/>
+	<property name="key.pass" value=""/>
+	
 	
 	<path id="tests.lib">
 		<pathelement location="${3rdparty.test.lib.dir}/emma.jar"/>
@@ -33,6 +41,22 @@
 	</path>
 	
 	<taskdef resource="emma_ant.properties" classpathref="tests.lib"/>
+	
+	<target name="release" depends="compile">
+		<jar destfile="${build.dir}/openfire.jar" basedir="${main.build.dir}">
+			<manifest>
+				<attribute name="Sealed" value="true"/>
+				<attribute name="Implementation-Title" value="OpenFire"/>
+				<attribute name="Implementation-Version" value="${release.version}"/> 
+				<attribute name="Implementation-Vendor" value="Absolute Zero Development"/>
+			</manifest>
+		</jar>
+		<signjar jar="${build.dir}/openfire.jar"
+			keystore="${keystore}"
+			storepass="${keystore.pass}" 
+			alias="${key.alias}"
+			keypass="${key.pass}"/>
+	</target>
 	
 	<target name="dist" depends="compile, test"/>
 	
@@ -90,7 +114,7 @@
 	</target>
 	
 	<target name="compile" depends="init">
-		<javac srcdir="${src.dir}" destdir="${main.build.dir}" debug="${coverage}"/>
+		<javac srcdir="${src.dir}" destdir="${main.build.dir}" debug="${coverage}" optimize="${optimize}"/>
 	</target>
 	
 	<target name="init" depends="clean">

@@ -18,9 +18,12 @@
  */
 package uk.azdev.openfire.net;
 
+import uk.azdev.openfire.net.messages.IMessage;
+
 
 public interface ConnectionStateListener {
 	
 	public void connectionError(Exception e);
+	public void messageReceived(IMessage message);
 
 }

@@ -103,7 +103,7 @@ public class ConnectionControllerTest {
 		
 		controller = new ConnectionController("127.0.0.1", boundPort);
 		
-		controller.addMessageListener(listener);
+		controller.addStateListener(listener);
 		controller.start();
 		
 		listener.latch.await();
@@ -122,7 +122,7 @@ public class ConnectionControllerTest {
 		assertFalse(emulator.didErrorOccur());
 	}
 	
-	private class TestMessageListener implements MessageListener {
+	private class TestMessageListener implements ConnectionStateListener {
 
 		public CountDownLatch latch;
 		public List<IMessage> receivedMessages = new ArrayList<IMessage>();
@@ -134,6 +134,10 @@ public class ConnectionControllerTest {
 				latch.countDown();
 			}
 			
+		}
+
+		public void connectionError(Exception e) {
+			// not relevant for this test
 		}
 		
 	}

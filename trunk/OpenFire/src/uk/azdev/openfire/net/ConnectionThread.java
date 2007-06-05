@@ -18,14 +18,19 @@
  */
 package uk.azdev.openfire.net;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import uk.azdev.openfire.net.messages.IMessage;
+
 public abstract class ConnectionThread implements Runnable {
 
-	protected ConnectionStateListener listener;
+	private List<ConnectionStateListener> listeners;
 	protected boolean plannedStop;
 	private Thread associatedThread;
 	
-	public ConnectionThread(ConnectionStateListener listener) {
-		this.listener = listener;
+	public ConnectionThread() {
+		this.listeners = new ArrayList<ConnectionStateListener>();
 		plannedStop = false;
 	}
 	
@@ -47,7 +52,29 @@ public abstract class ConnectionThread implements Runnable {
 		try {
 			doProcessing();
 		} catch(Exception e) {
-			listener.connectionError(e);
+			notifyConnectionError(e);
+		}
+	}
+	
+	public void addStateListener(ConnectionStateListener listener) {
+		synchronized(listeners) {
+			listeners.add(listener);
+		}
+	}
+	
+	protected void dispatchMessageToListeners(IMessage message) {
+		synchronized(listeners) {
+			for(ConnectionStateListener messageListener : listeners) {
+				messageListener.messageReceived(message);
+			}
+		}
+	}
+	
+	protected void notifyConnectionError(Exception e) {
+		synchronized(listeners) {
+			for(ConnectionStateListener listener : listeners) {
+				listener.connectionError(e);
+			}
 		}
 	}
 

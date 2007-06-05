@@ -46,14 +46,7 @@ public class IOUtil {
 	
 	public static int readUnsignedShort(ReadableByteChannel channel) throws IOException {
 		ByteBuffer readBuffer = createBuffer(2);
-		readBuffer.limit(2);
-		int numRead = channel.read(readBuffer);
-		
-		if(numRead != 2) {
-			return -1;
-		}
-		
-		readBuffer.flip();
+		readAllBytesOrFail(channel, readBuffer, 2);
 		return readUnsignedShort(readBuffer);
 	}
 	
@@ -63,18 +56,43 @@ public class IOUtil {
 	
 	public static long readUnsignedInt(ReadableByteChannel channel) throws IOException {
 		ByteBuffer readBuffer = createBuffer(4);
-		int numRead = channel.read(readBuffer);
-		
-		if(numRead != 4) {
-			return -1;
-		}
-		
-		readBuffer.flip();
+		readAllBytesOrFail(channel, readBuffer, 4);
 		return readUnsignedInt(readBuffer);
 	}
 	
 	public static long readUnsignedInt(ByteBuffer buffer) {
 		return buffer.getInt() & 0xFFFFFFFFL;
+	}
+	
+	public static void readAllBytesOrFail(ReadableByteChannel channel, ByteBuffer buffer, int numBytes) throws IOException {
+		if(!readAllBytesOrNone(channel, buffer, numBytes)) {
+			throw new IOException("no more bytes left in channel to read");
+		}
+	}
+	
+	public static boolean readAllBytesOrNone(ReadableByteChannel channel, ByteBuffer buffer, int numBytes) throws IOException {
+		buffer.rewind();
+		buffer.limit(numBytes);
+		
+		int totalBytesRead = 0;
+		int bytesRead = channel.read(buffer);
+		if(bytesRead <= 0) {
+			// no bytes available at all
+			return false;
+		}
+		totalBytesRead += bytesRead;
+		while(totalBytesRead < numBytes) {
+			bytesRead = channel.read(buffer);
+			if(bytesRead == -1) {
+				throw new IOException("insufficient but non-zero amount of bytes left in channel");
+			}
+			
+			totalBytesRead += bytesRead;
+		}
+		
+		buffer.flip();
+		
+		return true;
 	}
 	
 	public static boolean nextBytesMatchArray(ByteBuffer buffer, byte[] bytes) {

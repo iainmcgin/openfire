@@ -29,10 +29,12 @@ public class OutgoingMessagePump extends ConnectionThread {
 	private Object emptyQueueMutex;
 	private ChannelWriter writer;
 	
-	public OutgoingMessagePump(ChannelWriter writer, ConnectionStateListener listener) {
-		super(listener);
+	public OutgoingMessagePump() {
 		queuedMessages = new LinkedList<IMessage>();
 		emptyQueueMutex = new Object();
+	}
+	
+	public void setWriter(ChannelWriter writer) {
 		this.writer = writer;
 	}
 	
@@ -107,5 +109,4 @@ public class OutgoingMessagePump extends ConnectionThread {
 			}
 		}
 	}
-
 }

@@ -21,7 +21,10 @@ package uk.azdev.openfire;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import uk.azdev.openfire.common.OpenFireConfiguration;
 import uk.azdev.openfire.common.SessionId;
@@ -39,9 +42,9 @@ import uk.azdev.openfire.friendlist.messageprocessors.LoginSuccessMessageProcess
 import uk.azdev.openfire.friendlist.messageprocessors.NewVersionAvailableMessageProcessor;
 import uk.azdev.openfire.friendlist.messageprocessors.UserSessionIdListMessageProcessor;
 import uk.azdev.openfire.net.ConnectionController;
+import uk.azdev.openfire.net.ConnectionStateListener;
 import uk.azdev.openfire.net.IConnectionController;
 import uk.azdev.openfire.net.IMessageSender;
-import uk.azdev.openfire.net.MessageListener;
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
 import uk.azdev.openfire.net.messages.bidirectional.ServerRoutedChatMessage;
@@ -56,7 +59,7 @@ import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientInformationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientVersionMessage;
 
-public class XFireConnection implements MessageListener, IMessageSender, ConnectionStatusUpdater {
+public class XFireConnection implements IMessageSender, ConnectionStateListener, ConnectionStatusUpdater {
 
 	private OpenFireConfiguration config;
 	private IConnectionController controller;
@@ -67,6 +70,8 @@ public class XFireConnection implements MessageListener, IMessageSender, Connect
 	
 	private Map<SessionId, Conversation> activeConversations;
 	
+	private List<ConnectionEventListener> listeners;
+	
 	
 	public XFireConnection(OpenFireConfiguration config) {
 		this.config = config;
@@ -74,9 +79,10 @@ public class XFireConnection implements MessageListener, IMessageSender, Connect
 		friendList = new FriendsList(new Friend(config.getUsername()));
 		
 		controller = new ConnectionController(config.getXfireServerHostName(), config.getXfireServerPortNum());
-		controller.addMessageListener(this);
+		controller.addStateListener(this);
 		timer = new KeepaliveTimer(this);
-		activeConversations = new HashMap<SessionId, Conversation>();
+		activeConversations = new ConcurrentHashMap<SessionId, Conversation>();
+		listeners = new LinkedList<ConnectionEventListener>();
 		
 		initProcessorMap();
 	}
@@ -90,6 +96,7 @@ public class XFireConnection implements MessageListener, IMessageSender, Connect
 	public void disconnect() throws InterruptedException, IOException {
 		timer.stop();
 		controller.stop();
+		disconnected();
 	}
 	
 	public FriendsList getFriendList() {
@@ -98,7 +105,7 @@ public class XFireConnection implements MessageListener, IMessageSender, Connect
 	
 	private void initProcessorMap() {
 		processorMap = new HashMap<Integer, IMessageProcessor>();
-		processorMap.put(FriendListMessage.FRIEND_LIST_MESSAGE_ID, new FriendListMessageProcessor(friendList));
+		processorMap.put(FriendListMessage.FRIEND_LIST_MESSAGE_ID, new FriendListMessageProcessor(this));
 		processorMap.put(FriendOfFriendListMessage.FRIEND_OF_FRIEND_LIST_MESSAGE_TYPE, new FriendOfFriendListMessageProcessor(friendList));
 		processorMap.put(FriendStatusMessage.FRIEND_STATUS_MESSAGE_ID, new FriendStatusMessageProcessor(friendList));
 		processorMap.put(UserSessionIdListMessage.USER_SESSION_ID_LIST_MESSAGE_ID, new UserSessionIdListMessageProcessor(friendList));
@@ -126,20 +133,30 @@ public class XFireConnection implements MessageListener, IMessageSender, Connect
 			processorMap.get(message.getMessageId()).processMessage(message);
 		}
 	}
-
-	public void addMessageListener(MessageListener listener) {
-		controller.addMessageListener(listener);
+	
+	public void connectionError(Exception e) {
+		try {
+			disconnect();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		for(ConnectionEventListener listener : listeners) {
+			listener.connectionError();
+		}
 	}
 
 	public void loginFailed() {
 		try {
 			disconnect();
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		}
+		
+		for(ConnectionEventListener listener : listeners) {
+			listener.loginFailed();
 		}
 	}
 	
@@ -162,5 +179,27 @@ public class XFireConnection implements MessageListener, IMessageSender, Connect
 		}
 		
 		return activeConversations.get(peerSid);
+	}
+	
+	public void addListener(ConnectionEventListener listener) {
+		listeners.add(listener);
+	}
+	
+	public void conversationUpdate(SessionId sessionId) {
+		for(ConnectionEventListener listener : listeners) {
+			listener.conversationUpdate(sessionId);
+		}
+	}
+	
+	public void friendsListUpdated() {
+		for(ConnectionEventListener listener : listeners) {
+			listener.friendsListUpdated();
+		}
+	}
+	
+	public void disconnected() {
+		for(ConnectionEventListener listener : listeners) {
+			listener.disconnected();
+		}
 	}
 }

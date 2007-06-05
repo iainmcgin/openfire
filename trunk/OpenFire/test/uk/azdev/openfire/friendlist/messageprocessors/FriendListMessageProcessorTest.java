@@ -23,6 +23,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import uk.azdev.openfire.XFireConnection;
+import uk.azdev.openfire.common.OpenFireConfiguration;
 import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
@@ -31,19 +33,22 @@ public class FriendListMessageProcessorTest {
 	
 	@Test
 	public void testProcessMessage() {
-		Friend self = new Friend("testUser");
-		FriendsList friendsList = new FriendsList(self);
+		
+		XFireConnection connection = new XFireConnection(new OpenFireConfiguration());
+		FriendsList friendsList = connection.getFriendList();
 		FriendListMessage message = new FriendListMessage();
 		message.addUser(100L, "friend1", "Friend 1");
 		message.addUser(101L, "friend2", "Friend 2");
 		message.addUser(102L, "friend3", "Friend 3");
 		
-		FriendListMessageProcessor processor = new FriendListMessageProcessor(friendsList);
+		FriendListMessageProcessor processor = new FriendListMessageProcessor(connection);
 		processor.processMessage(message);
 		
 		checkForFriend(friendsList, 100L, "friend1", "Friend 1");
 		checkForFriend(friendsList, 101L, "friend2", "Friend 2");
 		checkForFriend(friendsList, 102L, "friend3", "Friend 3");
+		
+		// TODO: assert listener is called
 	}
 
 	private void checkForFriend(FriendsList friendsList, long userId, String userName, String displayName) {
