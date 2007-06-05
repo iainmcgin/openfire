@@ -35,6 +35,10 @@ public class ChatMessageProcessor implements IMessageProcessor {
 		ChatMessage message = (ChatMessage)msg;
 		Conversation conversation = connection.getConversation(message.getSessionId());
 		conversation.receiveMessage(message);
+		
+		if(message.isContentMessage()) {
+			connection.conversationUpdate(message.getSessionId());
+		}
 	}
 
 }

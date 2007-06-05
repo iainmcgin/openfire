@@ -45,9 +45,11 @@ public class ConnectionController implements IConnectionController {
 		channel.configureBlocking(true);
 		
 		ChannelReader reader = new ChannelReader(channel);
+		inPump.reset();
 		inPump.setReader(reader);
 		
 		ChannelWriter writer = new ChannelWriter(channel);
+		outPump.reset();
 		outPump.setWriter(writer);
 		
 		inPump.start("InPump");

@@ -49,6 +49,8 @@ public class Conversation {
 		if(chatMsg.isContentMessage()) {
 			addMessage(peer, chatMsg.getMessage());
 			notifyListeners();
+		} else if(chatMsg.isTypingMessage()) {
+			notifyListenersOfTyping();
 		}
 	}
 
@@ -84,6 +86,12 @@ public class Conversation {
 	public void notifyListeners() {
 		for(IConversationListener listener : listeners) {
 			listener.chatLogUpdated();
+		}
+	}
+	
+	public void notifyListenersOfTyping() {
+		for(IConversationListener listener : listeners) {
+			listener.peerIsTyping();
 		}
 	}
 }

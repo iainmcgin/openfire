@@ -21,5 +21,6 @@ package uk.azdev.openfire.conversations;
 public interface IConversationListener {
 
 	public void chatLogUpdated();
+	public void peerIsTyping();
 	
 }
