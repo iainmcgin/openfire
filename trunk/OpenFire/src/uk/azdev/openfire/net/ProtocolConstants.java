@@ -30,8 +30,8 @@ public final class ProtocolConstants {
 	public static final String XFIRE_SERVER_NAME = "cs.xfire.com";
 	public static final int XFIRE_SERVER_PORT = 25999;
 	
-	public static final int MAX_MESSAGE_SIZE = (1 << 16) - 1;
-	public static final int HEADER_SIZE = 4;
+	public static final int MAX_MESSAGE_SIZE = (1 << 16) - 1; // 64KB
+	public static final int HEADER_SIZE = 4; // bytes
 	
 	public static final byte[] CLIENT_OPENING_STATEMENT = { 0x55, 0x41, 0x30, 0x31 }; // "UA01"
 		

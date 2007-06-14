@@ -42,6 +42,7 @@ public class IncomingMessagePump extends ConnectionThread {
 			do {
 				IMessage message = reader.readMessage();
 				if(message != null) {
+					System.out.println("received mesage: " + message);
 					dispatchMessageToListeners(message);
 				} else if(stopOnNoMessagesLeft) {
 					return;

@@ -37,8 +37,16 @@ public class ChatMessageProcessor implements IMessageProcessor {
 		conversation.receiveMessage(message);
 		
 		if(message.isContentMessage()) {
-			connection.conversationUpdate(message.getSessionId());
+			sendAck(message);
+			connection.notifyConversationUpdate(message.getSessionId());
 		}
+	}
+
+	private void sendAck(ChatMessage message) {
+		ChatMessage ack = new ChatMessage();
+		ack.setSessionId(connection.getFriendList().getSelf().getSessionId());
+		ack.setAcknowledgementPayload(message.getMessageIndex());
+		connection.sendMessage(ack);
 	}
 
 }

@@ -18,6 +18,8 @@
  */
 package uk.azdev.openfire.net.messages.bidirectional;
 
+import java.net.InetSocketAddress;
+
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.net.attrvalues.Int32AttributeValue;
 import uk.azdev.openfire.net.attrvalues.SessionIdAttributeValue;
@@ -26,12 +28,14 @@ import uk.azdev.openfire.net.attrvalues.StringKeyedAttributeMap;
 import uk.azdev.openfire.net.attrvalues.StringKeyedMapAttributeValue;
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.StringMapBasedMessage;
+import uk.azdev.openfire.net.util.IOUtil;
 
 public class ChatMessage extends StringMapBasedMessage {
 
 	public static final int TYPE_ID = 2;
 	
 	private static final int CONTENT_MESSAGE_TYPE = 0;
+	private static final int ACK_MESSAGE_TYPE = 1;
 	private static final int PEER_INFO_MESSAGE_TYPE = 2;
 	private static final int USER_TYPING_MESSAGE_TYPE = 3;
 	
@@ -47,13 +51,13 @@ public class ChatMessage extends StringMapBasedMessage {
 	private static final String TYPING_KEY = "typing";
 	private static final String IM_KEY = "im";
 	
-	// these keys are used by peer info messages, which we don't handle yet
-//	private static final String IP_KEY = "ip";
-//	private static final String PORT_KEY = "port";
-//	private static final String LOCAL_IP_KEY = "localip";
-//	private static final String LOCAL_PORT_KEY = "localport";
-//	private static final String STATUS_KEY = "status";
-//	private static final String SALT_KEY = "salt";
+	// these keys are used by peer info messages
+	private static final String IP_KEY = "ip";
+	private static final String PORT_KEY = "port";
+	private static final String LOCAL_IP_KEY = "localip";
+	private static final String LOCAL_PORT_KEY = "localport";
+	private static final String STATUS_KEY = "status";
+	private static final String SALT_KEY = "salt";
 	
 	private SessionId sid;
 	private long messageType;
@@ -61,6 +65,12 @@ public class ChatMessage extends StringMapBasedMessage {
 	private long messageIndex;
 	private String message;
 	private long typingVal;
+	
+	private InetSocketAddress netAddr;
+	private InetSocketAddress localAddr;
+	private long status;
+	private String salt;
+	
 	
 	public SessionId getSessionId() {
 		return sid;
@@ -82,6 +92,10 @@ public class ChatMessage extends StringMapBasedMessage {
 		return messageType == USER_TYPING_MESSAGE_TYPE;
 	}
 	
+	public boolean isAckMessage() {
+		return messageType == ACK_MESSAGE_TYPE;
+	}
+	
 	public long getMessageIndex() {
 		return messageIndex;
 	}
@@ -92,6 +106,22 @@ public class ChatMessage extends StringMapBasedMessage {
 	
 	public long getTypingVal() {
 		return typingVal;
+	}
+	
+	public InetSocketAddress getNetAddress() {
+		return netAddr;
+	}
+	
+	public InetSocketAddress getLocalAddress() {
+		return localAddr;
+	}
+	
+	public long getStatus() {
+		return status;
+	}
+	
+	public String getSalt() {
+		return salt;
 	}
 	
 	public void setContentPayload(long messageIndex, String message) {
@@ -106,6 +136,18 @@ public class ChatMessage extends StringMapBasedMessage {
 		this.typingVal = typingVal;
 	}
 	
+	public void setAcknowledgementPayload(long messageIndex) {
+		this.messageType = ACK_MESSAGE_TYPE;
+		this.messageIndex = messageIndex;
+	}
+	
+	public void setClientInfoPayload(InetSocketAddress netAddr, InetSocketAddress localAddr, long status, String salt) {
+		this.netAddr = netAddr;
+		this.localAddr = localAddr;
+		this.status = status;
+		this.salt = salt;
+	}
+	
 	@Override
 	protected void interpretAttributeMap(StringKeyedAttributeMap map) {
 		sid = map.getAttributeValue(SID_KEY, new SessionIdAttributeValue());
@@ -117,13 +159,28 @@ public class ChatMessage extends StringMapBasedMessage {
 			messageIndex = payload.getAttributeValue(IM_INDEX_KEY, new Int32AttributeValue());
 			message = payload.getAttributeValue(IM_KEY, new StringAttributeValue());
 			break;
+		case ACK_MESSAGE_TYPE:
+			messageIndex = payload.getAttributeValue(IM_INDEX_KEY, new Int32AttributeValue());
+			break;
 		case PEER_INFO_MESSAGE_TYPE:
+			netAddr = getAddress(payload, IP_KEY, PORT_KEY);
+			localAddr = getAddress(payload, LOCAL_IP_KEY, LOCAL_PORT_KEY);
+			status = payload.getAttributeValue(STATUS_KEY, new Int32AttributeValue());
+			salt = payload.getAttributeValue(SALT_KEY, new StringAttributeValue());
 			break;
 		case USER_TYPING_MESSAGE_TYPE:
 			messageIndex = payload.getAttributeValue(IM_INDEX_KEY, new Int32AttributeValue());
 			typingVal = payload.getAttributeValue(TYPING_KEY, new Int32AttributeValue());
 			break;
+			default:
+				System.out.println(map);
 		}
+	}
+
+	private InetSocketAddress getAddress(StringKeyedAttributeMap map, String ipKey, String portKey) {
+		long ip = map.getAttributeValue(ipKey, new Int32AttributeValue());
+		long port = map.getAttributeValue(portKey, new Int32AttributeValue());
+		return new InetSocketAddress(IOUtil.getAddressFromInt32(ip), (int)port);
 	}
 
 	@Override
@@ -139,6 +196,9 @@ public class ChatMessage extends StringMapBasedMessage {
 		case CONTENT_MESSAGE_TYPE:
 			payloadMap.addAttribute(IM_INDEX_KEY, new Int32AttributeValue(messageIndex));
 			payloadMap.addAttribute(IM_KEY, new StringAttributeValue(message));
+			break;
+		case ACK_MESSAGE_TYPE:
+			payloadMap.addAttribute(IM_INDEX_KEY, new Int32AttributeValue(messageIndex));
 			break;
 		case PEER_INFO_MESSAGE_TYPE:
 			break;
@@ -175,6 +235,22 @@ public class ChatMessage extends StringMapBasedMessage {
 			buffer.append("\n\tMessage: \"");
 			buffer.append(message);
 			buffer.append("\"");
+			break;
+		case ACK_MESSAGE_TYPE:
+			buffer.append("Acknowledgement\n");
+			buffer.append("\tMessage index: ");
+			buffer.append(messageIndex);
+			break;
+		case PEER_INFO_MESSAGE_TYPE:
+			buffer.append("Client info\n");
+			buffer.append("\tNetwork address: ");
+			buffer.append(netAddr);
+			buffer.append("\n\tLocal address: ");
+			buffer.append(localAddr);
+			buffer.append("\n\tStatus: ");
+			buffer.append(status);
+			buffer.append("\n\tSalt: ");
+			buffer.append(salt);
 			break;
 		case USER_TYPING_MESSAGE_TYPE:
 			buffer.append("Typing\n");

@@ -32,7 +32,7 @@ public class Conversation {
 	private Friend peer;
 	
 	private int myMessageIndex;
-	private StringBuffer chatLog;
+	private LinkedList<String> chatLog;
 	
 	private List<IConversationListener> listeners;
 	
@@ -40,7 +40,7 @@ public class Conversation {
 		this.self = self;
 		this.peer = peer;
 		this.messageSender = messageSender;
-		this.chatLog = new StringBuffer();
+		this.chatLog = new LinkedList<String>();
 		this.myMessageIndex = 0;
 		this.listeners = new LinkedList<IConversationListener>();
 	}
@@ -65,10 +65,13 @@ public class Conversation {
 	}
 	
 	private void addMessage(Friend user, String message) {
-		chatLog.append(user.getDisplayName());
-		chatLog.append(": ");
-		chatLog.append(message);
-		chatLog.append("\n");
+		StringBuffer logLine = new StringBuffer();
+		logLine.append(user.getDisplayName());
+		logLine.append(": ");
+		logLine.append(message);
+		logLine.append("\n");
+		
+		chatLog.add(logLine.toString());
 	}
 	
 	public Friend getPeer() {
@@ -76,7 +79,16 @@ public class Conversation {
 	}
 	
 	public String getChatLog() {
-		return chatLog.toString();
+		StringBuffer entireChatLog = new StringBuffer();
+		for(String chatLine : chatLog) {
+			entireChatLog.append(chatLine);
+		}
+		
+		return entireChatLog.toString();
+	}
+	
+	public String getLastMessage() {
+		return chatLog.getLast();
 	}
 	
 	public void addChatListener(IConversationListener listener) {
