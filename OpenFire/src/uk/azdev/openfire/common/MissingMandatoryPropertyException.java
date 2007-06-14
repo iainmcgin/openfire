@@ -16,17 +16,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire;
+package uk.azdev.openfire.common;
 
-import uk.azdev.openfire.common.SessionId;
+public class MissingMandatoryPropertyException extends Exception {
 
-public interface ConnectionEventListener {
-
-	public void conversationUpdate(SessionId sessionId);
-	public void friendsListUpdated();
-	public void loginFailed();
-	public void disconnected();
-	public void connectionError();
-	public void internalError(Exception e);
+	public MissingMandatoryPropertyException(String propName, String propDesc) {
+		super(propDesc + " (" + propName + ") was missing from the configuration file");
+	}
 	
 }

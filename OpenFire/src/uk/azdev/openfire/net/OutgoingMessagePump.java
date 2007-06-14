@@ -55,6 +55,7 @@ public class OutgoingMessagePump extends ConnectionThread {
 				IMessage nextMessage = getNextMessage();
 				
 				if(nextMessage != null) {
+					System.out.println("sending message: " + nextMessage);
 					writer.writeMessage(nextMessage);
 				}
 			}

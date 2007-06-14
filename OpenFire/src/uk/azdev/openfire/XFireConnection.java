@@ -21,8 +21,6 @@ package uk.azdev.openfire;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -70,8 +68,7 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 	
 	private Map<SessionId, Conversation> activeConversations;
 	
-	private List<ConnectionEventListener> listeners;
-	
+	private ConnectionEventDispatcher eventDispatcher;
 	
 	public XFireConnection(OpenFireConfiguration config) {
 		this.config = config;
@@ -82,7 +79,7 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 		controller.addStateListener(this);
 		timer = new KeepaliveTimer(this);
 		activeConversations = new ConcurrentHashMap<SessionId, Conversation>();
-		listeners = new LinkedList<ConnectionEventListener>();
+		eventDispatcher = new ConnectionEventDispatcher();
 		
 		initProcessorMap();
 	}
@@ -96,7 +93,7 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 	public void disconnect() throws InterruptedException, IOException {
 		timer.stop();
 		controller.stop();
-		disconnected();
+		eventDispatcher.disconnected();
 	}
 	
 	public FriendsList getFriendList() {
@@ -135,29 +132,11 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 	}
 	
 	public void connectionError(Exception e) {
-		try {
-			disconnect();
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		for(ConnectionEventListener listener : listeners) {
-			listener.connectionError();
-		}
+		new Thread(new ConnectionErrorHandler()).start();
 	}
 
 	public void loginFailed() {
-		try {
-			disconnect();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		for(ConnectionEventListener listener : listeners) {
-			listener.loginFailed();
-		}
+		new Thread(new LoginFailureHandler()).start();
 	}
 	
 	public void reconnect() throws InterruptedException, IOException {
@@ -182,24 +161,40 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 	}
 	
 	public void addListener(ConnectionEventListener listener) {
-		listeners.add(listener);
+		eventDispatcher.addListener(listener);
 	}
 	
-	public void conversationUpdate(SessionId sessionId) {
-		for(ConnectionEventListener listener : listeners) {
-			listener.conversationUpdate(sessionId);
+	public void notifyConversationUpdate(SessionId sessionId) {
+		eventDispatcher.conversationUpdate(sessionId);
+	}
+	
+	public void notifyFriendsListUpdated() {
+		eventDispatcher.friendsListUpdated();
+	}
+	
+	private class LoginFailureHandler implements Runnable {
+
+		public void run() {
+			try {
+				disconnect();
+			} catch (Exception e) {
+				eventDispatcher.internalError(e);
+			}
+			
+			eventDispatcher.loginFailed();
 		}
 	}
 	
-	public void friendsListUpdated() {
-		for(ConnectionEventListener listener : listeners) {
-			listener.friendsListUpdated();
-		}
-	}
-	
-	public void disconnected() {
-		for(ConnectionEventListener listener : listeners) {
-			listener.disconnected();
+	private class ConnectionErrorHandler implements Runnable {
+		
+		public void run() {
+			try {
+				disconnect();
+			} catch (Exception e) {
+				eventDispatcher.internalError(e);
+			}
+			
+			eventDispatcher.connectionError();
 		}
 	}
 }

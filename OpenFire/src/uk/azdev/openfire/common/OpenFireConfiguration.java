@@ -20,7 +20,11 @@ package uk.azdev.openfire.common;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.util.Properties;
 
 import uk.azdev.openfire.net.ProtocolConstants;
 
@@ -29,6 +33,9 @@ public class OpenFireConfiguration {
 	private String xfireGamesIniPath = "xfire_games.ini";
 	private String username = "";
 	private String password = "";
+	private String netAddr = "";
+	private int netPort = 0;
+	private int localPort = 0;
 	private String longVersion = "3.2.0.0";
 	private long shortVersion = 75;
 	private String clientLanguage = "us";
@@ -142,5 +149,28 @@ public class OpenFireConfiguration {
 	
 	public void setXfireServerPortNum(int xfireServerPortNum) {
 		this.xfireServerPortNum = xfireServerPortNum;
+	}
+	
+	public static OpenFireConfiguration readConfig(Reader configReader) throws IOException, MissingMandatoryPropertyException {
+		OpenFireConfiguration config = new OpenFireConfiguration();
+		Properties properties = new Properties();
+		properties.load(configReader);
+		
+		config.setUsername(getMandatoryProp(properties, "username", "client username"));
+		config.setPassword(getMandatoryProp(properties, "password", "client username"));
+		config.setUsername(getMandatoryProp(properties, "username", "client username"));
+		config.setUsername(getMandatoryProp(properties, "username", "client username"));
+		config.setUsername(getMandatoryProp(properties, "username", "client username"));
+		config.setUsername(getMandatoryProp(properties, "username", "client username"));
+		
+		return config;
+	}
+
+	private static String getMandatoryProp(Properties properties, String key, String propDesc) throws MissingMandatoryPropertyException {
+		if(properties.getProperty(key) == null) {
+			throw new MissingMandatoryPropertyException(key, propDesc);
+		}
+		
+		return properties.getProperty(key);
 	}
 }

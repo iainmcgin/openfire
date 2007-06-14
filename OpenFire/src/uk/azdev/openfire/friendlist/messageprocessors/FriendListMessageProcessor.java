@@ -46,7 +46,7 @@ public class FriendListMessageProcessor implements IMessageProcessor {
 			}
 		}
 		
-		xfireConnection.friendsListUpdated();
+		xfireConnection.notifyFriendsListUpdated();
 	}
 	
 }

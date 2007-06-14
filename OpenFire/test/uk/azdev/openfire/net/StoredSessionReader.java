@@ -135,8 +135,8 @@ public class StoredSessionReader {
 	private static void readAllMessages(ChannelReader reader, File messageOutputRoot) {
 		
 		try {
-			while(true) {
-				IMessage message = reader.readMessage(); 
+			IMessage message;
+			while((message = reader.readMessage()) != null) {
 				System.out.println(message);
 				System.out.println();
 				
