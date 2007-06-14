@@ -295,6 +295,10 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 	public void connectionError() {
 		JOptionPane.showMessageDialog(this, "An error occurred which required your connection with the XFire server to be closed", "Connection error", JOptionPane.ERROR_MESSAGE);
 	}
+	
+	public void internalError(Exception e) {
+		JOptionPane.showMessageDialog(this, "An internal error has occurred. It is recommended that you restart the program now\n Details:\n" + e.getMessage(), "Internal error", JOptionPane.ERROR_MESSAGE);
+	}
 
 	public void conversationClosed(SessionId sessionId) {
 		openConversations.remove(sessionId);
