@@ -73,9 +73,4 @@ public class ConnectionController implements IConnectionController {
 	public void sendMessage(IMessage message) {
 		outPump.sendMessage(message);
 	}
-
-	public void connectionError(Exception e) {
-		System.err.println("Exception occurred on connection");
-		e.printStackTrace();
-	}
 }

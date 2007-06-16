@@ -16,6 +16,7 @@
 	
 	<property name="3rdparty.lib.dir" location="3rdparty"/>
 	<property name="3rdparty.test.lib.dir" location="3rdparty_test"/>
+	<property name="junit.jar.loc" location="${3rdparty.test.lib.dir}/junit-4.3.1/junit-4.3.1.jar"/>
 	
 	<property name="coverage" value="true"/>
 	<property name="optimize" value="false"/>
@@ -30,6 +31,7 @@
 	<path id="tests.lib">
 		<pathelement location="${3rdparty.test.lib.dir}/emma.jar"/>
 		<pathelement location="${3rdparty.test.lib.dir}/emma_ant.jar"/>
+		<pathelement location="${junit.jar.loc}"/>
 		<pathelement location="${3rdparty.test.lib.dir}/jmock-2.0.0/hamcrest-api-1.0.jar"/>
 		<pathelement location="${3rdparty.test.lib.dir}/jmock-2.0.0/hamcrest-library-1.0.jar"/>
 		<pathelement location="${3rdparty.test.lib.dir}/jmock-2.0.0/jmock-2.0.0.jar"/>

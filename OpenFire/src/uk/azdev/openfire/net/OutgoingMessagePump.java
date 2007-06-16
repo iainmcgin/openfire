@@ -21,6 +21,7 @@ package uk.azdev.openfire.net;
 import java.nio.channels.AsynchronousCloseException;
 import java.util.LinkedList;
 
+import uk.azdev.openfire.common.Logging;
 import uk.azdev.openfire.net.messages.IMessage;
 
 public class OutgoingMessagePump extends ConnectionThread {
@@ -55,7 +56,7 @@ public class OutgoingMessagePump extends ConnectionThread {
 				IMessage nextMessage = getNextMessage();
 				
 				if(nextMessage != null) {
-					System.out.println("sending message: " + nextMessage);
+					Logging.connectionLogger.fine("sending message: " + nextMessage);
 					writer.writeMessage(nextMessage);
 				}
 			}

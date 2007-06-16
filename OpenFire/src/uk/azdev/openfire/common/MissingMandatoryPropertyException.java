@@ -18,7 +18,9 @@
  */
 package uk.azdev.openfire.common;
 
-public class MissingMandatoryPropertyException extends Exception {
+public class MissingMandatoryPropertyException extends InvalidConfigurationException {
+
+	private static final long serialVersionUID = 1L;
 
 	public MissingMandatoryPropertyException(String propName, String propDesc) {
 		super(propDesc + " (" + propName + ") was missing from the configuration file");
