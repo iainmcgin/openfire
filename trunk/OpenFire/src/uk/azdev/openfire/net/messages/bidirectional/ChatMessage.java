@@ -20,6 +20,7 @@ package uk.azdev.openfire.net.messages.bidirectional;
 
 import java.net.InetSocketAddress;
 
+import uk.azdev.openfire.common.Logging;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.net.attrvalues.Int32AttributeValue;
 import uk.azdev.openfire.net.attrvalues.SessionIdAttributeValue;
@@ -173,7 +174,8 @@ public class ChatMessage extends StringMapBasedMessage {
 			typingVal = payload.getAttributeValue(TYPING_KEY, new Int32AttributeValue());
 			break;
 			default:
-				System.out.println(map);
+				Logging.messageLogger.warning("Unknown chat message type " + messageType + " found");
+				Logging.messageLogger.finer("Unknown chat message contents:n" + map);
 		}
 	}
 

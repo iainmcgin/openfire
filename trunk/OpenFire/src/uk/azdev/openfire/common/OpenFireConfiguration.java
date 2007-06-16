@@ -18,45 +18,48 @@
  */
 package uk.azdev.openfire.common;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.util.Properties;
 
 import uk.azdev.openfire.net.ProtocolConstants;
 
 public class OpenFireConfiguration {
 	
-	private String xfireGamesIniPath = "xfire_games.ini";
-	private String username = "";
-	private String password = "";
-	private String netAddr = "";
-	private int netPort = 0;
-	private int localPort = 0;
-	private String longVersion = "3.2.0.0";
-	private long shortVersion = 75;
-	private String clientLanguage = "us";
-	private String[] skinList = { "XFire", "standard", "Separator", "XF_URL" }; 
-	private String activeSkin = "XFire";
-	private String activeTheme = "default";
-	private String partner = "";
-	private String xfireServerHostName = ProtocolConstants.XFIRE_SERVER_NAME;
-	private int xfireServerPortNum = ProtocolConstants.XFIRE_SERVER_PORT;
+	public static final String DEFAULT_XFIRE_GAMES_INI_PATH = "xfire_games.ini";
+	public static final String DEFAULT_USER_NAME = "";
+	public static final String DEFAULT_PASSWORD = "";
+	public static final String DEFAULT_NETWORK_ADDR = "";
+	public static final int DEFAULT_NETWORK_PORT= 50000;
+	public static final int DEFAULT_LOCAL_PORT = 50000;
+	public static final String DEFAULT_LONG_VERSION = "3.2.0.0";
+	public static final long DEFAULT_SHORT_VERSION = 76;
+	public static final String DEFAULT_CLIENT_LANGUAGE = "us";
+	public static final String[] DEFAULT_SKIN_LIST = { "XFire", "standard", "Separator", "XF_URL" }; 
+	public static final String DEFAULT_ACTIVE_SKIN = "XFire";
+	public static final String DEFAULT_ACTIVE_THEME = "default";
+	public static final String DEFAULT_PARTNER = "";
+	public static final String DEFAULT_XFIRE_SERVER_HOSTNAME = ProtocolConstants.XFIRE_SERVER_NAME;
+	public static final int DEFAULT_XFIRE_SERVER_PORT = ProtocolConstants.XFIRE_SERVER_PORT; 
+	
+	private String xfireGamesIniPath = DEFAULT_XFIRE_GAMES_INI_PATH;
+	private String username = DEFAULT_USER_NAME;
+	private String password = DEFAULT_PASSWORD;
+	private String netAddr = DEFAULT_NETWORK_ADDR;
+	private int netPort = DEFAULT_NETWORK_PORT;
+	private int localPort = DEFAULT_LOCAL_PORT;
+	private String longVersion = DEFAULT_LONG_VERSION;
+	private long shortVersion = DEFAULT_SHORT_VERSION;
+	private String clientLanguage = DEFAULT_CLIENT_LANGUAGE;
+	private String[] skinList =  DEFAULT_SKIN_LIST;
+	private String activeSkin = DEFAULT_ACTIVE_SKIN;
+	private String activeTheme = DEFAULT_ACTIVE_THEME;
+	private String partner = DEFAULT_PARTNER;
+	private String xfireServerHostName = DEFAULT_XFIRE_SERVER_HOSTNAME;
+	private int xfireServerPortNum = DEFAULT_XFIRE_SERVER_PORT;
 	
 	public String getXfireGamesIniPath() {
 		return xfireGamesIniPath;
-	}
-	
-	public Reader getXfireGamesIni() {
-		try {
-			return new FileReader(xfireGamesIniPath);
-		} catch (FileNotFoundException e) {
-			// this should already have been checked when the config was parsed
-			throw new RuntimeException("XFire games ini file does not exist, but existence was already checked!");
-		}
 	}
 	
 	public void setXfireGamesIniPath(String xfireGamesIniPath) {
@@ -151,26 +154,139 @@ public class OpenFireConfiguration {
 		this.xfireServerPortNum = xfireServerPortNum;
 	}
 	
-	public static OpenFireConfiguration readConfig(Reader configReader) throws IOException, MissingMandatoryPropertyException {
-		OpenFireConfiguration config = new OpenFireConfiguration();
+	public int getLocalPort() {
+		return localPort;
+	}
+
+	public void setLocalPort(int localPort) {
+		this.localPort = localPort;
+	}
+
+	public String getNetworkAddress() {
+		return netAddr;
+	}
+
+	public void setNetworkAddress(String netAddr) {
+		this.netAddr = netAddr;
+	}
+
+	public int getNetworkPort() {
+		return netPort;
+	}
+
+	public void setNetworkPort(int netPort) {
+		this.netPort = netPort;
+	}
+
+	public static OpenFireConfiguration readConfig(Reader configReader) throws IOException, InvalidConfigurationException {
 		Properties properties = new Properties();
 		properties.load(configReader);
+		return readConfig(properties);
+	}
+	
+	public static OpenFireConfiguration readConfig(Properties properties) throws InvalidConfigurationException {
+		OpenFireConfiguration config = new OpenFireConfiguration();
 		
 		config.setUsername(getMandatoryProp(properties, "username", "client username"));
-		config.setPassword(getMandatoryProp(properties, "password", "client username"));
-		config.setUsername(getMandatoryProp(properties, "username", "client username"));
-		config.setUsername(getMandatoryProp(properties, "username", "client username"));
-		config.setUsername(getMandatoryProp(properties, "username", "client username"));
-		config.setUsername(getMandatoryProp(properties, "username", "client username"));
+		config.setPassword(getMandatoryProp(properties, "password", "client password"));
+		
+		config.setNetworkPort(getMandatoryPropAsBoundedInt(properties, "net.port", "public network port", 1, 65535));
+		config.setNetworkAddress(getMandatoryProp(properties, "net.addr", "public network address"));
+		
+		config.setLocalPort(getMandatoryPropAsBoundedInt(properties, "local.port", "local port", 1, 65535));
+		config.setXfireGamesIniPath(getMandatoryProp(properties, "games.ini.path", "xfire games ini path"));
+
+		config.setShortVersion(getOptionalPropAsBoundedLong(properties, "client.version", "client version", DEFAULT_SHORT_VERSION, 0, (1L << 32L) - 1L));
+		config.setLongVersion(getOptionalProp(properties, "client.long.version", DEFAULT_LONG_VERSION));
+		config.setClientLanguage(getOptionalProp(properties, "client.language", DEFAULT_CLIENT_LANGUAGE));
+		config.setSkinList(getOptionalPropAsStringList(properties, "client.skinlist", DEFAULT_SKIN_LIST));
+		config.setActiveSkin(getOptionalProp(properties, "client.activeskin", DEFAULT_ACTIVE_SKIN));
+		config.setActiveTheme(getOptionalProp(properties, "client.activetheme", DEFAULT_ACTIVE_THEME));
+		config.setPartner(getOptionalProp(properties, "partner", DEFAULT_PARTNER));
+		config.setXfireServerHostName(getOptionalProp(properties, "server.host", DEFAULT_XFIRE_SERVER_HOSTNAME));
+		config.setXfireServerPortNum(getOptionalPropAsBoundedInt(properties, "server.port", "xfire server port", DEFAULT_XFIRE_SERVER_PORT, 1, 65535));
 		
 		return config;
 	}
-
+	
+	private static int getMandatoryPropAsBoundedInt(Properties properties, String key, String propDesc, int minVal, int maxVal) throws InvalidConfigurationException {
+		String value = getMandatoryProp(properties, key, propDesc);
+		
+		try {
+			int propVal = Integer.parseInt(value);
+			if(propVal < minVal || propVal > maxVal) {
+				throw new InvalidPropertyValueException(propDesc + " (" + key + ") is not in the legal range (" + minVal + "-" + maxVal + ")");
+			}
+			
+			return propVal;
+		} catch(NumberFormatException e) {
+			throw new InvalidPropertyValueException(propDesc + " (" + key + ") is not a valid integer");
+		}
+	}
+	
 	private static String getMandatoryProp(Properties properties, String key, String propDesc) throws MissingMandatoryPropertyException {
 		if(properties.getProperty(key) == null) {
 			throw new MissingMandatoryPropertyException(key, propDesc);
 		}
 		
 		return properties.getProperty(key);
+	}
+	
+	private static long getOptionalPropAsBoundedLong(Properties properties, String key, String propDesc, long defaultVal, long minVal, long maxVal) throws InvalidPropertyValueException {
+		String value = properties.getProperty(key);
+		if(value == null) {
+			return defaultVal;
+		}
+		
+		try {
+			long longVal = Long.parseLong(value);
+			if(longVal < minVal || longVal > maxVal) {
+				throw new InvalidPropertyValueException(propDesc + " (" + key + ") is not in the legal range (" + minVal + "-" + maxVal + ")");
+			}
+			return longVal;
+		} catch(NumberFormatException e) {
+			throw new InvalidPropertyValueException(propDesc + " (" + key + ") is not a valid integer");
+		}
+	}
+	
+	private static int getOptionalPropAsBoundedInt(Properties properties, String key, String propDesc, int defaultVal, int minVal, int maxVal) throws InvalidPropertyValueException {
+		String value = properties.getProperty(key);
+		if(value == null) {
+			return defaultVal;
+		}
+		
+		try {
+			int propVal = Integer.parseInt(value);
+			if(propVal < minVal || propVal > maxVal) {
+				throw new InvalidPropertyValueException(propDesc + " (" + key + ") is not in the legal range (" + minVal + "-" + maxVal + ")");
+			}
+			return propVal;
+		} catch(NumberFormatException e) {
+			throw new InvalidPropertyValueException(propDesc + " (" + key + ") is not a valid integer");
+		}
+	}
+	
+	private static String[] getOptionalPropAsStringList(Properties properties, String key, String[] defaultVal) {
+		String value = properties.getProperty(key);
+		if(value == null) {
+			return defaultVal;
+		}
+		
+		String[] segments = value.split(",");
+		
+		for(int i=0; i < segments.length; i++) {
+			segments[i] = segments[i].trim();
+		}
+		
+		return segments;
+	}
+	
+	private static String getOptionalProp(Properties properties, String key, String defaultVal) {
+		String value = properties.getProperty(key);
+		if(value == null) {
+			return defaultVal;
+		}
+		
+		return value;
 	}
 }

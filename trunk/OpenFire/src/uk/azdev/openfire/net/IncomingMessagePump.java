@@ -21,6 +21,7 @@ package uk.azdev.openfire.net;
 import java.io.IOException;
 import java.nio.channels.AsynchronousCloseException;
 
+import uk.azdev.openfire.common.Logging;
 import uk.azdev.openfire.net.messages.IMessage;
 
 public class IncomingMessagePump extends ConnectionThread {
@@ -42,7 +43,7 @@ public class IncomingMessagePump extends ConnectionThread {
 			do {
 				IMessage message = reader.readMessage();
 				if(message != null) {
-					System.out.println("received mesage: " + message);
+					Logging.connectionLogger.fine("received message: " + message);
 					dispatchMessageToListeners(message);
 				} else if(stopOnNoMessagesLeft) {
 					return;
