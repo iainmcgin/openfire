@@ -46,12 +46,12 @@ public class LoginChallengeMessageProcessorTest {
 		message.setSalt("d3cd8b9eacb901fc153858786b047d1bb826ea75");
 		
 		final String expectedSaltedPass = "25e1911c4a08f46e864f156335c54e68aed701f0";
-		final IMessageSender controller = context.mock(IMessageSender.class);
+		final IMessageSender messageSender = context.mock(IMessageSender.class);
 		context.checking(new Expectations() {{
-			one(controller).sendMessage(with(new HasPropertyWithValue<LoginChallengeMessage>("saltedPassword", equal(expectedSaltedPass))));
+			one(messageSender).sendMessage(with(new HasPropertyWithValue<LoginChallengeMessage>("saltedPassword", equal(expectedSaltedPass))));
 		}});
 		
-		LoginChallengeMessageProcessor processor = new LoginChallengeMessageProcessor(controller, config);
+		LoginChallengeMessageProcessor processor = new LoginChallengeMessageProcessor(messageSender, config);
 		processor.processMessage(message);
 	}
 

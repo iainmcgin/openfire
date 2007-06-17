@@ -54,6 +54,7 @@ public class ChatMessageTest {
 		assertTrue(message.isContentMessage());
 		assertFalse(message.isTypingMessage());
 		assertFalse(message.isPeerInfoMessage());
+		assertFalse(message.isAckMessage());
 		assertEquals(2L, message.getMessageIndex());
 		assertEquals("a hoy hoy", message.getMessage());
 	}
@@ -67,8 +68,39 @@ public class ChatMessageTest {
 		assertTrue(message.isTypingMessage());
 		assertFalse(message.isContentMessage());
 		assertFalse(message.isPeerInfoMessage());
+		assertFalse(message.isAckMessage());
 		assertEquals(1L, message.getMessageIndex());
 		assertEquals(1L, message.getTypingVal());
+	}
+	
+	@Test
+	public void testReadMessageContent_withAckMessage() throws IOException {
+		ByteBuffer buffer = TestUtils.getByteBufferForResource(this.getClass(), "chat_message_ack.sampledata");
+		message.readMessageContent(buffer);
+		
+		assertEquals(new SessionId(EXPECTED_SID), message.getSessionId());
+		assertTrue(message.isAckMessage());
+		assertFalse(message.isTypingMessage());
+		assertFalse(message.isContentMessage());
+		assertFalse(message.isPeerInfoMessage());
+		assertEquals(1L, message.getMessageIndex());
+	}
+	
+	@Test
+	public void testReadMessageContent_withPeerInfoMessage() throws IOException {
+		ByteBuffer buffer = TestUtils.getByteBufferForResource(this.getClass(), "chat_message_peerinfo.sampledata");
+		message.readMessageContent(buffer);
+		
+		assertEquals(new SessionId(EXPECTED_SID), message.getSessionId());
+		assertTrue(message.isPeerInfoMessage());
+		assertFalse(message.isTypingMessage());
+		assertFalse(message.isContentMessage());
+		assertFalse(message.isAckMessage());
+		
+		assertEquals("/100.100.100.100:10000", message.getNetAddress().toString());
+		assertEquals("/192.168.0.1:30000", message.getLocalAddress().toString());
+		assertEquals(100L, message.getStatus());
+		assertEquals("cfb67a640fc290e41ce5e41bc6b5ad22847af2a3", message.getSalt());
 	}
 
 	@Test
@@ -83,6 +115,13 @@ public class ChatMessageTest {
 		message.setSessionId(new SessionId(EXPECTED_SID));
 		message.setTypingPayload(1L, 1L);
 		TestUtils.checkMessageOutput(message, this.getClass(), "chat_message_typing.sampledata");
+	}
+	
+	@Test
+	public void testWriteMessageContent_withAckMessage() throws IOException {
+		message.setSessionId(new SessionId(EXPECTED_SID));
+		message.setAcknowledgementPayload(1L);
+		TestUtils.checkMessageOutput(message, this.getClass(), "chat_message_ack.sampledata");
 	}
 	
 	@Test

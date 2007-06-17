@@ -18,9 +18,7 @@
  */
 package uk.azdev.openfire.friendlist.messageprocessors;
 
-import java.io.IOException;
-
-import uk.azdev.openfire.XFireConnection;
+import uk.azdev.openfire.ConnectionManipulator;
 import uk.azdev.openfire.common.OpenFireConfiguration;
 import uk.azdev.openfire.common.XFireUpdate;
 import uk.azdev.openfire.net.messages.IMessage;
@@ -28,11 +26,11 @@ import uk.azdev.openfire.net.messages.incoming.NewVersionAvailableMessage;
 
 public class NewVersionAvailableMessageProcessor implements IMessageProcessor {
 
-	private XFireConnection connection;
+	private ConnectionManipulator connectionManipulator;
 	private OpenFireConfiguration config;
 
-	public NewVersionAvailableMessageProcessor(XFireConnection connection, OpenFireConfiguration config) {
-		this.connection = connection;
+	public NewVersionAvailableMessageProcessor(ConnectionManipulator connection, OpenFireConfiguration config) {
+		this.connectionManipulator = connection;
 		this.config = config;
 	}
 
@@ -46,21 +44,6 @@ public class NewVersionAvailableMessageProcessor implements IMessageProcessor {
 		}
 		
 		config.setShortVersion(highestVersion);
-		new Thread(new ReconnectRunnable()).start();
-	}
-	
-	private class ReconnectRunnable implements Runnable {
-
-		public void run() {
-			try {
-				connection.reconnect();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		connectionManipulator.reconnect();
 	}
 }
