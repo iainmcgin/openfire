@@ -25,7 +25,7 @@ public class OpenFireRelay implements ConnectionEventListener {
 	
 	private void start() throws UnknownHostException, IOException {
 		connection.addListener(this);
-		connection.connect();
+		connection.blockingConnect();
 	}
 	
 	public void waitForExit() throws InterruptedException {
