@@ -84,6 +84,10 @@ public abstract class ConnectionThread implements Runnable {
 			}
 		}
 	}
+	
+	public Thread getAssociatedThread() {
+		return associatedThread;
+	}
 
 	protected abstract void doProcessing() throws Exception;
 }

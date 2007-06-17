@@ -26,14 +26,20 @@ import uk.azdev.openfire.net.messages.outgoing.KeepaliveMessage;
 
 public class KeepaliveTimer {
 
-	private static final long KEEPALIVE_INTERVAL_IN_MS = 60000;
+	private static final long DEFAULT_KEEPALIVE_INTERVAL_IN_MS = 60000;
 	
 	private IMessageSender sender;
 	private Timer sendTimer;
 	private KeepaliveSender task;
+	private long interval;
 	
 	public KeepaliveTimer(IMessageSender sender) {
+		this(sender, DEFAULT_KEEPALIVE_INTERVAL_IN_MS);
+	}
+	
+	public KeepaliveTimer(IMessageSender sender, long interval) {
 		this.sender = sender;
+		this.interval = interval;
 	}
 	
 	public void start() {
@@ -52,7 +58,7 @@ public class KeepaliveTimer {
 
 	private void scheduleTask() {
 		task = new KeepaliveSender();
-		sendTimer.scheduleAtFixedRate(task, KEEPALIVE_INTERVAL_IN_MS, KEEPALIVE_INTERVAL_IN_MS);
+		sendTimer.scheduleAtFixedRate(task, interval, interval);
 	}
 	
 	private class KeepaliveSender extends TimerTask {

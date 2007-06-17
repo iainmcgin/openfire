@@ -18,23 +18,18 @@
  */
 package uk.azdev.openfire.friendlist.messageprocessors;
 
-import uk.azdev.openfire.ConnectionStatusUpdater;
+import uk.azdev.openfire.XFireConnection;
 import uk.azdev.openfire.net.messages.IMessage;
 
 public class LoginFailureMessageProcessor implements IMessageProcessor {
 	
-	private final ConnectionStatusUpdater statusUpdater;
+	private final XFireConnection connection;
 
-	public LoginFailureMessageProcessor(ConnectionStatusUpdater statusUpdater) {
-		this.statusUpdater = statusUpdater;
+	public LoginFailureMessageProcessor(XFireConnection statusUpdater) {
+		this.connection = statusUpdater;
 	}
 
 	public void processMessage(IMessage message) {
-		new Thread(new Runnable() {
-
-			public void run() {
-				statusUpdater.loginFailed();
-			}
-		}).start();
+		connection.loginFailed();
 	}
 }

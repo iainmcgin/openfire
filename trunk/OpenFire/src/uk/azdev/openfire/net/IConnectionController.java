@@ -33,4 +33,6 @@ public interface IConnectionController {
 
 	public abstract void sendMessage(IMessage message);
 
+	public abstract boolean ownsCurrentThread();
+
 }

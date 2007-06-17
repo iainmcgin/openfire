@@ -23,7 +23,9 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
+import uk.azdev.openfire.common.Logging;
 import uk.azdev.openfire.common.OpenFireConfiguration;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.conversations.Conversation;
@@ -57,7 +59,7 @@ import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientInformationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientVersionMessage;
 
-public class XFireConnection implements IMessageSender, ConnectionStateListener, ConnectionStatusUpdater {
+public class XFireConnection implements IMessageSender, ConnectionStateListener, ConnectionManipulator {
 
 	private OpenFireConfiguration config;
 	private IConnectionController controller;
@@ -70,12 +72,21 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 	
 	private ConnectionEventDispatcher eventDispatcher;
 	
+	public XFireConnection(OpenFireConfiguration config, IConnectionController controller) {
+		this.config = config;
+		this.controller = controller;
+		init();
+	}
+	
 	public XFireConnection(OpenFireConfiguration config) {
 		this.config = config;
-		
+		controller = new ConnectionController(config.getXfireServerHostName(), config.getXfireServerPortNum());
+		init();
+	}
+	
+	private void init() {
 		friendList = new FriendsList(new Friend(config.getUsername()));
 		
-		controller = new ConnectionController(config.getXfireServerHostName(), config.getXfireServerPortNum());
 		controller.addStateListener(this);
 		timer = new KeepaliveTimer(this);
 		activeConversations = new ConcurrentHashMap<SessionId, Conversation>();
@@ -84,13 +95,47 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 		initProcessorMap();
 	}
 	
-	public void connect() throws UnknownHostException, IOException {
+	public void connect() {
+		new Thread(new ConnectHandler()).start();
+	}
+	
+	private class ConnectHandler implements Runnable {
+
+		public void run() {
+			try {
+				blockingConnect();
+			} catch (UnknownHostException e) {
+				Logging.connectionLogger.log(Level.SEVERE, "The network address of xfire server could not be resolved", e);
+			} catch (IOException e) {
+				Logging.connectionLogger.log(Level.SEVERE, "An error occurred while trying to connect to the xfire server", e);
+			}
+		}
+	}
+	
+	public void blockingConnect() throws UnknownHostException, IOException {
 		controller.start();
 		timer.start();
 		sendClientInfo();
 	}
+
+	public void disconnect() {
+		new Thread(new DisconnectHandler()).start();
+	}
 	
-	public void disconnect() throws InterruptedException, IOException {
+	private class DisconnectHandler implements Runnable {
+
+		public void run() {
+			try {
+				blockingDisconnect();
+			} catch (InterruptedException e) {
+				Logging.connectionLogger.log(Level.SEVERE, "Thread was interrupted while waiting for disconnect to complete", e);
+			} catch (IOException e) {
+				Logging.connectionLogger.log(Level.SEVERE, "An error occurred while trying to connect to the xfire server", e);
+			}
+		}
+	}
+	
+	public void blockingDisconnect() throws InterruptedException, IOException {
 		timer.stop();
 		controller.stop();
 		eventDispatcher.disconnected();
@@ -138,12 +183,27 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 	public void loginFailed() {
 		new Thread(new LoginFailureHandler()).start();
 	}
-	
-	public void reconnect() throws InterruptedException, IOException {
-		disconnect();
-		connect();
-	}
 
+	public void reconnect() {
+		new Thread(new ReconnectHandler()).start();
+	}
+	
+	private class ReconnectHandler implements Runnable {
+		public void run() {
+			try {
+				blockingReconnect();
+			} catch (Exception e) {
+				Logging.connectionLogger.log(Level.SEVERE, "Error occurred while attempting to reconnect", e);
+				connectionError(e);
+			}
+		}
+	}
+	
+	public void blockingReconnect() throws InterruptedException, UnknownHostException, IOException {
+		blockingDisconnect();
+		blockingConnect();
+	}
+	
 	public void sendMessage(IMessage message) {
 		controller.sendMessage(message);
 		timer.resetTimer();
@@ -176,7 +236,7 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 
 		public void run() {
 			try {
-				disconnect();
+				blockingDisconnect();
 			} catch (Exception e) {
 				eventDispatcher.internalError(e);
 			}
@@ -189,7 +249,7 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 		
 		public void run() {
 			try {
-				disconnect();
+				blockingDisconnect();
 			} catch (Exception e) {
 				eventDispatcher.internalError(e);
 			}

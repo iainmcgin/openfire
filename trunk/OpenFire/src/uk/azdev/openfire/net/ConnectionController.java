@@ -73,4 +73,9 @@ public class ConnectionController implements IConnectionController {
 	public void sendMessage(IMessage message) {
 		outPump.sendMessage(message);
 	}
+
+	public boolean ownsCurrentThread() {
+		return Thread.currentThread().equals(inPump.getAssociatedThread())
+		    || Thread.currentThread().equals(outPump.getAssociatedThread());
+	}
 }
