@@ -213,7 +213,7 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 		connection = new XFireConnection(config);
 		connection.addListener(this);
 		try {
-			connection.connect();
+			connection.blockingConnect();
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(this, "Error occurred while attempting to connect", "Connection Error", JOptionPane.ERROR_MESSAGE);
 			return;
@@ -229,7 +229,7 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 	
 	private void disconnect(ActionEvent e) {
 		try {
-			connection.disconnect();
+			connection.blockingDisconnect();
 			connectionOption.setEnabled(true);
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(this, "Error occurred while attempting to disconnect", "Connection Error", JOptionPane.ERROR_MESSAGE);
@@ -309,7 +309,7 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 		public void windowClosing(WindowEvent e) {
 			if(connection != null) {
 				try {
-					connection.disconnect();
+					connection.blockingDisconnect();
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(OpenFireClient.this, "Error occurred while attempting to disconnect", "Connection Error", JOptionPane.ERROR_MESSAGE);
 				}
