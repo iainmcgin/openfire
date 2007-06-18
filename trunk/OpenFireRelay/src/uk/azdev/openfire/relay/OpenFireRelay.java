@@ -2,6 +2,7 @@ package uk.azdev.openfire.relay;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
@@ -17,10 +18,12 @@ public class OpenFireRelay implements ConnectionEventListener {
 
 	private XFireConnection connection;
 	private CountDownLatch exitLatch;
+	private Set<String> adminList;
 	
-	public OpenFireRelay(OpenFireConfiguration config) {
+	public OpenFireRelay(OpenFireConfiguration config, Set<String> adminList) {
 		exitLatch = new CountDownLatch(1);
 		connection = new XFireConnection(config);
+		this.adminList = adminList;
 	}
 	
 	private void start() throws UnknownHostException, IOException {
@@ -89,7 +92,7 @@ public class OpenFireRelay implements ConnectionEventListener {
 		config.setUsername(args[0]);
 		config.setPassword(args[1]);
 		
-		OpenFireRelay relay = new OpenFireRelay(config);
+		OpenFireRelay relay = new OpenFireRelay(config, parseAdminList());
 		try {
 			relay.start();
 		} catch (UnknownHostException e) {
@@ -104,5 +107,9 @@ public class OpenFireRelay implements ConnectionEventListener {
 		} catch (InterruptedException e) {
 			System.err.println("Main thread unexpectedly terminated");
 		}
+	}
+
+	private static Set<String> parseAdminList() {
+		return new HashSet<String>();
 	}
 }
