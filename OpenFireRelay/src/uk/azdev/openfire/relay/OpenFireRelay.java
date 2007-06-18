@@ -1,13 +1,16 @@
 package uk.azdev.openfire.relay;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import uk.azdev.openfire.ConnectionEventListener;
 import uk.azdev.openfire.XFireConnection;
+import uk.azdev.openfire.common.InvalidConfigurationException;
 import uk.azdev.openfire.common.OpenFireConfiguration;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.conversations.Conversation;
@@ -41,17 +44,44 @@ public class OpenFireRelay implements ConnectionEventListener {
 	}
 
 	public void conversationUpdate(SessionId sessionId) {
-		System.out.println("message received from " + sessionId);
 		FriendsList list = connection.getFriendList();
-		Set<Friend> myFriends = list.getMyFriends();
 		
-		System.out.println("message was from " + connection.getFriendList().getOnlineFriend(sessionId).getDisplayName());
-		
+		Friend sourceFriend = list.getOnlineFriend(sessionId);
+		System.out.println("message received from " + sourceFriend.getUserName() + " (" + sessionId + ")");
 		Conversation sourceConv = connection.getConversation(sessionId);
 		String message = sourceConv.getLastMessage();
 		
+		if(adminList.contains(sourceFriend.getUserName())) {
+			System.out.println("Routing admin message");
+			routeToAll(sourceFriend, message);
+		} else {
+			System.out.println("Routing user message to admins");
+			routeToAdmins(sourceFriend, message);
+		}
+	}
+	
+	private void routeToAll(Friend source, String message) {
+		FriendsList list = connection.getFriendList();
+		Set<Friend> myFriends = list.getMyFriends();
+		
 		for(Friend f : myFriends) {
-			if(!f.isOnline() || f.getSessionId().equals(sessionId)) {
+			if(!f.isOnline() || f.equals(source)) {
+				continue;
+			}
+			
+			System.out.println("Forwarding message to " + f.getDisplayName());
+			
+			Conversation conv = connection.getConversation(f.getSessionId());
+			conv.sendMessage(message);
+		}
+	}
+	
+	private void routeToAdmins(Friend source, String message) {
+		FriendsList list = connection.getFriendList();
+		Set<Friend> myFriends = list.getMyFriends();
+		
+		for(Friend f : myFriends) {
+			if(!f.isOnline() || !adminList.contains(f.getUserName())) {
 				continue;
 			}
 			
@@ -82,24 +112,36 @@ public class OpenFireRelay implements ConnectionEventListener {
 	}
 	
 	public static void main(String[] args) {
-		OpenFireConfiguration config = new OpenFireConfiguration();
 		
-		if(args.length < 2) {
-			System.out.println("Usage: OpenFireRelay <username> <password>");
+		OpenFireConfiguration config;
+		try {
+			config = readConfig();
+		} catch (IOException e) {
+			System.err.println("Unable to read configuration file: " + e.getMessage());
+			return;
+		} catch (InvalidConfigurationException e) {
+			System.err.println("Configuration file is invalid: " + e.getMessage());
 			return;
 		}
 		
-		config.setUsername(args[0]);
-		config.setPassword(args[1]);
+		Set<String> admins;
+		try {
+			admins = parseAdminList();
+		} catch (IOException e) {
+			System.err.println("Unable to read admin list file: " + e.getMessage());
+			return;
+		}
 		
-		OpenFireRelay relay = new OpenFireRelay(config, parseAdminList());
+		OpenFireRelay relay = new OpenFireRelay(config, admins);
 		try {
 			relay.start();
 		} catch (UnknownHostException e) {
 			System.err.println("Unable to resolve host: " + e.getMessage());
+			return;
 		} catch (IOException e) {
 			System.err.println("I/O error occurred: " + e.getMessage());
 			e.printStackTrace();
+			return;
 		}
 		
 		try {
@@ -109,7 +151,24 @@ public class OpenFireRelay implements ConnectionEventListener {
 		}
 	}
 
-	private static Set<String> parseAdminList() {
-		return new HashSet<String>();
+	private static OpenFireConfiguration readConfig() throws IOException, InvalidConfigurationException {
+		FileReader reader = new FileReader("openfire.cfg");
+		return OpenFireConfiguration.readConfig(reader);
+	}
+
+	private static Set<String> parseAdminList() throws IOException {
+		
+		FileReader reader = new FileReader("admin.list");
+		Properties admins = new Properties();
+		admins.load(reader);
+		
+		Set<Object> adminUids = admins.keySet();
+		Set<String> adminUidSet = new HashSet<String>();
+		
+		for(Object uid : adminUids) {
+			adminUidSet.add((String)uid);
+		}
+		
+		return adminUidSet;
 	}
 }
