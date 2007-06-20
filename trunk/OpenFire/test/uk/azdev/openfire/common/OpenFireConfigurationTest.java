@@ -56,7 +56,6 @@ public class OpenFireConfigurationTest {
 		configuration = OpenFireConfiguration.readConfig(configReader);
 		assertEquals("testuser", configuration.getUsername());
 		assertEquals("testpass", configuration.getPassword());
-		assertEquals("123.221.131.113", configuration.getNetworkAddress());
 		assertEquals(12345, configuration.getNetworkPort());
 		assertEquals(54321, configuration.getLocalPort());
 		assertEquals("C:/Program Files/Xfire/xfire_games.ini", configuration.getXfireGamesIniPath());
@@ -75,7 +74,6 @@ public class OpenFireConfigurationTest {
 	public void testReadConfig_withMissingProperties() throws IOException, InvalidConfigurationException {
 		assertParseThrowsMissingPropertyEx("username", "client username (username) was missing from the configuration file");
 		assertParseThrowsMissingPropertyEx("password", "client password (password) was missing from the configuration file");
-		assertParseThrowsMissingPropertyEx("net.addr", "public network address (net.addr) was missing from the configuration file");
 		assertParseThrowsMissingPropertyEx("net.port", "public network port (net.port) was missing from the configuration file");
 		assertParseThrowsMissingPropertyEx("local.port", "local port (local.port) was missing from the configuration file");
 		assertParseThrowsMissingPropertyEx("games.ini.path", "xfire games ini path (games.ini.path) was missing from the configuration file");

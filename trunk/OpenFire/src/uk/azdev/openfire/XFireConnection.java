@@ -177,6 +177,7 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 	}
 	
 	public void connectionError(Exception e) {
+		Logging.connectionLogger.log(Level.SEVERE, "Connection error occurred, client disconnected", e);
 		new Thread(new ConnectionErrorHandler()).start();
 	}
 
@@ -213,7 +214,7 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 		
 		if(!activeConversations.containsKey(peerSid)) {
 			Friend peer = friendList.getOnlineFriend(peerSid);
-			Conversation conversation = new Conversation(friendList.getSelf(), peer, this);
+			Conversation conversation = new Conversation(friendList.getSelf(), peer, this, config);
 			activeConversations.put(peerSid, conversation);
 		}
 		

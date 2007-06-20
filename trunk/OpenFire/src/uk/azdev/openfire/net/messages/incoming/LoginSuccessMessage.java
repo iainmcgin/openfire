@@ -29,7 +29,7 @@ import uk.azdev.openfire.net.messages.StringMapBasedMessage;
 
 public class LoginSuccessMessage extends StringMapBasedMessage {
 
-	private static final String PIP_KEY = "pip";
+	private static final String PUBLIC_IP_KEY = "pip";
 	private static final String N3_KEY = "n3";
 	private static final String N2_KEY = "n2";
 	private static final String N1_KEY = "n1";
@@ -59,7 +59,7 @@ public class LoginSuccessMessage extends StringMapBasedMessage {
 	private Inet4Address n1;
 	private Inet4Address n2;
 	private Inet4Address n3;
-	private Inet4Address pip;
+	private Inet4Address publicIp;
 	
 	@Override
 	protected void interpretAttributeMap(StringKeyedAttributeMap map) {
@@ -76,7 +76,7 @@ public class LoginSuccessMessage extends StringMapBasedMessage {
 		n1 = ((Int32AttributeValue)map.getAttributeValue(N1_KEY)).getValueAsInetAddress();
 		n2 = ((Int32AttributeValue)map.getAttributeValue(N2_KEY)).getValueAsInetAddress();
 		n3 = ((Int32AttributeValue)map.getAttributeValue(N3_KEY)).getValueAsInetAddress();
-		pip = ((Int32AttributeValue)map.getAttributeValue(PIP_KEY)).getValueAsInetAddress();
+		publicIp = ((Int32AttributeValue)map.getAttributeValue(PUBLIC_IP_KEY)).getValueAsInetAddress();
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public class LoginSuccessMessage extends StringMapBasedMessage {
 		map.addAttribute(N1_KEY, new Int32AttributeValue(n1));
 		map.addAttribute(N2_KEY, new Int32AttributeValue(n2));
 		map.addAttribute(N3_KEY, new Int32AttributeValue(n3));
-		map.addAttribute(PIP_KEY, new Int32AttributeValue(pip));
+		map.addAttribute(PUBLIC_IP_KEY, new Int32AttributeValue(publicIp));
 	}
 
 	public int getMessageId() {
@@ -185,12 +185,12 @@ public class LoginSuccessMessage extends StringMapBasedMessage {
 		p2pSet = set;
 	}
 
-	public Inet4Address getPip() {
-		return pip;
+	public Inet4Address getPublicIp() {
+		return publicIp;
 	}
 
-	public void setPip(Inet4Address pip) {
-		this.pip = pip;
+	public void setPublicIp(Inet4Address peerIp) {
+		this.publicIp = peerIp;
 	}
 
 	public SessionId getSessionId() {
@@ -247,8 +247,8 @@ public class LoginSuccessMessage extends StringMapBasedMessage {
 		buffer.append(n2.toString());
 		buffer.append("\n\tN3: ");
 		buffer.append(n3.toString());
-		buffer.append("\n\tPip: ");
-		buffer.append(pip.toString());
+		buffer.append("\n\tPublic IP: ");
+		buffer.append(publicIp.toString());
 		
 		return buffer.toString();
 	}

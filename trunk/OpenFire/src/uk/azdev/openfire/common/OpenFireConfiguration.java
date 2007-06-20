@@ -29,7 +29,6 @@ public class OpenFireConfiguration {
 	public static final String DEFAULT_XFIRE_GAMES_INI_PATH = "xfire_games.ini";
 	public static final String DEFAULT_USER_NAME = "";
 	public static final String DEFAULT_PASSWORD = "";
-	public static final String DEFAULT_NETWORK_ADDR = "";
 	public static final int DEFAULT_NETWORK_PORT= 50000;
 	public static final int DEFAULT_LOCAL_PORT = 50000;
 	public static final String DEFAULT_LONG_VERSION = "3.2.0.0";
@@ -45,7 +44,6 @@ public class OpenFireConfiguration {
 	private String xfireGamesIniPath = DEFAULT_XFIRE_GAMES_INI_PATH;
 	private String username = DEFAULT_USER_NAME;
 	private String password = DEFAULT_PASSWORD;
-	private String netAddr = DEFAULT_NETWORK_ADDR;
 	private int netPort = DEFAULT_NETWORK_PORT;
 	private int localPort = DEFAULT_LOCAL_PORT;
 	private String longVersion = DEFAULT_LONG_VERSION;
@@ -162,14 +160,6 @@ public class OpenFireConfiguration {
 		this.localPort = localPort;
 	}
 
-	public String getNetworkAddress() {
-		return netAddr;
-	}
-
-	public void setNetworkAddress(String netAddr) {
-		this.netAddr = netAddr;
-	}
-
 	public int getNetworkPort() {
 		return netPort;
 	}
@@ -191,7 +181,6 @@ public class OpenFireConfiguration {
 		config.setPassword(getMandatoryProp(properties, "password", "client password"));
 		
 		config.setNetworkPort(getMandatoryPropAsBoundedInt(properties, "net.port", "public network port", 1, 65535));
-		config.setNetworkAddress(getMandatoryProp(properties, "net.addr", "public network address"));
 		
 		config.setLocalPort(getMandatoryPropAsBoundedInt(properties, "local.port", "local port", 1, 65535));
 		config.setXfireGamesIniPath(getMandatoryProp(properties, "games.ini.path", "xfire games ini path"));

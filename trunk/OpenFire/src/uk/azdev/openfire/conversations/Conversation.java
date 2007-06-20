@@ -18,12 +18,19 @@
  */
 package uk.azdev.openfire.conversations;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 
+import uk.azdev.openfire.common.Logging;
+import uk.azdev.openfire.common.OpenFireConfiguration;
 import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.net.IMessageSender;
+import uk.azdev.openfire.net.ProtocolConstants;
 import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
+import uk.azdev.openfire.net.util.IOUtil;
 
 public class Conversation {
 	
@@ -34,15 +41,21 @@ public class Conversation {
 	private int myMessageIndex;
 	private LinkedList<String> chatLog;
 	
+	private long lastClientInfoTransmitTime;
+	
 	private List<IConversationListener> listeners;
 	
-	public Conversation(Friend self, Friend peer, IMessageSender messageSender) {
+	private OpenFireConfiguration config;
+	
+	public Conversation(Friend self, Friend peer, IMessageSender messageSender, OpenFireConfiguration config) {
 		this.self = self;
 		this.peer = peer;
 		this.messageSender = messageSender;
 		this.chatLog = new LinkedList<String>();
 		this.myMessageIndex = 0;
+		this.lastClientInfoTransmitTime = 0;
 		this.listeners = new LinkedList<IConversationListener>();
+		this.config = config;
 	}
 	
 	public void receiveMessage(ChatMessage chatMsg) {
@@ -52,6 +65,8 @@ public class Conversation {
 		} else if(chatMsg.isTypingMessage()) {
 			notifyListenersOfTyping();
 		}
+		
+		sendClientInfoIfNecessary();
 	}
 
 	public void sendMessage(String text) {
@@ -60,10 +75,36 @@ public class Conversation {
 		message.setContentPayload(myMessageIndex++, text);
 		messageSender.sendMessage(message);
 		
+		sendClientInfoIfNecessary();
+
 		addMessage(self, text);
 		notifyListeners();
 	}
+
+	private void sendClientInfoIfNecessary() {
+		if(System.currentTimeMillis() - lastClientInfoTransmitTime > ProtocolConstants.CLIENT_INFO_TRANSMIT_INTERVAL) {
+			messageSender.sendMessage(generateClientInfo());
+			lastClientInfoTransmitTime = System.currentTimeMillis();
+		}
+	}
 	
+	private ChatMessage generateClientInfo() {
+		ChatMessage message = new ChatMessage();
+		message.setSessionId(peer.getSessionId());
+		InetSocketAddress netAddr = self.getAddress();
+		InetSocketAddress localAddr;
+		try {
+			InetAddress localHost = InetAddress.getLocalHost();
+			localAddr = new InetSocketAddress(localHost, config.getLocalPort());
+		} catch (UnknownHostException e) {
+			Logging.connectionLogger.warning("Unable to resolve local host address: will report 192.168.0.1 to peer");
+			localAddr = InetSocketAddress.createUnresolved("192.168.0.1", config.getLocalPort());
+		}
+		
+		message.setClientInfoPayload(netAddr, localAddr, 1L, IOUtil.generateSaltString());
+		return message;
+	}
+
 	private void addMessage(Friend user, String message) {
 		StringBuffer logLine = new StringBuffer();
 		logLine.append(user.getDisplayName());
