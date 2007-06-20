@@ -53,7 +53,7 @@ public class LoginSuccessMessageTest {
 		  "\tN1: /204.71.190.131\n" +
 		  "\tN2: /204.71.190.132\n" +
 		  "\tN3: /204.71.190.133\n" +
-		  "\tPip: /207.46.232.182";
+		  "\tPublic IP: /207.46.232.182";
 	
 	private LoginSuccessMessage message;
 	
@@ -106,7 +106,7 @@ public class LoginSuccessMessageTest {
 		message.setN1(TestUtils.createInet4Address("204.71.190.131"));
 		message.setN2(TestUtils.createInet4Address("204.71.190.132"));
 		message.setN3(TestUtils.createInet4Address("204.71.190.133"));
-		message.setPip(TestUtils.createInet4Address("207.46.232.182"));
+		message.setPublicIp(TestUtils.createInet4Address("207.46.232.182"));
 		
 		return message;
 	}
@@ -125,6 +125,6 @@ public class LoginSuccessMessageTest {
 		assertEquals("/204.71.190.131", message.getN1().toString());
 		assertEquals("/204.71.190.132", message.getN2().toString());
 		assertEquals("/204.71.190.133", message.getN3().toString());
-		assertEquals("/207.46.232.182", message.getPip().toString());
+		assertEquals("/207.46.232.182", message.getPublicIp().toString());
 	}
 }

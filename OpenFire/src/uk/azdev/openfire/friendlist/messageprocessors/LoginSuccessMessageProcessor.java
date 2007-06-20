@@ -18,6 +18,8 @@
  */
 package uk.azdev.openfire.friendlist.messageprocessors;
 
+import java.net.InetSocketAddress;
+
 import uk.azdev.openfire.common.OpenFireConfiguration;
 import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.net.IMessageSender;
@@ -39,7 +41,10 @@ public class LoginSuccessMessageProcessor implements IMessageProcessor {
 
 	public void processMessage(IMessage msg) {
 		LoginSuccessMessage message = (LoginSuccessMessage)msg;
+		self.setUserId(message.getUserId());
+		self.setDisplayName(message.getNick());
 		self.setOnline(message.getSessionId());
+		self.setAddress(new InetSocketAddress(message.getPublicIp(), config.getNetworkPort()));
 		
 		ClientConfigurationMessage clientConfig = new ClientConfigurationMessage();
 		clientConfig.setLanguage(config.getClientLanguage());

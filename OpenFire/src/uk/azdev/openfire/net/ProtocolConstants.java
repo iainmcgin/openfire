@@ -34,5 +34,7 @@ public final class ProtocolConstants {
 	public static final int HEADER_SIZE = 4; // bytes
 	
 	public static final byte[] CLIENT_OPENING_STATEMENT = { 0x55, 0x41, 0x30, 0x31 }; // "UA01"
+	public static final int SALT_SIZE_IN_BYTES = 20;
+	public static final long CLIENT_INFO_TRANSMIT_INTERVAL = 5000;
 		
 }

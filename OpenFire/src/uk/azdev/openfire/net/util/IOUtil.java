@@ -27,10 +27,14 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
+import java.security.SecureRandom;
+
+import uk.azdev.openfire.net.ProtocolConstants;
 
 public class IOUtil {
 
 	private static final Charset CHARACTER_ENCODING = Charset.forName("UTF-8");
+	private static final SecureRandom randomGen = new SecureRandom();
 	
 	IOUtil() {
 		throw new RuntimeException("IOUtil is not meant to be instantiated");
@@ -182,4 +186,14 @@ public class IOUtil {
 		      | (convertByteToUnsigned(addrBytes[3]));
 	}
 	
+	public static String generateSaltString() {
+		byte[] saltBytes = generateSalt();
+		return IOUtil.printByteArray(saltBytes, false, false);
+	}
+
+	private static byte[] generateSalt() {
+		byte[] saltBytes = new byte[ProtocolConstants.SALT_SIZE_IN_BYTES];
+		randomGen.nextBytes(saltBytes);
+		return saltBytes;
+	}
 }

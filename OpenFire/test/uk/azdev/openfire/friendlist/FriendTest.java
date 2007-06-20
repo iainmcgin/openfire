@@ -20,6 +20,8 @@ package uk.azdev.openfire.friendlist;
 
 import static org.junit.Assert.*;
 
+import java.net.InetSocketAddress;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -86,10 +88,20 @@ public class FriendTest {
 	@Test
 	public void testSetOffline() {
 		friend.setOnline(new SessionId());
+		friend.setAddress(InetSocketAddress.createUnresolved("127.0.0.1", 20000));
 		assertTrue(friend.isOnline());
+		
 		friend.setOffline();
 		assertFalse(friend.isOnline());
 		assertNull(friend.getSessionId());
+		assertNull(friend.getAddress());
+	}
+	
+	@Test
+	public void testSetAddress() {
+		friend.setAddress(InetSocketAddress.createUnresolved("127.0.0.1", 20000));
+		assertNotNull(friend.getAddress());
+		assertEquals("127.0.0.1:20000", friend.getAddress().toString());
 	}
 	
 	@Test

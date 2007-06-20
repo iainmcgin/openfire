@@ -37,7 +37,7 @@ public class ChatMessage extends StringMapBasedMessage {
 	
 	private static final int CONTENT_MESSAGE_TYPE = 0;
 	private static final int ACK_MESSAGE_TYPE = 1;
-	private static final int PEER_INFO_MESSAGE_TYPE = 2;
+	private static final int CLIENT_INFO_MESSAGE_TYPE = 2;
 	private static final int USER_TYPING_MESSAGE_TYPE = 3;
 	
 	// top level keys
@@ -86,7 +86,7 @@ public class ChatMessage extends StringMapBasedMessage {
 	}
 	
 	public boolean isPeerInfoMessage() {
-		return messageType == PEER_INFO_MESSAGE_TYPE;
+		return messageType == CLIENT_INFO_MESSAGE_TYPE;
 	}
 	
 	public boolean isTypingMessage() {
@@ -143,6 +143,7 @@ public class ChatMessage extends StringMapBasedMessage {
 	}
 	
 	public void setClientInfoPayload(InetSocketAddress netAddr, InetSocketAddress localAddr, long status, String salt) {
+		this.messageType = CLIENT_INFO_MESSAGE_TYPE;
 		this.netAddr = netAddr;
 		this.localAddr = localAddr;
 		this.status = status;
@@ -163,7 +164,7 @@ public class ChatMessage extends StringMapBasedMessage {
 		case ACK_MESSAGE_TYPE:
 			messageIndex = payload.getAttributeValue(IM_INDEX_KEY, new Int32AttributeValue());
 			break;
-		case PEER_INFO_MESSAGE_TYPE:
+		case CLIENT_INFO_MESSAGE_TYPE:
 			netAddr = getAddress(payload, IP_KEY, PORT_KEY);
 			localAddr = getAddress(payload, LOCAL_IP_KEY, LOCAL_PORT_KEY);
 			status = payload.getAttributeValue(STATUS_KEY, new Int32AttributeValue());
@@ -202,7 +203,7 @@ public class ChatMessage extends StringMapBasedMessage {
 		case ACK_MESSAGE_TYPE:
 			payloadMap.addAttribute(IM_INDEX_KEY, new Int32AttributeValue(messageIndex));
 			break;
-		case PEER_INFO_MESSAGE_TYPE:
+		case CLIENT_INFO_MESSAGE_TYPE:
 			break;
 		case USER_TYPING_MESSAGE_TYPE:
 			payloadMap.addAttribute(IM_INDEX_KEY, new Int32AttributeValue(messageIndex));
@@ -243,7 +244,7 @@ public class ChatMessage extends StringMapBasedMessage {
 			buffer.append("\tMessage index: ");
 			buffer.append(messageIndex);
 			break;
-		case PEER_INFO_MESSAGE_TYPE:
+		case CLIENT_INFO_MESSAGE_TYPE:
 			buffer.append("Client info\n");
 			buffer.append("\tNetwork address: ");
 			buffer.append(netAddr);

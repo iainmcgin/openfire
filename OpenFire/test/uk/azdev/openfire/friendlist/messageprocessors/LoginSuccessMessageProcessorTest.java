@@ -18,6 +18,11 @@
  */
 package uk.azdev.openfire.friendlist.messageprocessors;
 
+import static org.junit.Assert.*;
+
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import org.hamcrest.Matcher;
@@ -41,15 +46,19 @@ public class LoginSuccessMessageProcessorTest {
 	Mockery context = new JUnit4Mockery();
 	
 	@Test
-	public void testProcessMessage() {
+	public void testProcessMessage() throws UnknownHostException {
 		LoginSuccessMessage message = new LoginSuccessMessage();
 		message.setSessionId(new SessionId(100));
+		message.setNick("Test User");
+		message.setUserId(150L);
+		message.setPublicIp((Inet4Address)InetAddress.getByAddress(new byte[] { 127, 0, 0, 1}));
 		
 		OpenFireConfiguration config = new OpenFireConfiguration();
 		config.setClientLanguage("de");
 		config.setActiveSkin("MySkin");
 		config.setActiveTheme("MyTheme");
 		config.setPartner("InCrime");
+		config.setNetworkPort(12345);
 		
 		Friend self = new Friend("me");
 		
@@ -68,5 +77,11 @@ public class LoginSuccessMessageProcessorTest {
 		
 		processor.processMessage(message);
 		context.assertIsSatisfied();
+		
+		assertTrue(self.isOnline());
+		assertEquals(new SessionId(100), self.getSessionId());
+		assertEquals("Test User", self.getDisplayName());
+		assertEquals(150L, self.getUserId());
+		assertEquals("/127.0.0.1:12345", self.getAddress().toString());
 	}
 }

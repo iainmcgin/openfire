@@ -18,6 +18,8 @@
  */
 package uk.azdev.openfire.friendlist;
 
+import java.net.InetSocketAddress;
+
 import uk.azdev.openfire.common.SessionId;
 
 public class Friend {
@@ -27,6 +29,7 @@ public class Friend {
 	private String displayName;
 	private String statusString;
 	private SessionId sessionId;
+	private InetSocketAddress address;
 	
 	public Friend(String userName) {
 		this(-1, userName, null);
@@ -41,6 +44,9 @@ public class Friend {
 		
 		this.userName = userName;
 		this.displayName = displayName;
+		this.statusString = "";
+		this.sessionId = null;
+		this.address = null;
 	}
 
 	public long getUserId() {
@@ -89,6 +95,15 @@ public class Friend {
 	
 	public void setOffline() {
 		this.sessionId = null;
+		this.address = null;
+	}
+	
+	public InetSocketAddress getAddress() {
+		return address;
+	}
+	
+	public void setAddress(InetSocketAddress netAddr) {
+		this.address = netAddr;
 	}
 	
 	public void update(Friend friend) {
