@@ -21,10 +21,11 @@ package uk.azdev.openfire.friendlist.messageprocessors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.jmock.Expectations;
+import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Test;
 
-import uk.azdev.openfire.XFireConnection;
-import uk.azdev.openfire.common.OpenFireConfiguration;
+import uk.azdev.openfire.ConnectionEventListener;
 import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
@@ -33,22 +34,28 @@ public class FriendListMessageProcessorTest {
 	
 	@Test
 	public void testProcessMessage() {
+		JUnit4Mockery context = new JUnit4Mockery();
 		
-		XFireConnection connection = new XFireConnection(new OpenFireConfiguration());
-		FriendsList friendsList = connection.getFriendList();
+		final ConnectionEventListener listener = context.mock(ConnectionEventListener.class);
+		
+		context.checking(new Expectations() {{
+			one(listener).friendsListUpdated();
+		}});
+		
+		FriendsList friendsList = new FriendsList(new Friend("me"));
 		FriendListMessage message = new FriendListMessage();
 		message.addUser(100L, "friend1", "Friend 1");
 		message.addUser(101L, "friend2", "Friend 2");
 		message.addUser(102L, "friend3", "Friend 3");
 		
-		FriendListMessageProcessor processor = new FriendListMessageProcessor(connection);
+		FriendListMessageProcessor processor = new FriendListMessageProcessor(friendsList, listener);
 		processor.processMessage(message);
 		
 		checkForFriend(friendsList, 100L, "friend1", "Friend 1");
 		checkForFriend(friendsList, 101L, "friend2", "Friend 2");
 		checkForFriend(friendsList, 102L, "friend3", "Friend 3");
 		
-		// TODO: assert listener is called
+		context.assertIsSatisfied();
 	}
 
 	private void checkForFriend(FriendsList friendsList, long userId, String userName, String displayName) {

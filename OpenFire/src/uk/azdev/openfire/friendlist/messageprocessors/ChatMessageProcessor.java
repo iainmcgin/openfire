@@ -18,6 +18,7 @@
  */
 package uk.azdev.openfire.friendlist.messageprocessors;
 
+import uk.azdev.openfire.ConnectionEventListener;
 import uk.azdev.openfire.XFireConnection;
 import uk.azdev.openfire.conversations.Conversation;
 import uk.azdev.openfire.net.messages.IMessage;
@@ -26,9 +27,11 @@ import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
 public class ChatMessageProcessor implements IMessageProcessor {
 
 	private XFireConnection connection;
+	private ConnectionEventListener listener;
 	
-	public ChatMessageProcessor(XFireConnection connection) {
+	public ChatMessageProcessor(XFireConnection connection, ConnectionEventListener listener) {
 		this.connection = connection;
+		this.listener = listener;
 	}
 	
 	public void processMessage(IMessage msg) {
@@ -38,7 +41,7 @@ public class ChatMessageProcessor implements IMessageProcessor {
 		
 		if(message.isContentMessage()) {
 			sendAck(message);
-			connection.notifyConversationUpdate(message.getSessionId());
+			listener.conversationUpdate(message.getSessionId());
 		}
 	}
 
