@@ -149,7 +149,7 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 	
 	private void initProcessorMap() {
 		processorMap = new HashMap<Integer, IMessageProcessor>();
-		processorMap.put(FriendListMessage.FRIEND_LIST_MESSAGE_ID, new FriendListMessageProcessor(this));
+		processorMap.put(FriendListMessage.FRIEND_LIST_MESSAGE_ID, new FriendListMessageProcessor(friendList, eventDispatcher));
 		processorMap.put(FriendOfFriendListMessage.FRIEND_OF_FRIEND_LIST_MESSAGE_TYPE, new FriendOfFriendListMessageProcessor(friendList));
 		processorMap.put(FriendStatusMessage.FRIEND_STATUS_MESSAGE_ID, new FriendStatusMessageProcessor(friendList));
 		processorMap.put(UserSessionIdListMessage.USER_SESSION_ID_LIST_MESSAGE_ID, new UserSessionIdListMessageProcessor(friendList));
@@ -157,8 +157,8 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 		processorMap.put(LoginSuccessMessage.LOGIN_SUCCESS_MESSAGE_ID, new LoginSuccessMessageProcessor(this, friendList.getSelf(), config));
 		processorMap.put(LoginFailureMessage.LOGIN_FAILURE_MESSAGE_ID, new LoginFailureMessageProcessor(this));
 		processorMap.put(NewVersionAvailableMessage.TYPE_ID, new NewVersionAvailableMessageProcessor(this, config));
-		processorMap.put(ServerRoutedChatMessage.SR_TYPE_ID, new ChatMessageProcessor(this));
-		processorMap.put(ChatMessage.TYPE_ID, new ChatMessageProcessor(this));
+		processorMap.put(ServerRoutedChatMessage.SR_TYPE_ID, new ChatMessageProcessor(this, eventDispatcher));
+		processorMap.put(ChatMessage.TYPE_ID, new ChatMessageProcessor(this, eventDispatcher));
 		processorMap.put(IncomingInvitationMessage.TYPE_ID, new IncomingInvitationMessageProcessor(eventDispatcher));
 	}
 	
@@ -226,14 +226,6 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 	
 	public void addListener(ConnectionEventListener listener) {
 		eventDispatcher.addListener(listener);
-	}
-	
-	public void notifyConversationUpdate(SessionId sessionId) {
-		eventDispatcher.conversationUpdate(sessionId);
-	}
-	
-	public void notifyFriendsListUpdated() {
-		eventDispatcher.friendsListUpdated();
 	}
 	
 	private class LoginFailureHandler implements Runnable {

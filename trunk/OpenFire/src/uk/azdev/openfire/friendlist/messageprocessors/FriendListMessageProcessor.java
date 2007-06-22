@@ -20,7 +20,7 @@ package uk.azdev.openfire.friendlist.messageprocessors;
 
 import java.util.List;
 
-import uk.azdev.openfire.XFireConnection;
+import uk.azdev.openfire.ConnectionEventListener;
 import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.messages.IMessage;
@@ -28,25 +28,26 @@ import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
 
 public class FriendListMessageProcessor implements IMessageProcessor {
 	
-	private XFireConnection xfireConnection;
+	private ConnectionEventListener listener;
+	private FriendsList friendsList;
 	
-	public FriendListMessageProcessor(XFireConnection xfireConnection) {
-		this.xfireConnection = xfireConnection;
+	public FriendListMessageProcessor(FriendsList friendsList, ConnectionEventListener listener) {
+		this.friendsList = friendsList;
+		this.listener = listener;
 	}
 
 	public void processMessage(IMessage msg) {
-		FriendsList friendList = xfireConnection.getFriendList();
 		FriendListMessage message = (FriendListMessage)msg;
 		List<Long> userIds = message.getUserIdList();
 		
 		for(long userId : userIds) {
-			if(!friendList.containsFriend(userId)) {
+			if(!friendsList.containsFriend(userId)) {
 				Friend friend = new Friend(userId, message.getUsernameForId(userId), message.getUserNickForId(userId));
-				friendList.addFriend(friend, friendList.getSelf());
+				friendsList.addFriend(friend, friendsList.getSelf());
 			}
 		}
 		
-		xfireConnection.notifyFriendsListUpdated();
+		listener.friendsListUpdated();
 	}
 	
 }
