@@ -107,6 +107,8 @@ public class ConnectionControllerTest {
 		controller.start();
 		
 		listener.latch.await();
+		controller.stop();
+		emulator.stop();
 		
 		assertEquals(3, listener.receivedMessages.size());
 		assertTrue(listener.receivedMessages.get(0) instanceof LoginChallengeMessage);
@@ -116,8 +118,7 @@ public class ConnectionControllerTest {
 		assertTrue(listener.receivedMessages.get(2) instanceof UserSessionIdListMessage);
 		UserSessionIdListMessageTest.verifyMessage((UserSessionIdListMessage) listener.receivedMessages.get(2));
 		
-		emulator.stop();
-		controller.stop();
+		
 		
 		assertFalse(emulator.didErrorOccur());
 	}
