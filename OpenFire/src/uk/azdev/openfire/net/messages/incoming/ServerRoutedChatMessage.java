@@ -16,19 +16,28 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire;
+package uk.azdev.openfire.net.messages.incoming;
 
-import uk.azdev.openfire.common.Invitation;
-import uk.azdev.openfire.common.SessionId;
+import uk.azdev.openfire.net.messages.IMessage;
+import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
 
-public interface ConnectionEventListener {
+public class ServerRoutedChatMessage extends ChatMessage {
 
-	public void conversationUpdate(SessionId sessionId);
-	public void friendsListUpdated();
-	public void inviteReceived(Invitation invite);
-	public void loginFailed();
-	public void disconnected();
-	public void connectionError();
-	public void internalError(Exception e);
+	public static final int SR_TYPE_ID = 133;
+	
+	@Override
+	public int getMessageId() {
+		return SR_TYPE_ID;
+	}
+	
+	@Override
+	public IMessage newInstance() {
+		return new ServerRoutedChatMessage();
+	}
+	
+	@Override
+	public String toString() {
+		return "Server Routed " + super.toString();
+	}
 	
 }

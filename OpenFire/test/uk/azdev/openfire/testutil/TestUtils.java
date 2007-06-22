@@ -19,24 +19,12 @@ import uk.azdev.openfire.net.util.IOUtil;
 
 public class TestUtils {
 	
-	public static void checkArray(byte[] expected, byte[] actual, String failMessage) {
-		assertEquals(failMessage + ": different lengths", expected.length, actual.length);
-		
-		for(int i=0; i < expected.length; i++) {
-			assertEquals(failMessage + ": arrays differ at position " + i, expected[i], actual[i]);
-		}
-	}
-	
-	public static void checkArray(byte[] expected, byte[] actual) {
-		checkArray(expected, actual, "arrays do not match");
-	}
-	
 	public static void checkBytes(byte[] expected, ByteBuffer actual) {
 		byte[] actualBytes = new byte[actual.limit()];
 		actual.rewind();
 		actual.get(actualBytes);
 		
-		checkArray(expected, actualBytes);
+		assertArrayEquals("arrays do not match", expected, actualBytes);
 	}
 	
 	public static ByteBuffer createBufferFromArray(byte[] bytes) {

@@ -62,7 +62,7 @@ public class OpenFireConfigurationTest {
 		assertEquals(101L, configuration.getShortVersion());
 		assertEquals("1.2.3.4", configuration.getLongVersion());
 		assertEquals("de", configuration.getClientLanguage());
-		assertEquals(new String[] { "Skin1", "Skin2", "Skin3"}, configuration.getSkinList());
+		assertArrayEquals(new String[] { "Skin1", "Skin2", "Skin3"}, configuration.getSkinList());
 		assertEquals("Skin3", configuration.getActiveSkin());
 		assertEquals("MyTheme", configuration.getActiveTheme());
 		assertEquals("InCrime", configuration.getPartner());
@@ -104,7 +104,7 @@ public class OpenFireConfigurationTest {
 	public void testReadConfig_withMissingSkinList() throws IOException, InvalidConfigurationException {
 		Properties configProps = readConfigAndRemoveProperty("client.skinlist");
 		OpenFireConfiguration config = readConfigFromProps(configProps);
-		assertEquals(OpenFireConfiguration.DEFAULT_SKIN_LIST, config.getSkinList());
+		assertArrayEquals(OpenFireConfiguration.DEFAULT_SKIN_LIST, config.getSkinList());
 	}
 	
 	@Test

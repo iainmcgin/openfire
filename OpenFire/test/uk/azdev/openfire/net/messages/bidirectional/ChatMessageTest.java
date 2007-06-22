@@ -21,6 +21,7 @@ package uk.azdev.openfire.net.messages.bidirectional;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 
 import org.junit.Before;
@@ -31,6 +32,8 @@ import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
 import uk.azdev.openfire.testutil.TestUtils;
 
 public class ChatMessageTest {
+
+	private static final String EXPECTED_SALT = "cfb67a640fc290e41ce5e41bc6b5ad22847af2a3";
 
 	private ChatMessage message;
 	
@@ -100,7 +103,7 @@ public class ChatMessageTest {
 		assertEquals("/100.100.100.100:10000", message.getNetAddress().toString());
 		assertEquals("/192.168.0.1:30000", message.getLocalAddress().toString());
 		assertEquals(100L, message.getStatus());
-		assertEquals("cfb67a640fc290e41ce5e41bc6b5ad22847af2a3", message.getSalt());
+		assertEquals(EXPECTED_SALT, message.getSalt());
 	}
 
 	@Test
@@ -118,10 +121,20 @@ public class ChatMessageTest {
 	}
 	
 	@Test
-	public void testWriteMessageContent_withAckMessage() throws IOException {
+	public void testWriteMessageContent_ackMessage() throws IOException {
 		message.setSessionId(new SessionId(EXPECTED_SID));
 		message.setAcknowledgementPayload(1L);
 		TestUtils.checkMessageOutput(message, this.getClass(), "chat_message_ack.sampledata");
+	}
+	
+	@Test
+	public void testWriteMessageContent_peerInfoMessage() throws IOException {
+		message.setSessionId(new SessionId(EXPECTED_SID));
+		InetSocketAddress netAddr = new InetSocketAddress("100.100.100.100", 10000);
+		InetSocketAddress localAddr = new InetSocketAddress("192.168.0.1", 30000);
+		message.setClientInfoPayload(netAddr, localAddr, 100L, EXPECTED_SALT);
+		
+		TestUtils.checkMessageOutput(message, this.getClass(), "chat_message_peerinfo.sampledata");
 	}
 	
 	@Test
@@ -159,6 +172,38 @@ public class ChatMessageTest {
 		message.setSessionId(new SessionId(EXPECTED_SID));
 		message.setTypingPayload(1L, 1L);
 		assertEquals(EXPECTED_TO_STRING_TYPING_MSG, message.toString());
+	}
+	
+	private static final String EXPECTED_TO_STRING_PEER_INFO_MSG
+	= "Chat Message\n" +
+	  "\tPeer SID: SID:<01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10>\n" +
+	  "\tType: Client info\n" +
+	  "\tNetwork address: /100.100.100.100:10000\n" +
+	  "\tLocal address: /192.168.0.1:30000\n" +
+	  "\tStatus: 100\n" +
+	  "\tSalt: " + EXPECTED_SALT;
+	
+	@Test
+	public void testToString_withPeerInfoMessage() {
+		message.setSessionId(new SessionId(EXPECTED_SID));
+		InetSocketAddress netAddr = new InetSocketAddress("100.100.100.100", 10000);
+		InetSocketAddress localAddr = new InetSocketAddress("192.168.0.1", 30000);
+		message.setClientInfoPayload(netAddr, localAddr, 100L, EXPECTED_SALT);
+		
+		assertEquals(EXPECTED_TO_STRING_PEER_INFO_MSG, message.toString());
+	}
+	
+	private static final String EXPECTED_TO_STRING_ACK_MSG
+	= "Chat Message\n" +
+	  "\tPeer SID: SID:<01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10>\n" +
+	  "\tType: Acknowledgement\n" +
+	  "\tMessage index: 100";
+	  
+	@Test
+	public void testToString_withAckMessage() {
+		message.setSessionId(new SessionId(EXPECTED_SID));
+		message.setAcknowledgementPayload(100);
+		assertEquals(EXPECTED_TO_STRING_ACK_MSG, message.toString());
 	}
 
 }

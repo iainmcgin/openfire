@@ -18,6 +18,7 @@
  */
 package uk.azdev.openfire.net;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -52,7 +53,7 @@ public class ChannelWriterTest {
 		byte[] writtenBytes = bytesStream.toByteArray();
 		
 		byte[] expectedBytes = TestUtils.getByteArrayForResource(ChannelWriterTest.class, "upstream.sampledata");
-		TestUtils.checkArray(expectedBytes, writtenBytes);
+		assertArrayEquals("arrays do not match", expectedBytes, writtenBytes);
 	}
 	
 	@Test

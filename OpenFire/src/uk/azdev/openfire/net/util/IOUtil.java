@@ -180,9 +180,9 @@ public class IOUtil {
 	
 	public static long getInt32FromAddress(Inet4Address inetAddress) {
 		byte[] addrBytes = inetAddress.getAddress();
-		return  (convertByteToUnsigned(addrBytes[0]) << 24L) 
-		      | (convertByteToUnsigned(addrBytes[1]) << 16L) 
-		      | (convertByteToUnsigned(addrBytes[2]) << 8L)
+		return  ((long)convertByteToUnsigned(addrBytes[0]) << 24L) 
+		      | ((long)convertByteToUnsigned(addrBytes[1]) << 16L) 
+		      | ((long)convertByteToUnsigned(addrBytes[2]) << 8L)
 		      | (convertByteToUnsigned(addrBytes[3]));
 	}
 	

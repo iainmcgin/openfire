@@ -165,7 +165,7 @@ public class UnrolledListAttributeValueTest {
 
 	@Test
 	public void testToArray() {
-		assertEquals(new Long[] { 10L, 20L, 30L, 40L }, unrolledList.toArray());
+		assertArrayEquals(new Long[] { 10L, 20L, 30L, 40L }, unrolledList.toArray());
 	}
 
 	@Test
@@ -175,7 +175,7 @@ public class UnrolledListAttributeValueTest {
 		Long[] largeArray = new Long[6];
 		assertNotSame(smallArray, unrolledList.toArray(smallArray));
 		assertSame(correctArray, unrolledList.toArray(correctArray));
-		assertEquals(new Long[] { 10L, 20L, 30L, 40L }, correctArray);
+		assertArrayEquals(new Long[] { 10L, 20L, 30L, 40L }, correctArray);
 		assertSame(largeArray, unrolledList.toArray(largeArray));
 		assertEquals(null, largeArray[4]);
 	}

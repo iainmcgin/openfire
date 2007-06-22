@@ -39,7 +39,7 @@ public class Conversation {
 	private Friend peer;
 	
 	private int myMessageIndex;
-	private LinkedList<String> chatLog;
+	private LinkedList<ConversationLogLine> chatLog;
 	
 	private long lastClientInfoTransmitTime;
 	
@@ -51,7 +51,7 @@ public class Conversation {
 		this.self = self;
 		this.peer = peer;
 		this.messageSender = messageSender;
-		this.chatLog = new LinkedList<String>();
+		this.chatLog = new LinkedList<ConversationLogLine>();
 		this.myMessageIndex = 0;
 		this.lastClientInfoTransmitTime = 0;
 		this.listeners = new LinkedList<IConversationListener>();
@@ -106,13 +106,7 @@ public class Conversation {
 	}
 
 	private void addMessage(Friend user, String message) {
-		StringBuffer logLine = new StringBuffer();
-		logLine.append(user.getDisplayName());
-		logLine.append(": ");
-		logLine.append(message);
-		logLine.append("\n");
-		
-		chatLog.add(logLine.toString());
+		chatLog.add(new ConversationLogLine(user, message));
 	}
 	
 	public Friend getPeer() {
@@ -121,14 +115,14 @@ public class Conversation {
 	
 	public String getChatLog() {
 		StringBuffer entireChatLog = new StringBuffer();
-		for(String chatLine : chatLog) {
+		for(ConversationLogLine chatLine : chatLog) {
 			entireChatLog.append(chatLine);
 		}
 		
 		return entireChatLog.toString();
 	}
 	
-	public String getLastMessage() {
+	public ConversationLogLine getLastMessage() {
 		return chatLog.getLast();
 	}
 	

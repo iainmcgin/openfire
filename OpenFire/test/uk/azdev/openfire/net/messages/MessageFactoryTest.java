@@ -29,6 +29,7 @@ import uk.azdev.openfire.net.messages.incoming.FriendGameInfoMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendOfFriendListMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendStatusMessage;
+import uk.azdev.openfire.net.messages.incoming.IncomingInvitationMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginChallengeMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginFailureMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
@@ -67,6 +68,7 @@ public class MessageFactoryTest {
 		assertTrue(factory.isKnownMessageType(FriendOfFriendListMessage.FRIEND_OF_FRIEND_LIST_MESSAGE_TYPE));
 		assertTrue(factory.isKnownMessageType(NewVersionAvailableMessage.TYPE_ID));
 		assertTrue(factory.isKnownMessageType(ChatMessage.TYPE_ID));
+		assertTrue(factory.isKnownMessageType(IncomingInvitationMessage.TYPE_ID));
 		assertFalse(factory.isKnownMessageType(-1));
 	}
 	
@@ -88,6 +90,7 @@ public class MessageFactoryTest {
 		assertTrue(factory.createMessage(FriendOfFriendListMessage.FRIEND_OF_FRIEND_LIST_MESSAGE_TYPE) instanceof FriendOfFriendListMessage);
 		assertTrue(factory.createMessage(NewVersionAvailableMessage.TYPE_ID) instanceof NewVersionAvailableMessage);
 		assertTrue(factory.createMessage(ChatMessage.TYPE_ID) instanceof ChatMessage);
+		assertTrue(factory.createMessage(IncomingInvitationMessage.TYPE_ID) instanceof IncomingInvitationMessage);
 	}
 	
 	@Test(expected=UnknownMessageTypeException.class)

@@ -22,16 +22,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
-import uk.azdev.openfire.net.messages.bidirectional.ServerRoutedChatMessage;
 import uk.azdev.openfire.net.messages.incoming.DIdMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendGameInfoMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendOfFriendListMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendStatusMessage;
+import uk.azdev.openfire.net.messages.incoming.IncomingInvitationMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginChallengeMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginFailureMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
 import uk.azdev.openfire.net.messages.incoming.NewVersionAvailableMessage;
+import uk.azdev.openfire.net.messages.incoming.ServerRoutedChatMessage;
 import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientConfigurationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientInformationMessage;
@@ -64,6 +65,7 @@ public class MessageFactory {
 		addMessageType(new NewVersionAvailableMessage());
 		addMessageType(new ChatMessage());
 		addMessageType(new ServerRoutedChatMessage());
+		addMessageType(new IncomingInvitationMessage());
 	}
 
 	private void addMessageType(IMessage message) {
