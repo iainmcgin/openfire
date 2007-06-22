@@ -24,14 +24,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.concurrent.CountDownLatch;
 
 public abstract class AbstractServerEmulator implements Runnable {
 
 	private ServerSocket socket;
 	private Thread myThread;
 	private boolean errorOccurred;
-	private Object stopMutex;
-	private boolean stop;
+	private CountDownLatch latch;
 	
 	public AbstractServerEmulator() throws IOException {
 		ServerSocketChannel channel = ServerSocketChannel.open();
@@ -39,8 +39,7 @@ public abstract class AbstractServerEmulator implements Runnable {
 		channel.socket().bind(new InetSocketAddress(0));
 		socket = channel.socket();
 		errorOccurred = false;
-		stopMutex = new Object();
-		stop = false;
+		latch = new CountDownLatch(1);
 	}
 	
 	public void start() {
@@ -53,11 +52,7 @@ public abstract class AbstractServerEmulator implements Runnable {
 	}
 	
 	public void stop() throws InterruptedException {
-		synchronized (stopMutex) {
-			stop = true;
-			stopMutex.notify();
-		}
-		
+		latch.countDown();
 		myThread.join();
 	}
 	
@@ -73,11 +68,7 @@ public abstract class AbstractServerEmulator implements Runnable {
 			
 			doWork(channel);
 
-			while(!stop) {
-				synchronized (stopMutex) {
-					stopMutex.wait();
-				}
-			}
+			latch.await();
 			
 			acceptedConnection.close();
 			socket.close();
