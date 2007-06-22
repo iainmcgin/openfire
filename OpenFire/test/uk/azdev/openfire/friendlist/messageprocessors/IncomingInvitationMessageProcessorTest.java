@@ -24,6 +24,8 @@ import org.junit.Test;
 
 import uk.azdev.openfire.ConnectionEventListener;
 import uk.azdev.openfire.common.Invitation;
+import uk.azdev.openfire.common.ReceivedInvitation;
+import uk.azdev.openfire.net.IMessageSender;
 import uk.azdev.openfire.net.messages.incoming.IncomingInvitationMessage;
 
 public class IncomingInvitationMessageProcessorTest {
@@ -32,22 +34,27 @@ public class IncomingInvitationMessageProcessorTest {
 	public void testProcessMessage() {
 		JUnit4Mockery context = new JUnit4Mockery();
 		final ConnectionEventListener listener = context.mock(ConnectionEventListener.class);
+		final IMessageSender messageSender = context.mock(IMessageSender.class);
 		
-		final Invitation inv1 = new Invitation("alice", "Alice", "Hello! Let me talk to you");
-		final Invitation inv2 = new Invitation("bob", "Bob", "Ahoy there!");
-		final Invitation inv3 = new Invitation("carol", "Carol", "Y HELO THAR");
+		Invitation inv1 = new Invitation("alice", "Alice", "Hello! Let me talk to you");
+		Invitation inv2 = new Invitation("bob", "Bob", "Ahoy there!");
+		Invitation inv3 = new Invitation("carol", "Carol", "Y HELO THAR");
 		IncomingInvitationMessage message = new IncomingInvitationMessage();
 		message.addInvite(inv1);
 		message.addInvite(inv2);
 		message.addInvite(inv3);
 		
+		final ReceivedInvitation expectedInv1 = new ReceivedInvitation(inv1, messageSender);
+		final ReceivedInvitation expectedInv2 = new ReceivedInvitation(inv2, messageSender);
+		final ReceivedInvitation expectedInv3 = new ReceivedInvitation(inv3, messageSender);
+		
 		context.checking(new Expectations() {{
-			one(listener).inviteReceived(with(same(inv1)));
-			one(listener).inviteReceived(with(same(inv2)));
-			one(listener).inviteReceived(with(same(inv3)));
+			one(listener).inviteReceived(with(equal(expectedInv1)));
+			one(listener).inviteReceived(with(equal(expectedInv2)));
+			one(listener).inviteReceived(with(equal(expectedInv3)));
 		}});
 		
-		IncomingInvitationMessageProcessor processor = new IncomingInvitationMessageProcessor(listener);
+		IncomingInvitationMessageProcessor processor = new IncomingInvitationMessageProcessor(listener, messageSender);
 		processor.processMessage(message);
 		context.assertIsSatisfied();
 	}

@@ -20,22 +20,27 @@ package uk.azdev.openfire.friendlist.messageprocessors;
 
 import uk.azdev.openfire.ConnectionEventListener;
 import uk.azdev.openfire.common.Invitation;
+import uk.azdev.openfire.common.ReceivedInvitation;
+import uk.azdev.openfire.net.IMessageSender;
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.incoming.IncomingInvitationMessage;
 
 public class IncomingInvitationMessageProcessor implements IMessageProcessor {
 
 	private ConnectionEventListener listener;
+	private IMessageSender messageSender;
 
-	public IncomingInvitationMessageProcessor(ConnectionEventListener listener) {
+	public IncomingInvitationMessageProcessor(ConnectionEventListener listener, IMessageSender messageSender) {
 		this.listener = listener;
+		this.messageSender = messageSender;
 	}
 	
 	public void processMessage(IMessage msg) {
 		IncomingInvitationMessage message = (IncomingInvitationMessage)msg;
 		
 		for(Invitation invite : message.getInvites()) {
-			listener.inviteReceived(invite);
+			ReceivedInvitation invitation = new ReceivedInvitation(invite, messageSender);
+			listener.inviteReceived(invitation);
 		}
 	}
 }

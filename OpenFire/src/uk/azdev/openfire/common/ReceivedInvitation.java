@@ -16,25 +16,35 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire.net.messages.outgoing;
+package uk.azdev.openfire.common;
 
-import uk.azdev.openfire.net.messages.IMessage;
+import uk.azdev.openfire.net.IMessageSender;
+import uk.azdev.openfire.net.messages.outgoing.AcceptInvitationMessage;
+import uk.azdev.openfire.net.messages.outgoing.RejectInvitationMessage;
 
-public class RejectInvitationMessage extends AbstractInvitationResponseMessage {
+public class ReceivedInvitation extends Invitation {
 
-	public static final int TYPE_ID = 8;
-
-	public int getMessageId() {
-		return TYPE_ID;
-	}
-
-	public IMessage newInstance() {
-		return new RejectInvitationMessage();
+	private IMessageSender messageSender;
+	
+	public ReceivedInvitation(Invitation invite, IMessageSender messageSender) {
+		super(invite.getUserName(), invite.getDisplayName(), invite.getMessage());
+		this.messageSender = messageSender;
 	}
 	
-	@Override
-	public boolean equals(Object obj) {
-		return (obj instanceof RejectInvitationMessage) && super.equals(obj);
+	public void accept() {
+		AcceptInvitationMessage message = new AcceptInvitationMessage();
+		message.setPeerUserName(getUserName());
+		messageSender.sendMessage(message);
+	}
+	
+	public void reject() {
+		RejectInvitationMessage message = new RejectInvitationMessage();
+		message.setPeerUserName(getUserName());
+		messageSender.sendMessage(message);
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		return (obj instanceof ReceivedInvitation) && super.equals(obj);
+	}
 }

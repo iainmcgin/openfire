@@ -49,4 +49,14 @@ public abstract class AbstractInvitationResponseMessage extends StringMapBasedMe
 	public void setPeerUserName(String peerUserName) {
 		this.peerUserName = peerUserName;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof AbstractInvitationResponseMessage)) {
+			return false;
+		}
+		
+		AbstractInvitationResponseMessage inv = (AbstractInvitationResponseMessage)obj;
+		return inv.getPeerUserName().equals(getPeerUserName());
+	}
 }

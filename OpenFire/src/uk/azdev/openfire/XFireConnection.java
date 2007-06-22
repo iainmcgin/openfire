@@ -159,7 +159,7 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 		processorMap.put(NewVersionAvailableMessage.TYPE_ID, new NewVersionAvailableMessageProcessor(this, config));
 		processorMap.put(ServerRoutedChatMessage.SR_TYPE_ID, new ChatMessageProcessor(this, eventDispatcher));
 		processorMap.put(ChatMessage.TYPE_ID, new ChatMessageProcessor(this, eventDispatcher));
-		processorMap.put(IncomingInvitationMessage.TYPE_ID, new IncomingInvitationMessageProcessor(eventDispatcher));
+		processorMap.put(IncomingInvitationMessage.TYPE_ID, new IncomingInvitationMessageProcessor(eventDispatcher, this));
 	}
 	
 	private void sendClientInfo() {
