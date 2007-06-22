@@ -19,8 +19,6 @@
 package uk.azdev.openfire.net.attrvalues;
 
 import static org.junit.Assert.*;
-import static uk.azdev.openfire.testutil.TestUtils.*;
-
 import java.nio.ByteBuffer;
 
 import org.junit.Before;
