@@ -41,4 +41,21 @@ public class Invitation {
 	public String getUserName() {
 		return userName;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Invitation)) {
+			return false;
+		}
+		
+		Invitation i = (Invitation)obj;
+		return i.getUserName().equals(getUserName())
+		    && i.getDisplayName().equals(getDisplayName())
+		    && i.getMessage().equals(getMessage());
+	}
+	
+	@Override
+	public int hashCode() {
+		return getUserName().hashCode() ^ getDisplayName().hashCode() ^ message.hashCode();
+	}
 }

@@ -18,14 +18,14 @@
  */
 package uk.azdev.openfire;
 
-import uk.azdev.openfire.common.Invitation;
+import uk.azdev.openfire.common.ReceivedInvitation;
 import uk.azdev.openfire.common.SessionId;
 
 public interface ConnectionEventListener {
 
 	public void conversationUpdate(SessionId sessionId);
 	public void friendsListUpdated();
-	public void inviteReceived(Invitation invite);
+	public void inviteReceived(ReceivedInvitation invite);
 	public void loginFailed();
 	public void disconnected();
 	public void connectionError();

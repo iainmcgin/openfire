@@ -21,7 +21,7 @@ package uk.azdev.openfire;
 import java.util.LinkedList;
 import java.util.List;
 
-import uk.azdev.openfire.common.Invitation;
+import uk.azdev.openfire.common.ReceivedInvitation;
 import uk.azdev.openfire.common.SessionId;
 
 public class ConnectionEventDispatcher implements ConnectionEventListener {
@@ -72,7 +72,7 @@ public class ConnectionEventDispatcher implements ConnectionEventListener {
 		}
 	}
 
-	public void inviteReceived(Invitation invite) {
+	public void inviteReceived(ReceivedInvitation invite) {
 		for(ConnectionEventListener listener : listeners) {
 			listener.inviteReceived(invite);
 		}

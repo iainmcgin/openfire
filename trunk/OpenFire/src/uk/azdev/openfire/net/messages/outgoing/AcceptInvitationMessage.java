@@ -31,5 +31,10 @@ public class AcceptInvitationMessage extends AbstractInvitationResponseMessage {
 	public IMessage newInstance() {
 		return new AcceptInvitationMessage();
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return (obj instanceof AcceptInvitationMessage) && super.equals(obj);
+	}
 
 }
