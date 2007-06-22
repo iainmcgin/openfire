@@ -16,19 +16,20 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire;
+package uk.azdev.openfire.net.messages.outgoing;
 
-import uk.azdev.openfire.common.Invitation;
-import uk.azdev.openfire.common.SessionId;
+import uk.azdev.openfire.net.messages.IMessage;
 
-public interface ConnectionEventListener {
+public class AcceptInvitationMessage extends AbstractInvitationResponseMessage {
 
-	public void conversationUpdate(SessionId sessionId);
-	public void friendsListUpdated();
-	public void inviteReceived(Invitation invite);
-	public void loginFailed();
-	public void disconnected();
-	public void connectionError();
-	public void internalError(Exception e);
+	public static final int TYPE_ID = 7;
 	
+	public int getMessageId() {
+		return TYPE_ID;
+	}
+
+	public IMessage newInstance() {
+		return new AcceptInvitationMessage();
+	}
+
 }

@@ -245,7 +245,7 @@ public class IniDataTest {
 		iniContents.write(byteStream);
 		byte[] bytes = byteStream.toByteArray();
 		
-		TestUtils.checkArray(TestUtils.getByteArrayForResource(this.getClass(), "singlesection.ini"), bytes);
+		assertArrayEquals("arrays do not match", TestUtils.getByteArrayForResource(this.getClass(), "singlesection.ini"), bytes);
 	}
 	
 	@Test
@@ -268,7 +268,7 @@ public class IniDataTest {
 		iniContents.write(byteStream);
 		byte[] bytes = byteStream.toByteArray();
 		
-		TestUtils.checkArray(TestUtils.getByteArrayForResource(this.getClass(), "multisection.ini"), bytes);
+		assertArrayEquals("arrays do not match", TestUtils.getByteArrayForResource(this.getClass(), "multisection.ini"), bytes);
 	}
 	
 	@Test
@@ -291,7 +291,7 @@ public class IniDataTest {
 		iniContents.write(testFile);
 		
 		byte[] bytes = TestUtils.getBytesFromFile(testFile);
-		TestUtils.checkArray(TestUtils.getByteArrayForResource(this.getClass(), "multisection.ini"), bytes);
+		assertArrayEquals("arrays do not match", TestUtils.getByteArrayForResource(this.getClass(), "multisection.ini"), bytes);
 	}
 	
 	@Test

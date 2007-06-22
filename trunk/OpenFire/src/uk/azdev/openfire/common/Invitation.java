@@ -16,19 +16,29 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire;
+package uk.azdev.openfire.common;
 
-import uk.azdev.openfire.common.Invitation;
-import uk.azdev.openfire.common.SessionId;
+public class Invitation {
 
-public interface ConnectionEventListener {
-
-	public void conversationUpdate(SessionId sessionId);
-	public void friendsListUpdated();
-	public void inviteReceived(Invitation invite);
-	public void loginFailed();
-	public void disconnected();
-	public void connectionError();
-	public void internalError(Exception e);
+	private String userName;
+	private String displayName;
+	private String message;
 	
+	public Invitation(String userName, String displayName, String message) {
+		this.userName = userName;
+		this.displayName = displayName;
+		this.message = message;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
 }

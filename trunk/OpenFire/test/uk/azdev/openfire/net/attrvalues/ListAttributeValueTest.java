@@ -101,7 +101,7 @@ public class ListAttributeValueTest {
 		buffer.flip();
 		buffer.get(bytes);
 		
-		checkArray(INT_LIST, bytes);
+		assertArrayEquals("arrays do not match", INT_LIST, bytes);
 	}
 	
 	@Test

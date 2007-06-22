@@ -16,19 +16,30 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire;
+package uk.azdev.openfire.net.messages.outgoing;
 
-import uk.azdev.openfire.common.Invitation;
-import uk.azdev.openfire.common.SessionId;
+import static org.junit.Assert.*;
 
-public interface ConnectionEventListener {
+import org.junit.Before;
+import org.junit.Test;
 
-	public void conversationUpdate(SessionId sessionId);
-	public void friendsListUpdated();
-	public void inviteReceived(Invitation invite);
-	public void loginFailed();
-	public void disconnected();
-	public void connectionError();
-	public void internalError(Exception e);
+public class RejectInvitationMessageTest {
+
+	private RejectInvitationMessage message;
 	
+	@Before
+	public void setUp() throws Exception {
+		message = new RejectInvitationMessage();
+	}
+
+	@Test
+	public void testGetMessageId() {
+		assertEquals(RejectInvitationMessage.TYPE_ID, message.getMessageId());
+	}
+
+	@Test
+	public void testNewInstance() {
+		assertTrue(message.newInstance().getClass().equals(RejectInvitationMessage.class));
+	}
+
 }

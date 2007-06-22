@@ -39,12 +39,12 @@ public class OpenFireConfiguration {
 	public static final String DEFAULT_ACTIVE_THEME = "default";
 	public static final String DEFAULT_PARTNER = "";
 	public static final String DEFAULT_XFIRE_SERVER_HOSTNAME = ProtocolConstants.XFIRE_SERVER_NAME;
-	public static final int DEFAULT_XFIRE_SERVER_PORT = ProtocolConstants.XFIRE_SERVER_PORT; 
+	public static final int DEFAULT_XFIRE_SERVER_PORT = ProtocolConstants.XFIRE_SERVER_PORT;
 	
 	private String xfireGamesIniPath = DEFAULT_XFIRE_GAMES_INI_PATH;
 	private String username = DEFAULT_USER_NAME;
 	private String password = DEFAULT_PASSWORD;
-	private int netPort = DEFAULT_NETWORK_PORT;
+	private int networkPort = DEFAULT_NETWORK_PORT;
 	private int localPort = DEFAULT_LOCAL_PORT;
 	private String longVersion = DEFAULT_LONG_VERSION;
 	private long shortVersion = DEFAULT_SHORT_VERSION;
@@ -161,11 +161,11 @@ public class OpenFireConfiguration {
 	}
 
 	public int getNetworkPort() {
-		return netPort;
+		return networkPort;
 	}
 
 	public void setNetworkPort(int netPort) {
-		this.netPort = netPort;
+		this.networkPort = netPort;
 	}
 
 	public static OpenFireConfiguration readConfig(Reader configReader) throws IOException, InvalidConfigurationException {
@@ -197,7 +197,7 @@ public class OpenFireConfiguration {
 		
 		return config;
 	}
-	
+
 	private static int getMandatoryPropAsBoundedInt(Properties properties, String key, String propDesc, int minVal, int maxVal) throws InvalidConfigurationException {
 		String value = getMandatoryProp(properties, key, propDesc);
 		

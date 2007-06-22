@@ -16,19 +16,44 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire;
+package uk.azdev.openfire.conversations;
 
-import uk.azdev.openfire.common.Invitation;
-import uk.azdev.openfire.common.SessionId;
+import uk.azdev.openfire.friendlist.Friend;
 
-public interface ConnectionEventListener {
+public class ConversationLogLine {
 
-	public void conversationUpdate(SessionId sessionId);
-	public void friendsListUpdated();
-	public void inviteReceived(Invitation invite);
-	public void loginFailed();
-	public void disconnected();
-	public void connectionError();
-	public void internalError(Exception e);
+	private Friend originator;
+	private String message;
 	
+	public ConversationLogLine(Friend originator, String message) {
+		this.originator = originator;
+		this.message = message;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public Friend getOriginator() {
+		return originator;
+	}
+
+	public void setOriginator(Friend originator) {
+		this.originator = originator;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuffer logLine = new StringBuffer();
+		logLine.append(originator.getDisplayName());
+		logLine.append(": ");
+		logLine.append(message);
+		logLine.append("\n");
+		
+		return logLine.toString();
+	}
 }

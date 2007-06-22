@@ -36,6 +36,7 @@ import uk.azdev.openfire.friendlist.messageprocessors.FriendListMessageProcessor
 import uk.azdev.openfire.friendlist.messageprocessors.FriendOfFriendListMessageProcessor;
 import uk.azdev.openfire.friendlist.messageprocessors.FriendStatusMessageProcessor;
 import uk.azdev.openfire.friendlist.messageprocessors.IMessageProcessor;
+import uk.azdev.openfire.friendlist.messageprocessors.IncomingInvitationMessageProcessor;
 import uk.azdev.openfire.friendlist.messageprocessors.LoginChallengeMessageProcessor;
 import uk.azdev.openfire.friendlist.messageprocessors.LoginFailureMessageProcessor;
 import uk.azdev.openfire.friendlist.messageprocessors.LoginSuccessMessageProcessor;
@@ -47,14 +48,15 @@ import uk.azdev.openfire.net.IConnectionController;
 import uk.azdev.openfire.net.IMessageSender;
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
-import uk.azdev.openfire.net.messages.bidirectional.ServerRoutedChatMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendOfFriendListMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendStatusMessage;
+import uk.azdev.openfire.net.messages.incoming.IncomingInvitationMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginChallengeMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginFailureMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
 import uk.azdev.openfire.net.messages.incoming.NewVersionAvailableMessage;
+import uk.azdev.openfire.net.messages.incoming.ServerRoutedChatMessage;
 import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientInformationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientVersionMessage;
@@ -157,6 +159,7 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 		processorMap.put(NewVersionAvailableMessage.TYPE_ID, new NewVersionAvailableMessageProcessor(this, config));
 		processorMap.put(ServerRoutedChatMessage.SR_TYPE_ID, new ChatMessageProcessor(this));
 		processorMap.put(ChatMessage.TYPE_ID, new ChatMessageProcessor(this));
+		processorMap.put(IncomingInvitationMessage.TYPE_ID, new IncomingInvitationMessageProcessor(eventDispatcher));
 	}
 	
 	private void sendClientInfo() {

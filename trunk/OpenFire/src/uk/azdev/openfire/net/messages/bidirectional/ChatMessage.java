@@ -18,6 +18,7 @@
  */
 package uk.azdev.openfire.net.messages.bidirectional;
 
+import java.net.Inet4Address;
 import java.net.InetSocketAddress;
 
 import uk.azdev.openfire.common.Logging;
@@ -204,6 +205,14 @@ public class ChatMessage extends StringMapBasedMessage {
 			payloadMap.addAttribute(IM_INDEX_KEY, new Int32AttributeValue(messageIndex));
 			break;
 		case CLIENT_INFO_MESSAGE_TYPE:
+			long localIp = IOUtil.getInt32FromAddress((Inet4Address) localAddr.getAddress());
+			long netIp = IOUtil.getInt32FromAddress((Inet4Address) netAddr.getAddress());
+			payloadMap.addAttribute(IP_KEY, new Int32AttributeValue(netIp));
+			payloadMap.addAttribute(PORT_KEY, netAddr.getPort());
+			payloadMap.addAttribute(LOCAL_IP_KEY, new Int32AttributeValue(localIp));
+			payloadMap.addAttribute(LOCAL_PORT_KEY, localAddr.getPort());
+			payloadMap.addAttribute(STATUS_KEY, status);
+			payloadMap.addAttribute(SALT_KEY, salt);
 			break;
 		case USER_TYPING_MESSAGE_TYPE:
 			payloadMap.addAttribute(IM_INDEX_KEY, new Int32AttributeValue(messageIndex));

@@ -16,27 +16,20 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire.net.messages.bidirectional;
+package uk.azdev.openfire.net.messages.outgoing;
 
 import uk.azdev.openfire.net.messages.IMessage;
 
-public class ServerRoutedChatMessage extends ChatMessage {
+public class RejectInvitationMessage extends AbstractInvitationResponseMessage {
 
-	public static final int SR_TYPE_ID = 133;
-	
-	@Override
+	public static final int TYPE_ID = 8;
+
 	public int getMessageId() {
-		return SR_TYPE_ID;
+		return TYPE_ID;
 	}
-	
-	@Override
+
 	public IMessage newInstance() {
-		return new ServerRoutedChatMessage();
+		return new RejectInvitationMessage();
 	}
-	
-	@Override
-	public String toString() {
-		return "Server Routed " + super.toString();
-	}
-	
+
 }
