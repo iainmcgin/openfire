@@ -18,8 +18,6 @@
  */
 package uk.azdev.openfire.friendlist.messageprocessors;
 
-import static org.junit.Assert.*;
-
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Test;
