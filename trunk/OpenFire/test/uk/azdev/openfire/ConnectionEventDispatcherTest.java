@@ -23,7 +23,10 @@ import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.azdev.openfire.common.Invitation;
+import uk.azdev.openfire.common.ReceivedInvitation;
 import uk.azdev.openfire.common.SessionId;
+import uk.azdev.openfire.net.IMessageSender;
 
 public class ConnectionEventDispatcherTest {
 
@@ -119,6 +122,20 @@ public class ConnectionEventDispatcherTest {
 		}});
 		
 		dispatcher.internalError(e);
+		context.assertIsSatisfied();
+	}
+	
+	@Test
+	public void testInviteReceived() {
+		Invitation inviteData = new Invitation("bob", "Bob", "hello");
+		final ReceivedInvitation invite = new ReceivedInvitation(inviteData, context.mock(IMessageSender.class));
+		context.checking(new Expectations() {{
+			one(listener1).inviteReceived(with(same(invite)));
+			one(listener2).inviteReceived(with(same(invite)));
+			one(listener3).inviteReceived(with(same(invite)));
+		}});
+		
+		dispatcher.inviteReceived(invite);
 		context.assertIsSatisfied();
 	}
 
