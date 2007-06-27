@@ -52,7 +52,7 @@ public class Conversation {
 		this.peer = peer;
 		this.messageSender = messageSender;
 		this.chatLog = new LinkedList<ConversationLogLine>();
-		this.myMessageIndex = 0;
+		this.myMessageIndex = 1;
 		this.lastClientInfoTransmitTime = 0;
 		this.listeners = new LinkedList<IConversationListener>();
 		this.config = config;
