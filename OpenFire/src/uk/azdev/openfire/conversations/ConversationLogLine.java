@@ -26,8 +26,8 @@ public class ConversationLogLine {
 	private String message;
 	
 	public ConversationLogLine(Friend originator, String message) {
-		this.originator = originator;
-		this.message = message;
+		setOriginator(originator);
+		setMessage(message);
 	}
 
 	public String getMessage() {
