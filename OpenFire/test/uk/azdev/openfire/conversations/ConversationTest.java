@@ -26,7 +26,6 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.hamcrest.beans.HasPropertyWithValue;
 import org.hamcrest.core.AllOf;
-import org.hamcrest.core.Is;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Before;
