@@ -7,13 +7,20 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
 
 import uk.azdev.openfire.ConnectionEventListener;
 import uk.azdev.openfire.XFireConnection;
 import uk.azdev.openfire.common.InvalidConfigurationException;
+import uk.azdev.openfire.common.Logging;
 import uk.azdev.openfire.common.OpenFireConfiguration;
+import uk.azdev.openfire.common.ReceivedInvitation;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.conversations.Conversation;
+import uk.azdev.openfire.conversations.ConversationLogLine;
 import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
 
@@ -22,11 +29,15 @@ public class OpenFireRelay implements ConnectionEventListener {
 	private XFireConnection connection;
 	private CountDownLatch exitLatch;
 	private Set<String> adminList;
+	private CommandProcessor commandProcessor;
+	
+	public static final Logger relayLog = Logger.getLogger("relay");
 	
 	public OpenFireRelay(OpenFireConfiguration config, Set<String> adminList) {
 		exitLatch = new CountDownLatch(1);
 		connection = new XFireConnection(config);
 		this.adminList = adminList;
+		commandProcessor = new CommandProcessor();
 	}
 	
 	private void start() throws UnknownHostException, IOException {
@@ -49,17 +60,19 @@ public class OpenFireRelay implements ConnectionEventListener {
 		Friend sourceFriend = list.getOnlineFriend(sessionId);
 		System.out.println("message received from " + sourceFriend.getUserName() + " (" + sessionId + ")");
 		Conversation sourceConv = connection.getConversation(sessionId);
-		String message = sourceConv.getLastMessage();
+		ConversationLogLine message = sourceConv.getLastMessage();
 		
-		if(adminList.contains(sourceFriend.getUserName())) {
+		if(message.getMessage().startsWith("@")) {
+			commandProcessor.processCommand(message.getMessage().substring(1), message.getOriginator(), connection);
+		}else if(adminList.contains(sourceFriend.getUserName())) {
 			System.out.println("Routing admin message");
-			routeToAll(sourceFriend, message);
+			routeToAll(sourceFriend, message.toString());
 		} else {
 			System.out.println("Routing user message to admins");
-			routeToAdmins(sourceFriend, message);
+			routeToAdmins(sourceFriend, message.toString());
 		}
 	}
-	
+
 	private void routeToAll(Friend source, String message) {
 		FriendsList list = connection.getFriendList();
 		Set<Friend> myFriends = list.getMyFriends();
@@ -81,7 +94,7 @@ public class OpenFireRelay implements ConnectionEventListener {
 		Set<Friend> myFriends = list.getMyFriends();
 		
 		for(Friend f : myFriends) {
-			if(!f.isOnline() || !adminList.contains(f.getUserName())) {
+			if(!f.isOnline() || f.equals(source) || !adminList.contains(f.getUserName())) {
 				continue;
 			}
 			
@@ -112,7 +125,7 @@ public class OpenFireRelay implements ConnectionEventListener {
 	}
 	
 	public static void main(String[] args) {
-		
+		configureLogging();
 		OpenFireConfiguration config;
 		try {
 			config = readConfig();
@@ -151,6 +164,13 @@ public class OpenFireRelay implements ConnectionEventListener {
 		}
 	}
 
+	private static void configureLogging() {
+		Logging.connectionLogger.addHandler(new StreamHandler(System.out, new SimpleFormatter()));
+		Logging.connectionLogger.setLevel(Level.FINEST);
+		relayLog.addHandler(new StreamHandler(System.out, new SimpleFormatter()));
+		relayLog.setLevel(Level.FINEST);
+	}
+
 	private static OpenFireConfiguration readConfig() throws IOException, InvalidConfigurationException {
 		FileReader reader = new FileReader("openfire.cfg");
 		return OpenFireConfiguration.readConfig(reader);
@@ -170,5 +190,10 @@ public class OpenFireRelay implements ConnectionEventListener {
 		}
 		
 		return adminUidSet;
+	}
+
+	public void inviteReceived(ReceivedInvitation invite) {
+		relayLog.info("Accepting invite from user \"" + invite.getUserName() + "\"");
+		invite.accept();
 	}
 }
