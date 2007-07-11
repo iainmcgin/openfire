@@ -21,7 +21,6 @@ package uk.azdev.openfire.friendlist.messageprocessors;
 import java.util.Set;
 
 import uk.azdev.openfire.common.SessionId;
-import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendStatusMessage;
@@ -38,9 +37,13 @@ public class FriendStatusMessageProcessor implements IMessageProcessor {
 		FriendStatusMessage message = (FriendStatusMessage)msg;
 		Set<SessionId> sessionIds = message.getSessionIdSet();
 		
-		for(SessionId sessionId : sessionIds) {
-			Friend friend = friendsList.getOnlineFriend(sessionId);
-			friend.setStatus(message.getStatusForSessionId(sessionId));
+		friendsList.acquireLock();
+		try {
+			for(SessionId sessionId : sessionIds) {
+				friendsList.updateFriendStatus(sessionId, message.getStatusForSessionId(sessionId));
+			}
+		} finally {
+			friendsList.releaseLock();
 		}
 	}
 }

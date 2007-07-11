@@ -21,7 +21,7 @@ package uk.azdev.openfire.friendlist.messageprocessors;
 import java.net.InetSocketAddress;
 
 import uk.azdev.openfire.common.OpenFireConfiguration;
-import uk.azdev.openfire.friendlist.Friend;
+import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.IMessageSender;
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
@@ -31,20 +31,19 @@ public class LoginSuccessMessageProcessor implements IMessageProcessor {
 
 	private IMessageSender messageSender;
 	private OpenFireConfiguration config;
-	private Friend self;
+	private FriendsList friendsList;
 
-	public LoginSuccessMessageProcessor(IMessageSender messageSender, Friend self, OpenFireConfiguration config) {
+	public LoginSuccessMessageProcessor(IMessageSender messageSender, FriendsList friendsList, OpenFireConfiguration config) {
 		this.messageSender = messageSender;
 		this.config = config;
-		this.self = self;
+		this.friendsList = friendsList;
 	}
 
 	public void processMessage(IMessage msg) {
 		LoginSuccessMessage message = (LoginSuccessMessage)msg;
-		self.setUserId(message.getUserId());
-		self.setDisplayName(message.getNick());
-		self.setOnline(message.getSessionId());
-		self.setAddress(new InetSocketAddress(message.getPublicIp(), config.getNetworkPort()));
+		
+		InetSocketAddress netAddr = new InetSocketAddress(message.getPublicIp(), config.getNetworkPort());
+		friendsList.setSelfOnline(message.getNick(), message.getSessionId(), message.getUserId(), netAddr);
 		
 		ClientConfigurationMessage clientConfig = new ClientConfigurationMessage();
 		clientConfig.setLanguage(config.getClientLanguage());

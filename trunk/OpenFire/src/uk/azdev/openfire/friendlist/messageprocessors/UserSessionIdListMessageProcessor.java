@@ -20,6 +20,7 @@ package uk.azdev.openfire.friendlist.messageprocessors;
 
 import java.util.Set;
 
+import uk.azdev.openfire.ConnectionEventListener;
 import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
@@ -27,21 +28,30 @@ import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
 public class UserSessionIdListMessageProcessor implements IMessageProcessor {
 
 	private FriendsList friendsList;
+	private ConnectionEventListener listener;
 
-	public UserSessionIdListMessageProcessor(FriendsList friendsList) {
+	public UserSessionIdListMessageProcessor(FriendsList friendsList, ConnectionEventListener listener) {
 		this.friendsList = friendsList;
+		this.listener = listener;
 	}
 	
 	public void processMessage(IMessage msg) {
 		UserSessionIdListMessage message = (UserSessionIdListMessage)msg;
 		Set<Long> userIds = message.getUserIdList();
 		
-		for(long userId : userIds) {
-			if(message.getSessionIdForUser(userId).isZero()) {
-				friendsList.setFriendOffline(userId);
-			} else {
-				friendsList.setFriendOnline(userId, message.getSessionIdForUser(userId));
+		friendsList.acquireLock();
+		try {
+			for(long userId : userIds) {
+				if(message.getSessionIdForUser(userId).isZero()) {
+					friendsList.setFriendOffline(userId);
+				} else {
+					friendsList.setFriendOnline(userId, message.getSessionIdForUser(userId));
+				}
 			}
+			
+			listener.friendsListUpdated();
+		} finally {
+			friendsList.releaseLock();
 		}
 	}
 	

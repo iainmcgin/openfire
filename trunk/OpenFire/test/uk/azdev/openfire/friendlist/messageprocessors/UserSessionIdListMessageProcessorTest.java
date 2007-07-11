@@ -22,7 +22,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import uk.azdev.openfire.ConnectionEventDispatcher;
 import uk.azdev.openfire.common.SessionId;
+import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
 
 public class UserSessionIdListMessageProcessorTest extends AbstractFriendsListTest {
@@ -36,15 +38,17 @@ public class UserSessionIdListMessageProcessorTest extends AbstractFriendsListTe
 		message.addUserMapping(bob.getUserId(), bobSid);
 		message.addUserMapping(carol.getUserId(), carolSid);
 		
-		UserSessionIdListMessageProcessor processor = new UserSessionIdListMessageProcessor(friendsList);
+		UserSessionIdListMessageProcessor processor = new UserSessionIdListMessageProcessor(friendsList, new ConnectionEventDispatcher());
 		processor.processMessage(message);
 		
-		assertEquals(aliceSid, alice.getSessionId());
-		assertTrue(alice.isOnline());
-		assertEquals(bobSid, bob.getSessionId());
-		assertTrue(bob.isOnline());
-		assertEquals(carolSid, carol.getSessionId());
-		assertTrue(carol.isOnline());
+		checkOnline(friendsList.getFriend(alice.getUserId()), aliceSid);
+		checkOnline(friendsList.getFriend(bob.getUserId()), bobSid);
+		checkOnline(friendsList.getFriend(carol.getUserId()), carolSid);
+	}
+
+	private void checkOnline(Friend f, SessionId expectedSid) {
+		assertEquals(expectedSid, f.getSessionId());
+		assertTrue(f.isOnline());
 	}
 	
 	@Test
@@ -54,7 +58,7 @@ public class UserSessionIdListMessageProcessorTest extends AbstractFriendsListTe
 		UserSessionIdListMessage message = new UserSessionIdListMessage();
 		message.addUserMapping(alice.getUserId(), new SessionId());
 		
-		UserSessionIdListMessageProcessor processor = new UserSessionIdListMessageProcessor(friendsList);
+		UserSessionIdListMessageProcessor processor = new UserSessionIdListMessageProcessor(friendsList, new ConnectionEventDispatcher());
 		processor.processMessage(message);
 		
 		assertFalse(alice.isOnline());

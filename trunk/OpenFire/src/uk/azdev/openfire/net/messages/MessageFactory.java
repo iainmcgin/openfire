@@ -34,11 +34,14 @@ import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
 import uk.azdev.openfire.net.messages.incoming.NewVersionAvailableMessage;
 import uk.azdev.openfire.net.messages.incoming.ServerRoutedChatMessage;
 import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
+import uk.azdev.openfire.net.messages.outgoing.AcceptInvitationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientConfigurationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientInformationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientVersionMessage;
 import uk.azdev.openfire.net.messages.outgoing.KeepaliveMessage;
 import uk.azdev.openfire.net.messages.outgoing.LoginRequestMessage;
+import uk.azdev.openfire.net.messages.outgoing.OutgoingInvitationMessage;
+import uk.azdev.openfire.net.messages.outgoing.RejectInvitationMessage;
 
 
 public class MessageFactory {
@@ -66,6 +69,9 @@ public class MessageFactory {
 		addMessageType(new ChatMessage());
 		addMessageType(new ServerRoutedChatMessage());
 		addMessageType(new IncomingInvitationMessage());
+		addMessageType(new AcceptInvitationMessage());
+		addMessageType(new RejectInvitationMessage());
+		addMessageType(new OutgoingInvitationMessage());
 	}
 
 	private void addMessageType(IMessage message) {

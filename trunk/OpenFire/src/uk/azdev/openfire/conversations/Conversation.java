@@ -27,6 +27,7 @@ import java.util.List;
 import uk.azdev.openfire.common.Logging;
 import uk.azdev.openfire.common.OpenFireConfiguration;
 import uk.azdev.openfire.friendlist.Friend;
+import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.IMessageSender;
 import uk.azdev.openfire.net.ProtocolConstants;
 import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
@@ -35,8 +36,8 @@ import uk.azdev.openfire.net.util.IOUtil;
 public class Conversation {
 	
 	private IMessageSender messageSender;
-	private Friend self;
-	private Friend peer;
+	private FriendsList friendsList;
+	private long peerUid;
 	
 	private int myMessageIndex;
 	private LinkedList<ConversationLogLine> chatLog;
@@ -47,9 +48,9 @@ public class Conversation {
 	
 	private OpenFireConfiguration config;
 	
-	public Conversation(Friend self, Friend peer, IMessageSender messageSender, OpenFireConfiguration config) {
-		this.self = self;
-		this.peer = peer;
+	public Conversation(FriendsList friendsList, long peerUid, IMessageSender messageSender, OpenFireConfiguration config) {
+		this.friendsList = friendsList;
+		this.peerUid = peerUid;
 		this.messageSender = messageSender;
 		this.chatLog = new LinkedList<ConversationLogLine>();
 		this.myMessageIndex = 1;
@@ -60,7 +61,7 @@ public class Conversation {
 	
 	public void receiveMessage(ChatMessage chatMsg) {
 		if(chatMsg.isContentMessage()) {
-			addMessage(peer, chatMsg.getMessage());
+			addMessage(getPeer(), chatMsg.getMessage());
 			notifyListeners();
 		} else if(chatMsg.isTypingMessage()) {
 			notifyListenersOfTyping();
@@ -70,14 +71,18 @@ public class Conversation {
 	}
 
 	public void sendMessage(String text) {
+		if(!getPeer().isOnline()) {
+			return;
+		}
+		
 		ChatMessage message = new ChatMessage();
-		message.setSessionId(peer.getSessionId());
+		message.setSessionId(getPeer().getSessionId());
 		message.setContentPayload(myMessageIndex++, text);
 		messageSender.sendMessage(message);
 		
 		sendClientInfoIfNecessary();
 
-		addMessage(self, text);
+		addMessage(getSelf(), text);
 		notifyListeners();
 	}
 
@@ -90,8 +95,8 @@ public class Conversation {
 	
 	private ChatMessage generateClientInfo() {
 		ChatMessage message = new ChatMessage();
-		message.setSessionId(peer.getSessionId());
-		InetSocketAddress netAddr = self.getAddress();
+		message.setSessionId(getPeer().getSessionId());
+		InetSocketAddress netAddr = getSelf().getAddress();
 		InetSocketAddress localAddr;
 		try {
 			InetAddress localHost = InetAddress.getLocalHost();
@@ -107,10 +112,6 @@ public class Conversation {
 
 	private void addMessage(Friend user, String message) {
 		chatLog.add(new ConversationLogLine(user, message));
-	}
-	
-	public Friend getPeer() {
-		return peer;
 	}
 	
 	public String getChatLog() {
@@ -140,5 +141,13 @@ public class Conversation {
 		for(IConversationListener listener : listeners) {
 			listener.peerIsTyping();
 		}
+	}
+	
+	public Friend getPeer() {
+		return friendsList.getFriend(peerUid);
+	}
+
+	private Friend getSelf() {
+		return friendsList.getSelf();
 	}
 }
