@@ -34,6 +34,7 @@ import org.junit.Test;
 import uk.azdev.openfire.common.OpenFireConfiguration;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.friendlist.Friend;
+import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.IMessageSender;
 import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
 
@@ -55,14 +56,14 @@ public class ConversationTest {
 	public void setUp() throws Exception {
 		context = new JUnit4Mockery();
 
-		self = new Friend(100L, "me", "Me");
-		self.setOnline(new SessionId(1000));
-		peer = new Friend(200L, "alice", "Alice");
-		peer.setOnline(new SessionId(2000));
+		self = new Friend(100L, "me", "Me", new SessionId(1000));
+		FriendsList friendsList = new FriendsList(self);
+		peer = new Friend(200L, "alice", "Alice", new SessionId(2000));
+		friendsList.addFriend(peer);
 		messageSender = context.mock(IMessageSender.class);
 		config = new OpenFireConfiguration();
 		
-		conv = new Conversation(self, peer, messageSender, config);
+		conv = new Conversation(friendsList, peer.getUserId(), messageSender, config);
 		
 		list1 = context.mock(IConversationListener.class);
 		list2 = context.mock(IConversationListener.class);
@@ -183,7 +184,7 @@ public class ConversationTest {
 	
 	@Test
 	public void testGetPeer() {
-		assertSame(peer, conv.getPeer());
+		assertEquals(peer, conv.getPeer());
 	}
 
 }

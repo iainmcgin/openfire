@@ -40,12 +40,16 @@ public class Friend {
 	}
 	
 	public Friend(long userId, String userName, String displayName) {
+		this(userId, userName, displayName, null);
+	}
+	
+	public Friend(long userId, String userName, String displayName, SessionId sessionId) {
 		this(userId);
 		
 		this.userName = userName;
 		this.displayName = displayName;
 		this.statusString = "";
-		this.sessionId = null;
+		this.sessionId = sessionId;
 		this.address = null;
 	}
 
@@ -53,7 +57,7 @@ public class Friend {
 		return userId;
 	}
 	
-	public void setUserId(long userId) {
+	protected void setUserId(long userId) {
 		this.userId = userId;
 	}
 	
@@ -62,14 +66,14 @@ public class Friend {
 	}
 	
 	public String getDisplayName() {
-		if(displayName == null) {
+		if(displayName == null || displayName.equals("")) {
 			return userName;
 		}
 		
 		return displayName;
 	}
 
-	public void setDisplayName(String displayName) {
+	protected void setDisplayName(String displayName) {
 		this.displayName = displayName;
 	}
 
@@ -77,7 +81,7 @@ public class Friend {
 		return statusString;
 	}
 
-	public void setStatus(String statusString) {
+	protected void setStatus(String statusString) {
 		this.statusString = statusString;
 	}
 	
@@ -89,11 +93,11 @@ public class Friend {
 		return sessionId;
 	}
 	
-	public void setOnline(SessionId sessionId) {
+	protected void setOnline(SessionId sessionId) {
 		this.sessionId = sessionId;
 	}
 	
-	public void setOffline() {
+	protected void setOffline() {
 		this.sessionId = null;
 		this.address = null;
 	}
@@ -102,11 +106,11 @@ public class Friend {
 		return address;
 	}
 	
-	public void setAddress(InetSocketAddress netAddr) {
+	protected void setAddress(InetSocketAddress netAddr) {
 		this.address = netAddr;
 	}
 	
-	public void update(Friend friend) {
+	protected void update(Friend friend) {
 		if(this.userName == null && friend.userName != null) {
 			this.userName = friend.userName;
 		}
@@ -124,6 +128,26 @@ public class Friend {
 		}
 	}
 	
+	@Override
+	protected Friend clone() {
+		Friend clone = new Friend(this.getUserName());
+		clone.userId = userId;
+		clone.displayName = displayName;
+		clone.statusString = statusString;
+		clone.sessionId = sessionId;
+		clone.address = cloneAddress(address);
+		
+		return clone;
+	}
+	
+	private InetSocketAddress cloneAddress(InetSocketAddress addr) {
+		if(addr == null) {
+			return null;
+		}
+		
+		return new InetSocketAddress(addr.getAddress(), addr.getPort());
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof Friend) {

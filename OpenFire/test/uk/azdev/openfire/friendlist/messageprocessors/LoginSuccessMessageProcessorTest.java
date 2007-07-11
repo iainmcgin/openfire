@@ -36,6 +36,7 @@ import org.junit.Test;
 import uk.azdev.openfire.common.OpenFireConfiguration;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.friendlist.Friend;
+import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.IMessageSender;
 import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientConfigurationMessage;
@@ -60,7 +61,9 @@ public class LoginSuccessMessageProcessorTest {
 		config.setPartner("InCrime");
 		config.setNetworkPort(12345);
 		
+		
 		Friend self = new Friend("me");
+		FriendsList friendsList = new FriendsList(self);
 		
 		final IMessageSender messageSender = context.mock(IMessageSender.class);
 		context.checking(new Expectations() {{
@@ -73,7 +76,7 @@ public class LoginSuccessMessageProcessorTest {
 			one(messageSender).sendMessage(with(new AllOf<ClientConfigurationMessage>(conditions)));
 		}});
 		
-		LoginSuccessMessageProcessor processor = new LoginSuccessMessageProcessor(messageSender, self, config);
+		LoginSuccessMessageProcessor processor = new LoginSuccessMessageProcessor(messageSender, friendsList, config);
 		
 		processor.processMessage(message);
 		context.assertIsSatisfied();

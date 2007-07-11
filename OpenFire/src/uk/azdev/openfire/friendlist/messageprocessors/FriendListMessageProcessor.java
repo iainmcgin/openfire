@@ -40,14 +40,21 @@ public class FriendListMessageProcessor implements IMessageProcessor {
 		FriendListMessage message = (FriendListMessage)msg;
 		List<Long> userIds = message.getUserIdList();
 		
-		for(long userId : userIds) {
-			if(!friendsList.containsFriend(userId)) {
-				Friend friend = new Friend(userId, message.getUsernameForId(userId), message.getUserNickForId(userId));
-				friendsList.addFriend(friend, friendsList.getSelf());
+		friendsList.acquireLock();
+		try {
+			for(long userId : userIds) {
+				if(!friendsList.containsFriend(userId)) {
+					Friend friend = new Friend(userId, message.getUsernameForId(userId), message.getUserNickForId(userId));
+					friendsList.addFriend(friend, friendsList.getSelf());
+				}
 			}
+			listener.friendsListUpdated();
+		} finally {
+			friendsList.releaseLock();
 		}
 		
-		listener.friendsListUpdated();
+		
+		
 	}
 	
 }

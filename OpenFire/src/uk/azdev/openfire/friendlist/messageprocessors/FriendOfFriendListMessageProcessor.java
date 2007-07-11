@@ -38,12 +38,17 @@ public class FriendOfFriendListMessageProcessor implements IMessageProcessor {
 		
 		List<Friend> friends = message.getFriendsOfFriends();
 		
-		for(Friend friendOfFriend : friends) {
-			friendsList.addFriend(friendOfFriend);
-			List<Long> sharedFriends = message.getFriendsInCommon(friendOfFriend.getUserId());
-			for(Long sharedFriendId : sharedFriends) {
-				friendsList.connect(friendOfFriend, sharedFriendId);
+		friendsList.acquireLock();
+		try {
+			for(Friend friendOfFriend : friends) {
+				friendsList.addFriend(friendOfFriend);
+				List<Long> sharedFriends = message.getFriendsInCommon(friendOfFriend.getUserId());
+				for(Long sharedFriendId : sharedFriends) {
+					friendsList.connect(friendOfFriend, sharedFriendId);
+				}
 			}
+		} finally {
+			friendsList.releaseLock();
 		}
 	}
 	

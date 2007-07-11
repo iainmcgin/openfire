@@ -110,14 +110,10 @@ public class FriendOfFriendListMessageTest {
 
 	@Test
 	public void testWriteMessageContent() throws IOException {
-		Friend dave = new Friend(DAVE_UID, DAVE_UNAME, DAVE_DNAME);
-		dave.setOnline(new SessionId(DAVE_SID));
-		Friend elton = new Friend(ELTON_UID, ELTON_UNAME, ELTON_DNAME);
-		elton.setOnline(new SessionId(ELTON_SID));
-		Friend fiona = new Friend(FIONA_UID, FIONA_UNAME, FIONA_DNAME);
-		fiona.setOnline(new SessionId(FIONA_SID));
-		Friend gary = new Friend(GARY_UID, GARY_UNAME, GARY_DNAME);
-		gary.setOnline(new SessionId(GARY_SID));
+		Friend dave = new Friend(DAVE_UID, DAVE_UNAME, DAVE_DNAME, new SessionId(DAVE_SID));
+		Friend elton = new Friend(ELTON_UID, ELTON_UNAME, ELTON_DNAME, new SessionId(ELTON_SID));
+		Friend fiona = new Friend(FIONA_UID, FIONA_UNAME, FIONA_DNAME, new SessionId(FIONA_SID));
+		Friend gary = new Friend(GARY_UID, GARY_UNAME, GARY_DNAME, new SessionId(GARY_SID));
 		
 		message.addFriend(dave, toList(DAVE_CONNECTIONS));
 		message.addFriend(elton, toList(ELTON_CONNECTIONS));
@@ -157,14 +153,10 @@ public class FriendOfFriendListMessageTest {
 	
 	@Test
 	public void testToString() {
-		Friend dave = new Friend(DAVE_UID, DAVE_UNAME, DAVE_DNAME);
-		dave.setOnline(new SessionId(DAVE_SID));
-		Friend elton = new Friend(ELTON_UID, ELTON_UNAME, ELTON_DNAME);
-		elton.setOnline(new SessionId(ELTON_SID));
-		Friend fiona = new Friend(FIONA_UID, FIONA_UNAME, FIONA_DNAME);
-		fiona.setOnline(new SessionId(FIONA_SID));
-		Friend gary = new Friend(GARY_UID, GARY_UNAME, GARY_DNAME);
-		gary.setOnline(new SessionId(GARY_SID));
+		Friend dave = new Friend(DAVE_UID, DAVE_UNAME, DAVE_DNAME, new SessionId(DAVE_SID));
+		Friend elton = new Friend(ELTON_UID, ELTON_UNAME, ELTON_DNAME, new SessionId(ELTON_SID));
+		Friend fiona = new Friend(FIONA_UID, FIONA_UNAME, FIONA_DNAME, new SessionId(FIONA_SID));
+		Friend gary = new Friend(GARY_UID, GARY_UNAME, GARY_DNAME, new SessionId(GARY_SID));
 		
 		message.addFriend(dave, toList(DAVE_CONNECTIONS));
 		message.addFriend(elton, toList(ELTON_CONNECTIONS));

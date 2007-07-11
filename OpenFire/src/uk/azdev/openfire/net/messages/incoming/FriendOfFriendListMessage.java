@@ -76,9 +76,7 @@ public class FriendOfFriendListMessage extends StringMapBasedMessage {
 			String userName = userNamesIter.next();
 			String displayName = displayNamesIter.next();
 			
-			Friend friend = new Friend(userId, userName, displayName);
-			friend.setOnline(sessionId);
-			
+			Friend friend = new Friend(userId, userName, displayName, sessionId);
 			friendsOfFriends.add(friend);
 			
 			List<Long> otherFriends = extractThirdDegree(friendsListIter.next());

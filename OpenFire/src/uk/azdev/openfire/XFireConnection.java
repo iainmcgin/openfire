@@ -60,6 +60,7 @@ import uk.azdev.openfire.net.messages.incoming.ServerRoutedChatMessage;
 import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientInformationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientVersionMessage;
+import uk.azdev.openfire.net.messages.outgoing.OutgoingInvitationMessage;
 
 public class XFireConnection implements IMessageSender, ConnectionStateListener, ConnectionManipulator {
 
@@ -152,9 +153,9 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 		processorMap.put(FriendListMessage.FRIEND_LIST_MESSAGE_ID, new FriendListMessageProcessor(friendList, eventDispatcher));
 		processorMap.put(FriendOfFriendListMessage.FRIEND_OF_FRIEND_LIST_MESSAGE_TYPE, new FriendOfFriendListMessageProcessor(friendList));
 		processorMap.put(FriendStatusMessage.FRIEND_STATUS_MESSAGE_ID, new FriendStatusMessageProcessor(friendList));
-		processorMap.put(UserSessionIdListMessage.USER_SESSION_ID_LIST_MESSAGE_ID, new UserSessionIdListMessageProcessor(friendList));
+		processorMap.put(UserSessionIdListMessage.USER_SESSION_ID_LIST_MESSAGE_ID, new UserSessionIdListMessageProcessor(friendList, eventDispatcher));
 		processorMap.put(LoginChallengeMessage.LOGIN_CHALLENGE_MESSAGE_ID, new LoginChallengeMessageProcessor(this, config));
-		processorMap.put(LoginSuccessMessage.LOGIN_SUCCESS_MESSAGE_ID, new LoginSuccessMessageProcessor(this, friendList.getSelf(), config));
+		processorMap.put(LoginSuccessMessage.LOGIN_SUCCESS_MESSAGE_ID, new LoginSuccessMessageProcessor(this, friendList, config));
 		processorMap.put(LoginFailureMessage.LOGIN_FAILURE_MESSAGE_ID, new LoginFailureMessageProcessor(this));
 		processorMap.put(NewVersionAvailableMessage.TYPE_ID, new NewVersionAvailableMessageProcessor(this, config));
 		processorMap.put(ServerRoutedChatMessage.SR_TYPE_ID, new ChatMessageProcessor(this, eventDispatcher));
@@ -217,11 +218,19 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 		
 		if(!activeConversations.containsKey(peerSid)) {
 			Friend peer = friendList.getOnlineFriend(peerSid);
-			Conversation conversation = new Conversation(friendList.getSelf(), peer, this, config);
+			Conversation conversation = new Conversation(friendList, peer.getUserId(), this, config);
 			activeConversations.put(peerSid, conversation);
 		}
 		
 		return activeConversations.get(peerSid);
+	}
+	
+	public void sendInvitation(String userName, String inviteMessage) {
+		OutgoingInvitationMessage message = new OutgoingInvitationMessage();
+		message.setUserName(userName);
+		message.setMessage(inviteMessage);
+		
+		sendMessage(message);
 	}
 	
 	public void addListener(ConnectionEventListener listener) {

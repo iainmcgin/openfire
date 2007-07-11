@@ -35,11 +35,14 @@ import uk.azdev.openfire.net.messages.incoming.LoginFailureMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
 import uk.azdev.openfire.net.messages.incoming.NewVersionAvailableMessage;
 import uk.azdev.openfire.net.messages.incoming.UserSessionIdListMessage;
+import uk.azdev.openfire.net.messages.outgoing.AcceptInvitationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientConfigurationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientInformationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientVersionMessage;
 import uk.azdev.openfire.net.messages.outgoing.KeepaliveMessage;
 import uk.azdev.openfire.net.messages.outgoing.LoginRequestMessage;
+import uk.azdev.openfire.net.messages.outgoing.OutgoingInvitationMessage;
+import uk.azdev.openfire.net.messages.outgoing.RejectInvitationMessage;
 
 public class MessageFactoryTest {
 
@@ -69,6 +72,9 @@ public class MessageFactoryTest {
 		assertTrue(factory.isKnownMessageType(NewVersionAvailableMessage.TYPE_ID));
 		assertTrue(factory.isKnownMessageType(ChatMessage.TYPE_ID));
 		assertTrue(factory.isKnownMessageType(IncomingInvitationMessage.TYPE_ID));
+		assertTrue(factory.isKnownMessageType(AcceptInvitationMessage.TYPE_ID));
+		assertTrue(factory.isKnownMessageType(RejectInvitationMessage.TYPE_ID));
+		assertTrue(factory.isKnownMessageType(OutgoingInvitationMessage.TYPE_ID));
 		assertFalse(factory.isKnownMessageType(-1));
 	}
 	
@@ -91,6 +97,9 @@ public class MessageFactoryTest {
 		assertTrue(factory.createMessage(NewVersionAvailableMessage.TYPE_ID) instanceof NewVersionAvailableMessage);
 		assertTrue(factory.createMessage(ChatMessage.TYPE_ID) instanceof ChatMessage);
 		assertTrue(factory.createMessage(IncomingInvitationMessage.TYPE_ID) instanceof IncomingInvitationMessage);
+		assertTrue(factory.createMessage(AcceptInvitationMessage.TYPE_ID) instanceof AcceptInvitationMessage);
+		assertTrue(factory.createMessage(RejectInvitationMessage.TYPE_ID) instanceof RejectInvitationMessage);
+		assertTrue(factory.createMessage(OutgoingInvitationMessage.TYPE_ID) instanceof OutgoingInvitationMessage);
 	}
 	
 	@Test(expected=UnknownMessageTypeException.class)
