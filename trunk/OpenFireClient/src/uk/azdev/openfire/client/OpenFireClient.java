@@ -28,6 +28,7 @@ import javax.swing.WindowConstants;
 import uk.azdev.openfire.ConnectionEventListener;
 import uk.azdev.openfire.XFireConnection;
 import uk.azdev.openfire.common.OpenFireConfiguration;
+import uk.azdev.openfire.common.ReceivedInvitation;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.conversations.Conversation;
 import uk.azdev.openfire.friendlist.Friend;
@@ -66,6 +67,8 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 	
 	public OpenFireClient() {
 		config = new OpenFireConfiguration();
+		config.setNetworkPort(50000);
+		config.setLocalPort(50000);
 		exitLatch = new CountDownLatch(1);
 		initComponents();
 		
@@ -349,11 +352,15 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 			offlineFriendsModel.updateList(offlineFriends);
 			friendsOfFriendsModel.updateList(onlineFriendsOfFriends);
 		}
-		
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
 		OpenFireClient client = new OpenFireClient();
 		client.waitForExit();
+	}
+
+	public void inviteReceived(ReceivedInvitation invite) {
+		// TODO Auto-generated method stub
+		
 	}
 }
