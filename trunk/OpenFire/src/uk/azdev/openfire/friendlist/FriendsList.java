@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
+import uk.azdev.openfire.common.Logging;
 import uk.azdev.openfire.common.SessionId;
 
 public class FriendsList {
@@ -207,6 +208,10 @@ public class FriendsList {
 		acquireLock();
 		try {
 			Friend f = onlineFriends.get(friendSid);
+			if(f == null) {
+				Logging.connectionLogger.warning("Status update received for friend when friend is unknown. SID: " + friendSid + " status:" + newStatus);
+				return;
+			}
 			f.setStatus(newStatus);
 		} finally {
 			releaseLock();
