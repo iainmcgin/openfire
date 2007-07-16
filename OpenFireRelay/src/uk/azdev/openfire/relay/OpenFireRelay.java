@@ -7,7 +7,9 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
@@ -58,17 +60,17 @@ public class OpenFireRelay implements ConnectionEventListener {
 		FriendsList list = connection.getFriendList();
 		
 		Friend sourceFriend = list.getOnlineFriend(sessionId);
-		System.out.println("message received from " + sourceFriend.getUserName() + " (" + sessionId + ")");
+		relayLog.fine("message received from " + sourceFriend.getUserName() + " (" + sessionId + ")");
 		Conversation sourceConv = connection.getConversation(sessionId);
 		ConversationLogLine message = sourceConv.getLastMessage();
 		
 		if(message.getMessage().startsWith("@")) {
 			commandProcessor.processCommand(message.getMessage().substring(1), message.getOriginator(), connection);
 		}else if(adminList.contains(sourceFriend.getUserName())) {
-			System.out.println("Routing admin message");
+			relayLog.fine("Routing admin message");
 			routeToAll(sourceFriend, message.toString());
 		} else {
-			System.out.println("Routing user message to admins");
+			relayLog.fine("Routing user message to admins");
 			routeToAdmins(sourceFriend, message.toString());
 		}
 	}
@@ -82,7 +84,7 @@ public class OpenFireRelay implements ConnectionEventListener {
 				continue;
 			}
 			
-			System.out.println("Forwarding message to " + f.getDisplayName());
+			relayLog.finer("Forwarding message to " + f.getDisplayName());
 			
 			Conversation conv = connection.getConversation(f.getSessionId());
 			conv.sendMessage(message);
@@ -98,15 +100,15 @@ public class OpenFireRelay implements ConnectionEventListener {
 				continue;
 			}
 			
-			System.out.println("Forwarding message to " + f.getDisplayName());
+			relayLog.finer("Forwarding message to " + f.getDisplayName());
 			
 			Conversation conv = connection.getConversation(f.getSessionId());
-			conv.sendMessage(message);
+			conv.sendMessage("[" + source.getUserName() + "] " + message);
 		}
 	}
 
 	public void disconnected() {
-		System.out.println("Client disconnected");
+		relayLog.info("Client disconnected");
 	}
 
 	public void friendsListUpdated() {
@@ -125,7 +127,14 @@ public class OpenFireRelay implements ConnectionEventListener {
 	}
 	
 	public static void main(String[] args) {
-		configureLogging();
+		try {
+			configureLogging();
+		} catch (Exception e) {
+			System.err.println("Error occurred while configuring logging");
+			e.printStackTrace();
+			return;
+		}
+		
 		OpenFireConfiguration config;
 		try {
 			config = readConfig();
@@ -164,10 +173,12 @@ public class OpenFireRelay implements ConnectionEventListener {
 		}
 	}
 
-	private static void configureLogging() {
+	private static void configureLogging() throws SecurityException, IOException {
 		Logging.connectionLogger.addHandler(new StreamHandler(System.out, new SimpleFormatter()));
+		Logging.connectionLogger.addHandler(new FileHandler());
 		Logging.connectionLogger.setLevel(Level.FINEST);
 		relayLog.addHandler(new StreamHandler(System.out, new SimpleFormatter()));
+		relayLog.addHandler(new FileHandler());
 		relayLog.setLevel(Level.FINEST);
 	}
 
