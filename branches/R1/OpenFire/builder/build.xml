@@ -1,0 +1,131 @@
+<project name="OpenFire" default="dist" basedir="..">
+	
+	<property name="builder.dir" location="builder"/>
+	<property file="${builder.dir}/override.properties"/>
+	
+	<property name="build.dir" location="build"/>
+	<property name="main.build.dir" location="${build.dir}/main"/>
+	<property name="test.build.dir" location="${build.dir}/tests"/>
+	<property name="instr.build.dir" location="${build.dir}/instr"/>
+	
+	<property name="test.coverage.dir" location="${build.dir}/coverage"/>	
+	<property name="test.results.dir" location="${build.dir}/testResults"/>
+	
+	<property name="src.dir" location="src"/>
+	<property name="test.src.dir" location="test"/>
+	
+	<property name="3rdparty.lib.dir" location="3rdparty"/>
+	<property name="3rdparty.test.lib.dir" location="3rdparty_test"/>
+	<property name="junit.jar.loc" location="${3rdparty.test.lib.dir}/junit-4.3.1/junit-4.3.1.jar"/>
+	
+	<property name="coverage" value="true"/>
+	<property name="optimize" value="false"/>
+	
+	<property name="release.version" value="DEVEL"/>
+	<property name="keystore" value="keys"/>
+	<property name="keystore.pass" value=""/>
+	<property name="key.alias" value=""/>
+	<property name="key.pass" value=""/>
+	
+	
+	<path id="tests.lib">
+		<pathelement location="${3rdparty.test.lib.dir}/emma.jar"/>
+		<pathelement location="${3rdparty.test.lib.dir}/emma_ant.jar"/>
+		<pathelement location="${junit.jar.loc}"/>
+		<pathelement location="${3rdparty.test.lib.dir}/jmock-2.0.0/hamcrest-api-1.0.jar"/>
+		<pathelement location="${3rdparty.test.lib.dir}/jmock-2.0.0/hamcrest-library-1.0.jar"/>
+		<pathelement location="${3rdparty.test.lib.dir}/jmock-2.0.0/jmock-2.0.0.jar"/>
+		<pathelement location="${3rdparty.test.lib.dir}/jmock-2.0.0/jmock-junit4-2.0.0.jar"/>
+	</path>
+	
+	<path id="test.run.classpath">
+		<pathelement location="${main.build.dir}"/>
+	</path>
+	
+	<taskdef resource="emma_ant.properties" classpathref="tests.lib"/>
+	
+	<target name="release" depends="compile">
+		<jar destfile="${build.dir}/openfire.jar" basedir="${main.build.dir}">
+			<manifest>
+				<attribute name="Sealed" value="true"/>
+				<attribute name="Implementation-Title" value="OpenFire"/>
+				<attribute name="Implementation-Version" value="${release.version}"/> 
+				<attribute name="Implementation-Vendor" value="Absolute Zero Development"/>
+			</manifest>
+		</jar>
+		<signjar jar="${build.dir}/openfire.jar"
+			keystore="${keystore}"
+			storepass="${keystore.pass}" 
+			alias="${key.alias}"
+			keypass="${key.pass}"/>
+	</target>
+	
+	<target name="dist" depends="compile, test"/>
+	
+	<target name="test" depends="compile.tests, compile">
+		<mkdir dir="${test.results.dir}"/>
+		<mkdir dir="${test.coverage.dir}"/>
+		<mkdir dir="${instr.build.dir}"/>
+		<emma enabled="${coverage}">
+			<instr instrpathref="test.run.classpath"
+				   destdir="${instr.build.dir}"
+				   metadatafile="${test.coverage.dir}/metadata.emma"
+				   merge="true"/>
+		</emma>
+		
+		<junit printsummary="true" fork="yes">
+			<classpath refid="tests.lib"/>
+			<classpath>
+				<pathelement location="${instr.build.dir}"/>
+				<pathelement location="${main.build.dir}"/>
+				<pathelement location="${test.build.dir}"/>
+				<pathelement location="${test.src.dir}"/>
+			</classpath>
+			
+			<formatter type="brief" usefile="true"/>
+			
+			<batchtest todir="${test.results.dir}">
+				<fileset dir="${test.src.dir}">
+					<include name="**/*Test.java"/>
+					<exclude name="**/Abstract*.java"/>
+				</fileset>
+			</batchtest>
+			
+			<jvmarg value="-Demma.coverage.out.file=${test.coverage.dir}/coverage.emma" />
+			<jvmarg value="-Demma.coverage.out.merge=true" />
+		</junit>
+		
+		<emma enabled="${coverage}">
+			<report sourcepath="${src.dir}">
+				<fileset dir="${test.coverage.dir}">
+					<include name="*.emma"/>
+				</fileset>
+				<html outfile="${test.coverage.dir}/coverage.html"/>
+			</report>
+		</emma>
+		
+	</target>
+				
+	<target name="compile.tests" depends="compile">
+		<javac srcdir="${test.src.dir}" destdir="${test.build.dir}">
+			<classpath refid="tests.lib"/>
+			<classpath>
+				<pathelement location="${main.build.dir}"/>
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="compile" depends="init">
+		<javac srcdir="${src.dir}" destdir="${main.build.dir}" debug="${coverage}" optimize="${optimize}"/>
+	</target>
+	
+	<target name="init" depends="clean">
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${main.build.dir}"/>
+		<mkdir dir="${test.build.dir}"/>
+	</target>
+	
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+	</target>
+</project>
