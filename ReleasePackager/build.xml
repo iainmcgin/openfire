@@ -40,8 +40,10 @@
 		<copy file="../OpenFireClient/build/openfireclient.jar" todir="${release.dir}"/>
 		<copy file="../OpenFireRelay/build/openfirerelay.jar" todir="${release.dir}"/>
 		<copy todir="${release.dir}">
-			<fileset dir="${resources.dir}"/>
 			<fileset dir="../OpenFireRelay/resources"/>
+			<fileset dir="${resources.dir}/bin"/>
+			<fileset dir="${resources.dir}/bat"/>
+			<fileset dir="${resources.dir}/doc"/>
 		</copy>
 		
 		<zip destfile="${releases.dir}/openfire-${release.version}.zip" 
