@@ -19,7 +19,7 @@
 	
 	<target name="release" depends="init">
 		<delete dir="${release.dir}" failonerror="false"/>
-		<delete file="${release.dir}/openfire-${release.version}.tar.gz" failonerror="false"/>
+		<delete file="${release.dir}/openfire-${release.version}.tar.bz2" failonerror="false"/>
 		<delete file="${release.dir}/openfire-${release.version}.zip" failonerror="false"/>
 		<mkdir dir="${release.dir}"/>
 		
@@ -40,8 +40,7 @@
 		<copy file="../OpenFireClient/build/openfireclient.jar" todir="${release.dir}"/>
 		<copy file="../OpenFireRelay/build/openfirerelay.jar" todir="${release.dir}"/>
 		<copy todir="${release.dir}">
-			<fileset dir="${resources.dir}/bat"/>
-			<fileset dir="${resources.dir}/bin"/>
+			<fileset dir="${resources.dir}"/>
 			<fileset dir="../OpenFireRelay/resources"/>
 		</copy>
 		
