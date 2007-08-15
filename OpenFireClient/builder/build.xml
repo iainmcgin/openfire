@@ -25,7 +25,7 @@
 				<attribute name="Implementation-Title" value="OpenFire Client"/>
 				<attribute name="Implementation-Version" value="${release.version}"/> 
 				<attribute name="Implementation-Vendor" value="Absolute Zero Development"/>
-				<attribute name="Classpath" value="openfire.jar"/>
+				<attribute name="Main-Class" value="uk/azdev/openfire/client/OpenFireClient"/>
 			</manifest>
 		</jar>
 		<signjar jar="${build.dir}/openfireclient.jar"
