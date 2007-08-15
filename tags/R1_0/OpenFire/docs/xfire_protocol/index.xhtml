@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<title>XFire Protocol Specification - by Iain McGinniss</title>
+	<style type="text/css">
+		table {
+			border: 1px solid black;
+			border-collapse: collapse;
+		}
+		
+		th {
+			border: 1px solid black;
+			background: #ccc;
+		}
+		
+		td {
+			border: 1px solid #444;
+		}
+		
+		td.int8 {
+			background: #dfe;
+		}
+		
+		td.int16 {
+			background: #ced;
+		}
+		
+		td.int32 {
+			background: #bdc;
+		}
+		
+		td.string {
+			background: #cef;
+		}
+		
+		td.indeterminate {
+			background: #fe6;
+		}
+		
+		td.end {
+			background: #ccc;
+		}
+	</style>
+</head>
+<body>
+
+<h1>XFire Protocol Specification<br/>By Iain McGinniss<br/>2007/07/12</h1>
+
+<p>This document aims to provide a full specification for the XFire instant
+messaging protocol. A lot of the information found in this document would 
+not be available if it were not for the hard work of the xfirelib project 
+team (<a href="http://xfirelib.sphene.net">http://xfirelib.sphene.net</a>), who reverse engineered the protocol to 
+write xfirelib. This document was written to formally document what they 
+discovered, and to be provided as a basis for implementing XFire 
+communication libraries in alternative languages.</p>
+
+<h2>High level details</h2>
+
+<p>The XFire protocol uses a mix of client/server communication and peer 
+to peer communication. Client/server communication is carried out over 
+a TCP/IP connection, with the client connecting to the XFire central 
+server (cs.xfire.com) on port 25999. Peer to peer communication is 
+performed using UDP datagrams, with the ports involved negotiated 
+between the two peers.</p>
+
+<p>As a rule, XFire uses little endian byte ordering and UTF-8 
+encoding for strings.</p>
+
+<h3>Message structure</h3>
+
+<p>The Messages between client and server follow a common pattern:</p>
+
+<table>
+	<tr>
+		<th></th>
+		<th>0</th>
+		<th>1</th>
+		<th>2</th>
+		<th>3</th>
+		<th>4</th>
+		<th>5</th>
+		<th>...</th>
+	</tr>
+	<tr>
+		<th>0</th>
+		<td class="int16" colspan="2">MSG SIZE</td>
+		<td class="int16" colspan="2">MSG TYPE ID</td>
+		<td class="int8">NUM ATTRS</td>
+		<td class="indeterminate" colspan="2">ATTRIBUTES...</td>
+	</tr>
+</table>
+
+<ol>
+	<li>The message size, as a 16-bit integer.</li>
+	<li>The message type id. Each message type, from a login request to 
+	    a chat message, has a unique 16-bit integer ID.</li>
+	<li>The number of attributes within the message, as an 8-bit integer.</li>
+	<li>The list of attributes for the message with their associated values.</li>
+</ol>
+
+<p>Message attributes are formatted as follows:</p>
+
+<table>
+	<tr>
+		<th></th>
+		<th>0</th>
+		<th>1</th>
+		<th>...</th>
+		<th>n+1</th>
+		<th>n+2</th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>0</th>
+		<td class="int8">ATTR NAME LEN (n)</td>
+		<td class="string" colspan="2">ATTRIBUTE NAME</td>
+		<td class="int8">ATTR VALUE TYPE</td>
+		<td class="indeterminate" colspan="2">ATTR VALUE DATA...</td>
+	</tr>
+</table>
+
+<ol>
+	<li>The attribute name length, as an 8-bit integer.</li>
+	<li>The attribute name, as an ISO/IEC 8859-1 encoded string (i.e. 8 bits 
+	    per character).</li>
+	<li>1.The attribute value.</li>
+</ol>
+
+<p>The attribute value can be one of a set of predefined attribute types:</p>
+
+<table>
+	<tr>
+		<th>Type ID</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0x01</td>
+		<td>A variable length string. The first two bytes of the data contain 
+		    a 16-bit integer indicating the length of the string, followed by 
+			the string data.</td>
+	</tr>
+	<tr>
+		<td>0x02</td>
+		<td>A 32-bit integer</td>
+	</tr>
+	<tr>
+		<td>0x03</td>
+		<td>A 128-bit session identifier, used to identify a particular user's 
+		    session on the xfire network.</td>
+	</tr>
+	<tr>
+		<td>0x04</td>
+		<td>A list. The first byte indicates the type of the items in the list, 
+		    for instance 0x01 for a string list. The next two bytes indicate the 
+			number of items in the list, followed by each consecutive value.</td>
+	</tr>
+	<tr>
+		<td>0x05</td>
+		<td>A string keyed map. The first byte indicates the number of entries, 
+		    followed by each entry, with a string name (prefixed by 8-bit string 
+			length) and type (the same format for messages as a whole).</td>
+	</tr>
+	<tr>
+		<td>0x06</td>
+		<td>A DID value. As yet, the purpose of this value is unknown (See 
+		    <a href="#msg400">DID Message</a> for more information).</td>
+	</tr>
+	<tr>
+		<td>0x09</td>
+		<td>An integer keyed map (type 0x09). The first byte indicates the number of entries, followed by each entry, with an 8-bit integer key and type.</td>
+	</tr>
+</table>
+
+<p>An example of a simple message is the <a href="#msg3">client version message</a>, which has 
+a single attribute named "version". It looks like this (with each bytes 
+value displayed in hexadecimal, or the character equivalent where 
+appropriate):</p>
+
+<table>
+	<tr>
+		<th></th>
+		<th>0</th>
+		<th>1</th>
+		<th>2</th>
+		<th>3</th>
+		<th>4</th>
+		<th>5</th>
+		<th>6</th>
+		<th>7</th>
+	</tr>
+	<tr>
+		<th>0</th>
+		<td class="int16">12</td>
+		<td class="int16">00</td>
+		<td class="int16">03</td>
+		<td class="int16">00</td>
+		<td class="int8">01</td>
+		<td class="int8">07</td>
+		<td class="string">76<br/>v</td>
+		<td class="string">65<br/>e</td>
+	</tr>
+	<tr>
+		<th>8</th>
+		<td class="string">72<br/>r</td>
+		<td class="string">73<br/>s</td>
+		<td class="string">69<br/>i</td>
+		<td class="string">6f<br/>o</td>
+		<td class="string">6e<br/>n</td>
+		<td class="int8">02</td>
+		<td class="int32">43</td>
+		<td class="int32">00</td>
+	</tr>
+	<tr>
+		<th>16</th>
+		<td class="int32">00</td>
+		<td class="int32">00</td>
+		<td colspan="6" class="end"></td>
+	</tr>
+</table>
+
+<p>As you can see from the above, the message length is 18 (0x0012), the packet 
+id is 3 (0x0003), there is a single attribute with name of length 7 ("version"), 
+with a 32-bit value 0x00000043 (67 represented as a 32-bit integer). Remember 
+that because the protocol is little endian, the integers will appear with the 
+least significant byte first, i.e. the message length will appear as 12 00 
+in the message.</p>
+
+<h3>Connection Handshake</h3>
+
+When initiating a new connection, the sequence of events is as follows:
+
+<ol>
+	<li>The client opens a TCP/IP connection with the server, first sending 
+	    the hexadecimal code 55 41 30 31 (or, as a string, "UA01") as an 
+		opening statement.</li>
+	<li>It then sends a <a href="#msg18">client information message</a>, 
+	    followed by a <a href="#msg3">client version message</a>.
+		<ol>
+			<li>If this version is older than the current XFire version, a 
+			<a href="#msg134">new version message</a> will be sent and the 
+			server will send no more messages. The client should disconnect 
+			at this point.</li>
+		</ol>
+	</li>
+	<li>The server will then send an <a href="#msg128">authentication challenge 
+	    message</a> to the client.</li>
+	<li>In response to this, the client will send a <a href="#msg1">login request 
+	    message</a>, containing the user name and a SHA-1 hashed version of the 
+		password, combined with a salt string and constant for extra security.</li>
+	<li>The server will either respond with a <a href="#130">login success</a> or <a href="#msg129">failure message</a>.</li>
+</ol>
+
+<p>Once a client has successfully logged in, the server will send a flurry of 
+messages used to initialise the client (who the <a href="#msg131">user's friends are</a>, 
+<a href="#msg132">who is online</a>, and so on). Other messages follow a request / response
+model, where the client must send a message which triggers the server to send a matching
+response message (for instance, checking to see what friends of friends are online).
+</p>
+
+<h2>Message Types</h2>
+
+<table>
+	<tr>
+		<th>Message ID</th>
+		<th>Description</th>
+		<th>Key type</th>
+		<th>To Server</th>
+		<th>From Server</th>
+		<th>From Peer (UDP)</th>
+	</tr>
+	<tr><td><a href="#msg1">1</a></td><td>Login request</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
+	<tr><td><a href="#msg2">2</a></td><td>Chat message</td><td>String</td><td>Y</td><td>N</td><td>Y</td></tr>
+	<tr><td><a href="#msg3">3</a></td><td>Client version</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
+	<tr><td><a href="#msg5">5</a></td><td>Friends of online friend request</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
+	<tr><td><a href="#msg6">6</a></td><td>Outgoing friend invitation</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
+	<tr><td><a href="#msg7">7</a></td><td>Accept Invitation</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
+	<tr><td><a href="#msg8">8</a></td><td>Reject Invitation</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
+	<tr><td><a href="#msg12">12</a></td><td>User lookup</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
+	<tr><td><a href="#msg13">13</a></td><td>Connection keepalive</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
+	<tr><td><a href="#msg16">16</a></td><td>Client configuration</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
+	<tr><td><a href="#msg17">17</a></td><td>Connection information</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>	
+	<tr><td><a href="#msg18">18</a></td><td>Client information</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
+	<tr><td><a href="#msg23">23</a></td><td>???</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
+	<tr><td><a href="#msg24">24</a></td><td>???</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
+
+	<tr><td><a href="#msg128">128</a></td><td>Login challenge</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg129">129</a></td><td>Login failure</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg130">130</a></td><td>Login success</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg131">131</a></td><td>Friend list</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg132">132</a></td><td>Session ID list</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg133">133</a></td><td>Server routed chat message</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg134">134</a></td><td>New version available</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg135">135</a></td><td>Friend game information</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg136">136</a></td><td>Friends of friends</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg137">137</a></td><td>Outgoing friend invitation confirmation</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg138">138</a></td><td>Incoming friend invitation</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg141">141</a></td><td>???</td><td>Int8</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg143">143</a></td><td>User lookup results</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg147">147</a></td><td>???</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg148">148</a></td><td>???</td><td>Int8</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg154">154</a></td><td>Friend status</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg151">151</a></td><td>???</td><td>Int8</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg152">152</a></td><td>???</td><td>Int8</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg155">155</a></td><td>???</td><td>Int8</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg156">156</a></td><td>Extra friend game information</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg157">157</a></td><td>???</td><td>Int8</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg163">163</a></td><td>???</td><td>Int8</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg400">400</a></td><td>DID (?)</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg450">450</a></td><td>Channel information (?)</td><td>Int8</td><td>N</td><td>Y</td><td>N</td></tr>
+</table>
+
+<h3><a name="msg1">Login Request Message</a></h3>
+<h3><a name="msg2">Chat Message</a></h3>
+<h3><a name="msg3">Client version Message</a></h3>
+<h3><a name="msg5">Friends of Online Friend Request Message</a></h3>
+<h3><a name="msg6">Outgoing Friend Invitation Message</a></h3>
+<h3><a name="msg7">Accept Invitation Message</a></h3>
+<h3><a name="msg8">Reject Invitation Message</a></h3>
+<h3><a name="msg12">User Lookup Message</a></h3>
+<h3><a name="msg13">Connection Keepalive Message</a></h3>
+<h3><a name="msg16">Client Configuration Message</a></h3>
+<h3><a name="msg18">Client Information Message</a></h3>
+
+<h3><a name="msg128">Login Challenge Message</a></h3>
+<h3><a name="msg129">Login Failure Message</a></h3>
+<h3><a name="msg130">Login Success Message</a></h3>
+<h3><a name="msg131">Friend List Message</a></h3>
+<h3><a name="msg132">Session ID List Message</a></h3>
+<h3><a name="msg133">Server Routed Chat Message</a></h3>
+<h3><a name="msg134">New Version Available Message</a></h3>
+<h3><a name="msg135">Friend Game Information Message</a></h3>
+<h3><a name="msg136">Friends of Friends Message</a></h3>
+<h3><a name="msg138">Incoming Friend Invitation Message</a></h3>
+<h3><a name="msg154">Friend Status Message</a></h3>
+<h3><a name="msg400">DID Message</a></h3>
+
+</body>
+</html>
