@@ -4,6 +4,39 @@
 <head>
 	<title>XFire Protocol Specification - by Iain McGinniss</title>
 	<style type="text/css">
+	
+		h2, h3, h4, h5, h6 { text-align: left }
+		/* background should be transparent, but WebTV has a bug */
+		h1, h2, h3 { color: #005A9C; background: white }
+		h1 { font: 170% sans-serif; text-align: center; }
+		
+		h2 
+		{ 
+		     font: 140% sans-serif;
+			 counter-increment: chapter;  /* Add 1 to chapter */
+			 counter-reset: section 0;      /* Set section to 0 */
+		}
+		h2:before { content: counter(chapter) ". "; }
+		
+		h3 
+		{ 
+			font: 120% sans-serif;
+		    counter-increment: section;
+		}
+		
+		h4 { font: bold 100% sans-serif }
+		h5 { font: italic 100% sans-serif }
+		h6 { font: small-caps 100% sans-serif }
+		
+		
+		h3 {
+			
+		}
+		
+		h3:before {
+			content: counter(chapter) "." counter(section) " ";
+		}
+	
 		table {
 			border: 1px solid black;
 			border-collapse: collapse;
@@ -41,11 +74,15 @@
 		td.end {
 			background: #ccc;
 		}
+		
+		td.center {
+			text-align: center;
+		}
 	</style>
 </head>
 <body>
 
-<h1>XFire Protocol Specification<br/>By Iain McGinniss<br/>2007/07/12</h1>
+<h1>XFire Protocol Specification<br/>Iain McGinniss, 2007/08/16</h1>
 
 <p>This document aims to provide a full specification for the XFire instant
 messaging protocol. A lot of the information found in this document would 
@@ -190,31 +227,44 @@ appropriate):</p>
 		<th>7</th>
 	</tr>
 	<tr>
-		<th>0</th>
+		<th rowspan="2">0</th>
 		<td class="int16">12</td>
 		<td class="int16">00</td>
 		<td class="int16">03</td>
 		<td class="int16">00</td>
 		<td class="int8">01</td>
 		<td class="int8">07</td>
-		<td class="string">76<br/>v</td>
-		<td class="string">65<br/>e</td>
+		<td class="string">76</td>
+		<td class="string">65</td>
 	</tr>
 	<tr>
-		<th>8</th>
-		<td class="string">72<br/>r</td>
-		<td class="string">73<br/>s</td>
-		<td class="string">69<br/>i</td>
-		<td class="string">6f<br/>o</td>
-		<td class="string">6e<br/>n</td>
-		<td class="int8">02</td>
-		<td class="int32">43</td>
-		<td class="int32">00</td>
+		<td colspan="6"></td>
+		<td class="string">v</td>
+		<td class="string">e</td>
+	</tr>
+	<tr>
+		<th rowspan="2">8</th>
+		<td class="string">72</td>
+		<td class="string">73</td>
+		<td class="string">69</td>
+		<td class="string">6f</td>
+		<td class="string">6e</td>
+		<td class="int8">02<br/></td>
+		<td class="int32">43<br/></td>
+		<td class="int32">00<br/></td>
+	</tr>
+	<tr>
+		<td class="string">r</td>
+		<td class="string">s</td>
+		<td class="string">i</td>
+		<td class="string">o</td>
+		<td class="string">n</td>
+		<td colspan="3"></td>
 	</tr>
 	<tr>
 		<th>16</th>
-		<td class="int32">00</td>
-		<td class="int32">00</td>
+		<td class="int32">00<br/></td>
+		<td class="int32">00<br/></td>
 		<td colspan="6" class="end"></td>
 	</tr>
 </table>
@@ -226,9 +276,9 @@ that because the protocol is little endian, the integers will appear with the
 least significant byte first, i.e. the message length will appear as 12 00 
 in the message.</p>
 
-<h3>Connection Handshake</h3>
+<h3><a id="handshake">Connection Handshake</a></h3>
 
-When initiating a new connection, the sequence of events is as follows:
+<p>When initiating a new connection, the sequence of events is as follows:</p>
 
 <ol>
 	<li>The client opens a TCP/IP connection with the server, first sending 
@@ -269,71 +319,509 @@ response message (for instance, checking to see what friends of friends are onli
 		<th>From Server</th>
 		<th>From Peer (UDP)</th>
 	</tr>
-	<tr><td><a href="#msg1">1</a></td><td>Login request</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
-	<tr><td><a href="#msg2">2</a></td><td>Chat message</td><td>String</td><td>Y</td><td>N</td><td>Y</td></tr>
-	<tr><td><a href="#msg3">3</a></td><td>Client version</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
-	<tr><td><a href="#msg5">5</a></td><td>Friends of online friend request</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
-	<tr><td><a href="#msg6">6</a></td><td>Outgoing friend invitation</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
-	<tr><td><a href="#msg7">7</a></td><td>Accept Invitation</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
-	<tr><td><a href="#msg8">8</a></td><td>Reject Invitation</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
-	<tr><td><a href="#msg12">12</a></td><td>User lookup</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
-	<tr><td><a href="#msg13">13</a></td><td>Connection keepalive</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
-	<tr><td><a href="#msg16">16</a></td><td>Client configuration</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
-	<tr><td><a href="#msg17">17</a></td><td>Connection information</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>	
-	<tr><td><a href="#msg18">18</a></td><td>Client information</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
-	<tr><td><a href="#msg23">23</a></td><td>???</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
-	<tr><td><a href="#msg24">24</a></td><td>???</td><td>String</td><td>Y</td><td>N</td><td>N</td></tr>
+	<tr><td><a href="#msg1">1</a></td><td>Login request</td><td>String</td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg2">2</a></td><td>Chat message</td><td>String</td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td></tr>
+	<tr><td><a href="#msg3">3</a></td><td>Client version</td><td>String</td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg5">5</a></td><td>Friends of online friend request</td><td>String</td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg6">6</a></td><td>Outgoing friend invitation</td><td>String</td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg7">7</a></td><td>Accept Invitation</td><td>String</td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg8">8</a></td><td>Reject Invitation</td><td>String</td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg12">12</a></td><td>User lookup</td><td>String</td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg13">13</a></td><td>Connection keepalive</td><td>String</td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg16">16</a></td><td>Client configuration</td><td>String</td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg17">17</a></td><td>Connection information</td><td>String</td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>	
+	<tr><td><a href="#msg18">18</a></td><td>Client information</td><td>String</td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg23">23</a></td><td>???</td><td>String</td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg24">24</a></td><td>???</td><td>String</td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
 
-	<tr><td><a href="#msg128">128</a></td><td>Login challenge</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg129">129</a></td><td>Login failure</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg130">130</a></td><td>Login success</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg131">131</a></td><td>Friend list</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg132">132</a></td><td>Session ID list</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg133">133</a></td><td>Server routed chat message</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg134">134</a></td><td>New version available</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg135">135</a></td><td>Friend game information</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg136">136</a></td><td>Friends of friends</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg137">137</a></td><td>Outgoing friend invitation confirmation</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg138">138</a></td><td>Incoming friend invitation</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg141">141</a></td><td>???</td><td>Int8</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg143">143</a></td><td>User lookup results</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg147">147</a></td><td>???</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg148">148</a></td><td>???</td><td>Int8</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg154">154</a></td><td>Friend status</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg151">151</a></td><td>???</td><td>Int8</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg152">152</a></td><td>???</td><td>Int8</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg155">155</a></td><td>???</td><td>Int8</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg156">156</a></td><td>Extra friend game information</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg157">157</a></td><td>???</td><td>Int8</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg163">163</a></td><td>???</td><td>Int8</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg400">400</a></td><td>DID (?)</td><td>String</td><td>N</td><td>Y</td><td>N</td></tr>
-	<tr><td><a href="#msg450">450</a></td><td>Channel information (?)</td><td>Int8</td><td>N</td><td>Y</td><td>N</td></tr>
+	<tr><td><a href="#msg128">128</a></td><td>Login challenge</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg129">129</a></td><td>Login failure</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg130">130</a></td><td>Login success</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg131">131</a></td><td>Friend list</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg132">132</a></td><td>Session ID list</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg133">133</a></td><td>Server routed chat message</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg134">134</a></td><td>New version available</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg135">135</a></td><td>Friend game information</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg136">136</a></td><td>Friends of friends</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg137">137</a></td><td>Outgoing friend invitation confirmation</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg138">138</a></td><td>Incoming friend invitation</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg141">141</a></td><td>???</td><td>Int8</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg143">143</a></td><td>User lookup results</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg147">147</a></td><td>???</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg148">148</a></td><td>???</td><td>Int8</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg154">154</a></td><td>Friend status</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg151">151</a></td><td>???</td><td>Int8</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg152">152</a></td><td>???</td><td>Int8</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg155">155</a></td><td>???</td><td>Int8</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg156">156</a></td><td>Extra friend game information</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg157">157</a></td><td>???</td><td>Int8</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg163">163</a></td><td>???</td><td>Int8</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg400">400</a></td><td>DID (?)</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg450">450</a></td><td>Channel information (?)</td><td>Int8</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
 </table>
 
-<h3><a name="msg1">Login Request Message</a></h3>
-<h3><a name="msg2">Chat Message</a></h3>
-<h3><a name="msg3">Client version Message</a></h3>
-<h3><a name="msg5">Friends of Online Friend Request Message</a></h3>
-<h3><a name="msg6">Outgoing Friend Invitation Message</a></h3>
-<h3><a name="msg7">Accept Invitation Message</a></h3>
-<h3><a name="msg8">Reject Invitation Message</a></h3>
-<h3><a name="msg12">User Lookup Message</a></h3>
-<h3><a name="msg13">Connection Keepalive Message</a></h3>
-<h3><a name="msg16">Client Configuration Message</a></h3>
-<h3><a name="msg18">Client Information Message</a></h3>
+<h3><a id="msg1">Login Request Message</a></h3>
 
-<h3><a name="msg128">Login Challenge Message</a></h3>
-<h3><a name="msg129">Login Failure Message</a></h3>
-<h3><a name="msg130">Login Success Message</a></h3>
-<h3><a name="msg131">Friend List Message</a></h3>
-<h3><a name="msg132">Session ID List Message</a></h3>
-<h3><a name="msg133">Server Routed Chat Message</a></h3>
-<h3><a name="msg134">New Version Available Message</a></h3>
-<h3><a name="msg135">Friend Game Information Message</a></h3>
-<h3><a name="msg136">Friends of Friends Message</a></h3>
-<h3><a name="msg138">Incoming Friend Invitation Message</a></h3>
-<h3><a name="msg154">Friend Status Message</a></h3>
-<h3><a name="msg400">DID Message</a></h3>
+<p>
+This message is sent by the client to the server in response to a 
+<a href="#msg128">Login Challenge Message</a> in order to authenticate the
+user. The server will respond with either a
+<a href="#msg130">Login Success Message</a> or a
+<a href="#msg129">Login Failure Message</a>.
+</p>
+
+<h4>Properties</h4>
+<table>
+	<tr>
+		<th>Message ID</th>
+		<td>1</td>
+	</tr>
+	<tr>
+		<th>Attribute key type</th>
+		<td>string</td>
+	</tr>
+	<tr>
+		<th>Direction</th>
+		<td>From client to server</td>
+	</tr>
+</table>
+
+<h4>Contents</h4>
+
+<table>
+	<tr>
+		<th>Attribute name</th>
+		<th>Type</th>
+		<th>Details</th>
+	</tr>
+	<tr>
+		<td>name</td>
+		<td>string</td>
+		<td>The user name of the user that is attempting to log in.</td>
+	</tr>
+	<tr>
+		<td>password</td>
+		<td>string (128 bit SHA-1 hash as a hex string)</td>
+		<td>The salted username and password of the user that is attempting 
+		    to log in. This is constructed as follows:
+		    
+<pre>
+String a = username + password + "UltimateArena";
+int128 a_hash = sha1(a);
+String b = toHexString(a_hash) + salt;
+int128 b_hash = sha1(b);
+String result = toHexString(b_hash);
+</pre>
+		    
+		    Where the salt is a string that has been provided in the login 
+		    challenge.
+		</td>
+	</tr>
+	<tr>
+		<td>flags</td>
+		<td>32-bit integer</td>
+		<td>The purpose of this value is not known, in all data observed
+		    from the real XFire client it has been 0.
+		</td>
+	</tr>
+</table>
+
+<h3><a id="msg2">Chat Message</a></h3>
+
+<p>
+This message is sent by the client to the server, or directly to another
+user via UDP. The message can represent a number of things:
+</p>
+
+<ul>
+	<li>An content message (e.g. "hi there")</li>
+	<li>An indication of whether the user is typing or not</li>
+	<li>A list of the client's details (IP address, open UDP port, etc)</li>
+	<li>An acknowledgement of that a message from the peer was received</li> 
+</ul> 
+
+<p>
+When chat messages are sent via the server, they will be received by the peer as
+a <a href="#msg133">Server Routed Chat Message</a>.
+</p> 
+
+<p>
+If communication is to be routed via the XFire server, client information
+messages should be sent regularly to prevent "high latency warnings" where
+the peer is a real XFire client. In OpenFire, these are sent with each real
+message, up to once every 5 seconds. It has not been determined what the
+threshold is for the XFire client to start reporting latency warnings.
+</p>
+
+<h4>Properties</h4>
+<table>
+	<tr>
+		<th>Message ID</th>
+		<td>2</td>
+	</tr>
+	<tr>
+		<th>Attribute key type</th>
+		<td>string</td>
+	</tr>
+	<tr>
+		<th>Direction</th>
+		<td>Client to Server, Client to Client</td>
+	</tr>
+</table>
+
+<h4>Contents</h4>
+
+<table>
+	<tr>
+		<th>Attribute name</th>
+		<th>Type</th>
+		<th>Details</th>
+	</tr>
+	<tr>
+		<td>sid</td>
+		<td>Session ID</td>
+		<td>The session ID of the peer this message is intended for.</td>
+	</tr>
+	<tr>
+		<td>peermsg</td>
+		<td>string keyed map</td>
+		<td>Contains the real content of the message. See below for the
+		    structure of each payload.
+		</td>
+	</tr>
+</table>
+
+<h4> Peermsg contents</h4>
+
+<p>
+The contents of the peermsg map vary depending on what this chat message
+represents. What is represented is indicated in the "msgtype" attribute
+in the map, a 32-bit integer value.
+</p>
+
+<ul>
+	<li>
+		<p><em>msgtype = 0</em> - a content message:</p>
+		<table>
+			<tr>
+				<th>Attribute name</th>
+				<th>Type</th>
+				<th>Details</th>
+			</tr>
+			<tr>
+				<td>imindex</td>
+				<td>32-bit integer</td>
+				<td>The "index" of this message within the conversation log.
+				    Used as a hint of message order, incremented for each
+				    message sent.</td>
+			</tr>
+			<tr>
+				<td>im</td>
+				<td>string</td>
+				<td>The actual message (e.g. "hello")
+				</td>
+			</tr>
+		</table>
+	</li>
+	<li>
+		<p><em>msgtype = 1</em> - an acknowledgement message:</p>
+		<table>
+			<tr>
+				<th>Attribute name</th>
+				<th>Type</th>
+				<th>Details</th>
+			</tr>
+			<tr>
+				<td>imindex</td>
+				<td>32-bit integer</td>
+				<td>The "index" of the message we are acknowledging. Corresponds
+				    to the imindex in the message the peer sent.
+				</td>
+			</tr>
+		</table>
+	</li>
+	<li>
+		<p><em>msgtype = 2</em> - a client information message:</p>
+		<table>
+			<tr>
+				<th>Attribute name</th>
+				<th>Type</th>
+				<th>Details</th>
+			</tr>
+			<tr>
+				<td>ip</td>
+				<td>IPv4 address (32-bit int)</td>
+				<td>The public IPv4 address of this user.</td>
+			</tr>
+			<tr>
+				<td>port</td>
+				<td>32-bit int (legal range 0-65535)</td>
+				<td>The public UDP port of this user.</td>
+			</tr>
+			<tr>
+				<td>localip</td>
+				<td>IPv4 address (32-bit int)</td>
+				<td>The LAN IPv4 address of this user.</td>
+			</tr>
+			<tr>
+				<td>localport</td>
+				<td>32-bit int (legal range 0-65535)</td>
+				<td>The LAN UDP port of this user (not necessarily
+				    the same as the public port, depending on how
+				    the use of NAT or firewall)</td>
+			</tr>
+			<tr>
+				<td>status</td>
+				<td>32-bit int</td>
+				<td>
+					The purpose of this field has not been determined, in
+				    all analysed data to date it has been 0.
+				</td>
+			</tr>
+			<tr>
+				<td>salt</td>
+				<td>string</td>
+				<td>
+					A salt string; it is not known what this is used for
+				    (it is always present but does not appear to be used when 
+				    communicating via the server)
+				</td>
+			</tr>
+		</table>
+	</li>
+	<li>
+		<p><em>msgtype = 3</em> - a typing notification:</p>
+		<table>
+			<tr>
+				<th>Attribute name</th>
+				<th>Type</th>
+				<th>Details</th>
+			</tr>
+			<tr>
+				<td>imindex</td>
+				<td>32-bit integer</td>
+				<td>The "index" of the message that will be sent if the
+				    user sends the pending content message.
+				</td>
+			</tr>
+			<tr>
+				<td>typing</td>
+				<td>32-bit integer</td>
+				<td>A boolean indicating whether the user is typing or not
+				    (1 is typing, 0 is not typing).
+				</td>
+			</tr>
+		</table>
+	</li>
+</ul>
+
+<h3><a id="msg3">Client version Message</a></h3>
+
+<p>
+This message is sent by the client to the server immediately after a
+<a href="#msg18">client information message</a> in order to report the version
+of the xfire client in use. This number changes frequently, incremented with
+each release of the XFire client (typically at least once a month). If the
+version number sent to the server is lower than the current released client,
+the server will send a <a href="#msg134">new version available</a> message
+and cease communicating with the client (the TCP connection will remain open
+until the client closes it, but it will ignore any further messages from the
+client).
+</p>
+
+<h4>Properties</h4>
+<table>
+	<tr>
+		<th>Message ID</th>
+		<td>3</td>
+	</tr>
+	<tr>
+		<th>Attribute key type</th>
+		<td>string</td>
+	</tr>
+	<tr>
+		<th>Direction</th>
+		<td>From client to server</td>
+	</tr>
+</table>
+
+<h4>Contents</h4>
+
+<table>
+	<tr>
+		<th>Attribute name</th>
+		<th>Type</th>
+		<th>Details</th>
+	</tr>
+	<tr>
+		<td>version</td>
+		<td>32-bit integer</td>
+		<td>The version number of the client.</td>
+	</tr>
+</table>
+
+<h3><a id="msg5">Friends of Online Friend Request Message</a></h3>
+
+<h3><a id="msg6">Outgoing Friend Invitation Message</a></h3>
+
+
+
+<h3><a id="msg7">Accept Invitation Message</a></h3>
+<h3><a id="msg8">Reject Invitation Message</a></h3>
+<h3><a id="msg12">User Lookup Message</a></h3>
+<h3><a id="msg13">Connection Keep-alive Message</a></h3>
+<h3><a id="msg16">Client Configuration Message</a></h3>
+<h3><a id="msg18">Client Information Message</a></h3>
+
+<p>
+This message is sent by the client to the server as the first message after
+the <a href="#handshake">initial handshake</a>. It contains a version number
+and the list of skins installed by the client.
+</p>
+
+<h4>Properties</h4>
+<table>
+	<tr>
+		<th>Message ID</th>
+		<td>18</td>
+	</tr>
+	<tr>
+		<th>Attribute key type</th>
+		<td>string</td>
+	</tr>
+	<tr>
+		<th>Direction</th>
+		<td>From client to server</td>
+	</tr>
+</table>
+
+<h4>Contents</h4>
+
+<table>
+	<tr>
+		<th>Attribute name</th>
+		<th>Type</th>
+		<th>Details</th>
+	</tr>
+	<tr>
+		<td>version</td>
+		<td>32-bit integer list</td>
+		<td>
+			A version number, in 4 parts. As of writing,
+		    all observed messages have used the version number "3.2.0.0". It
+		    appears this may have been made redundant by the version number 
+		    transmitted in the <a href="#msg3">client version message</a>.
+		</td>
+	</tr>
+	<tr>
+		<td>skin</td>
+		<td>string list</td>
+		<td>
+			The list of skins installed on the client. With a vanilla install
+			of the XFire client, this contains the strings
+			
+			<ul>
+				<li>"Xfire"</li> 
+				<li>"standard"</li>
+				<li>"Separator"</li>
+				<li>"XF_URL"</li>
+			</ul>
+			
+			This corresponds to the XFire client's "Tools -> Skin" menu, with
+			string representations of the horizontal separator and the link
+			to the XFire skins download page.
+		</td>
+	</tr>
+</table>
+
+<h3><a id="msg128">Login Challenge Message</a></h3>
+<h3><a id="msg129">Login Failure Message</a></h3>
+<h3><a id="msg130">Login Success Message</a></h3>
+<h3><a id="msg131">Friend List Message</a></h3>
+<h3><a id="msg132">Session ID List Message</a></h3>
+<h3><a id="msg133">Server Routed Chat Message</a></h3>
+<h3><a id="msg134">New Version Available Message</a></h3>
+
+<p>
+This message is sent by the server to the client if it reports a version number
+which is lower than the currently released XFire client. It contains the
+details to download newer client versions. The message is composed of a number
+of string lists, where values at matching indices in these lists collectively
+represent a new version.
+</p>
+
+<h4>Properties</h4>
+<table>
+	<tr>
+		<th>Message ID</th>
+		<td>134</td>
+	</tr>
+	<tr>
+		<th>Attribute key type</th>
+		<td>string</td>
+	</tr>
+	<tr>
+		<th>Direction</th>
+		<td>From server to client</td>
+	</tr>
+</table>
+
+<h4>Contents</h4>
+
+<table>
+	<tr>
+		<th>Attribute name</th>
+		<th>Type</th>
+		<th>Details</th>
+	</tr>
+	<tr>
+		<td>version</td>
+		<td>32-bit integer list</td>
+		<td>
+			The list of new version numbers available.
+		</td>
+	</tr>
+	<tr>
+		<td>file</td>
+		<td>string list</td>
+		<td>
+			The links to the new XFire client versions. An example of a URL
+			sent is <a href="http://seed2.da.xfire.com/79.exe">http://seed2.da.xfire.com/79.exe</a>.
+			All files observed to date have been .exe update installers which 
+			must be run within the XFire installation path.
+		</td>
+	</tr>
+	<tr>
+		<td>command</td>
+		<td>32-bit integer list</td>
+		<td>
+			An integer list of unknown purpose. In all data observed so far,
+			the integers have had the value "1".
+		</td>
+	</tr>
+	<tr>
+		<td>fileid</td>
+		<td>32-bit integer list</td>
+		<td>
+			An integer list of unknown purpose. In all data observed so far,
+			the integers have had the value "0".
+		</td>
+	</tr>
+	<tr>
+		<td>flags</td>
+		<td>32-bit integer</td>
+		<td>
+			A 32-bit integer of unknown purpose. In all data observed so far
+			this has had the value 0.
+		</td>
+	</tr>
+</table>
+
+<h3><a id="msg135">Friend Game Information Message</a></h3>
+<h3><a id="msg136">Friends of Friends Message</a></h3>
+<h3><a id="msg138">Incoming Friend Invitation Message</a></h3>
+<h3><a id="msg154">Friend Status Message</a></h3>
+<h3><a id="msg400">DID Message</a></h3>
 
 </body>
 </html>
