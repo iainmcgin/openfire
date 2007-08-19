@@ -1040,7 +1040,7 @@ and the list of skins installed by the client.
 				<li>"XF_URL"</li>
 			</ul>
 			
-			This corresponds to the XFire client's "Tools -> Skin" menu, with
+			This corresponds to the XFire client's "Tools -&gt; Skin" menu, with
 			string representations of the horizontal separator and the link
 			to the XFire skins download page.
 		</td>
@@ -1286,8 +1286,145 @@ that is used to initialise the client.
 </table>
 
 <h3><a id="msg131">Friend List Message</a></h3>
+
+<p>
+This message provides the list of friends for the current user after a successful login,
+with some essential details for future operations dealing with these friends.
+</p>
+
+<h4>Properties</h4>
+<table>
+	<tr>
+		<th>Message ID</th>
+		<td>131</td>
+	</tr>
+	<tr>
+		<th>Attribute key type</th>
+		<td>string</td>
+	</tr>
+	<tr>
+		<th>Direction</th>
+		<td>From server to client</td>
+	</tr>
+</table>
+
+<h4>Contents</h4>
+
+<table>
+	<tr>
+		<th>Attribute name</th>
+		<th>Type</th>
+		<th>Details</th>
+	</tr>
+	<tr>
+		<td>userid</td>
+		<td>32-bit integer list</td>
+		<td>
+			A list containing the unique ID of each friend.
+		</td>
+	</tr>
+	<tr>
+		<td>friends</td>
+		<td>String list</td>
+		<td>
+			A list containing the usernames of each friend.
+		</td>
+	</tr>
+	<tr>
+		<td>nick</td>
+		<td>String list</td>
+		<td>
+			A list containing the "nick name" of each friend, i.e.
+			the name that will be displayed instead of the username
+			if set. If no nick name has been set, this will be
+			an empty string.
+		</td>
+	</tr>
+</table>
+
+
 <h3><a id="msg132">Session ID List Message</a></h3>
+
+<p>
+This message provides a list of session IDs for friends who are currently online,
+or for friends who have just come online mid-way through a session. This message
+type is also used to indicate when friends have gone offline.
+</p>
+
+<h4>Properties</h4>
+<table>
+	<tr>
+		<th>Message ID</th>
+		<td>132</td>
+	</tr>
+	<tr>
+		<th>Attribute key type</th>
+		<td>string</td>
+	</tr>
+	<tr>
+		<th>Direction</th>
+		<td>From server to client</td>
+	</tr>
+</table>
+
+<h4>Contents</h4>
+
+<table>
+	<tr>
+		<th>Attribute name</th>
+		<th>Type</th>
+		<th>Details</th>
+	</tr>
+	<tr>
+		<td>userid</td>
+		<td>32-bit integer list</td>
+		<td>
+			A list containing the unique ID of each who has come online or
+			gone offline.
+		</td>
+	</tr>
+	<tr>
+		<td>sid</td>
+		<td>Session ID list</td>
+		<td>
+			A list containing the session IDs for each user. If the session ID
+			is 0, this indicates that the friend has gone offline. Otherwise,
+			it is a real session ID and indicates the user is online.
+		</td>
+	</tr>
+</table>
+
+
 <h3><a id="msg133">Server Routed Chat Message</a></h3>
+
+<p>
+This message type is identical to a normal <a href="#msg2">chat message</a>, but
+is sent down to the client via the TCP link to the server. This allows
+clients to communicate where they cannot open a public UDP port and directly
+communicate with peers.
+</p>
+
+<h4>Properties</h4>
+<table>
+	<tr>
+		<th>Message ID</th>
+		<td>133</td>
+	</tr>
+	<tr>
+		<th>Attribute key type</th>
+		<td>string</td>
+	</tr>
+	<tr>
+		<th>Direction</th>
+		<td>Server to client</td>
+	</tr>
+</table>
+
+<h4>Contents</h4>
+
+<p>See the description of the normal <a href="#msg2">chat message</a> for a full
+description of the contents of the message.</p>
+
 <h3><a id="msg134">New Version Available Message</a></h3>
 
 <p>
