@@ -12,16 +12,44 @@ which is acting as the customer for this project. As such, expected release date
 
 || *Release* || *Plannned Date*     ||
 || R1        || 12th July 2007      ||
-|| R2        || 6th September 2007  ||
-|| R3        || 14th December 2007  ||
-|| R4        || 13th February 2008  ||
-|| R5        || 10th April 2008     ||
+|| R2        || 14th December 2007  ||
+|| R3        || 13th February 2008  ||
+|| R4        || 10th April 2008     ||
 
 Features for all these releases have not yet been planned - many requirements will
 only be discovered once the first release have been completed and the customer
 has had a chance to play with it.
 
+== R2 Release Plan ==
+
+=== OpenFire core library ===
+
+|| *Task* || *Status* || *Target/Actual completion date* ||
+|| Record games currently being played for each friend || Pending || ||
+|| Conversation specific event listener interface || Pending || ||
+|| Friend specific event listener interface || Pending || ||
+
+=== OpenFire relay ===
+
+|| *Task* || *Status* || *Target/Actual completion date* ||
+|| Group based permissions for commands || Pending || ||
+|| Send welcome message to newly invited users || Pending || ||
+|| Command to send message directly to a specific user based on username, ID, IP address or seat number || Pending || ||
+|| Command to determine the username of the person logged in at a specific IP address || Pending || ||
+|| Command to determine the username of the person logged in at a specific seat number || Pending || ||
+|| Command to list all usable aliases for a user (seat number, IP address, ID etc. if applicable) || Pending || ||
+|| Command to send a message to all users playing on a specific game server (ip+port combination) || Pending || ||
+|| Authenticate admins and time out admin access || Pending || ||
+|| Command to silence a user (i.e. prevent messages being relayed) for a set period of time || Pending || ||
+|| Command to ban a user from the relay permanently || Pending || ||
+|| Command to list banned users || Pending || ||
+|| Command to lift a ban on a user || Pending || ||
+|| Commands to create, subscribe, broadcast to and unsubscribe from channels || Pending || ||
+|| Store gameplay stats in database || Pending || ||
+
 == R1 Release Plan ==
+
+R1 was officially released on the 18th of August, 2007.
 
 || *Task* || *Status* || *Target/Actual completion date* ||
 || Ability to parse and generate XFire protocol messages || Complete ||  March 23rd 2007 ||
