@@ -88,7 +88,12 @@ public class FriendGameInfoMessage extends StringMapBasedMessage {
 			return null;
 		}
 		
-		return IOUtil.getInetSocketAddress(address, port);
+		// it looks like a recent protocol update is stuffing some extra info
+		// into the port field. The first 16 bits of the field are now the
+		// port and the second 16 bits are used for something unknown at
+		// present
+		
+		return IOUtil.getInetSocketAddress(address, port & 0xFFFF);
 	}
 
 	@Override
