@@ -21,6 +21,10 @@ package uk.azdev.openfire.friendlist;
 
 import static org.junit.Assert.*;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,6 +33,9 @@ import uk.azdev.openfire.common.SessionId;
 public class FriendsListTest {
 
 	private FriendsList friendsList;
+	
+	private Friend self;
+	
 	private Friend alice;
 	private Friend bob;
 	private Friend carol;
@@ -36,17 +43,17 @@ public class FriendsListTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		Friend self = new Friend("me");
+		self = new Friend("me");
 		friendsList = new FriendsList(self);
 		
 		alice = new Friend(100L, "alice", "Alice", new SessionId(1000));
 		bob = new Friend(101L, "bob", "Bob", new SessionId(1001));
 		carol = new Friend(102L, "carol", "Carol", new SessionId(1002));
 		dave = new Friend(103L, "dave", "Dave", new SessionId(1003));
-		friendsList.addFriend(alice);
-		friendsList.addFriend(bob);
-		friendsList.addFriend(carol);
-		friendsList.addFriend(dave);
+		friendsList.addFriend(alice, self);
+		friendsList.addFriend(bob, self);
+		friendsList.addFriend(carol, alice);
+		friendsList.addFriend(dave, bob);
 	}
 	
 	@Test
@@ -60,5 +67,33 @@ public class FriendsListTest {
 		assertTrue(friendsList.containsFriend("alice"));
 		assertFalse(friendsList.containsFriend("someguy"));
 	}
-
+	
+	@Test
+	public void testGetOnlineFriend() {
+		Friend f = friendsList.getOnlineFriend(new SessionId(1000));
+		assertEquals("Incorrect friend returned by getOnlineFriend", alice, f);
+		
+		assertNull(friendsList.getOnlineFriend(new SessionId(2000)));
+	}
+	
+	@Test
+	public void testGetMyFriends() {
+		Set<Friend> friends = friendsList.getMyFriends();
+	
+		assertTrue(friends.contains(alice));
+		assertTrue(friends.contains(bob));
+		assertFalse(friends.contains(carol));
+	}
+	
+	@Test
+	public void testGetAllFriends() {
+		List<Friend> friends = friendsList.getAllFriends();
+		
+		assertEquals(5, friends.size());
+		assertTrue(friends.contains(alice));
+		assertTrue(friends.contains(bob));
+		assertTrue(friends.contains(carol));
+		assertTrue(friends.contains(dave));
+		assertTrue(friends.contains(self));
+	}
 }

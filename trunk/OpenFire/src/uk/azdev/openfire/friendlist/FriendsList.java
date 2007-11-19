@@ -186,7 +186,11 @@ public class FriendsList {
 	public Friend getOnlineFriend(SessionId sessionId) {
 		acquireLock();
 		try {
-			return onlineFriends.get(sessionId).clone();
+			if(onlineFriends.containsKey(sessionId)) {
+				return onlineFriends.get(sessionId).clone();
+			}
+			
+			return null;
 		} finally {
 			releaseLock();
 		}
@@ -272,7 +276,7 @@ public class FriendsList {
 		}
 	}
 	
-	public Collection<Friend> getAllFriends() {
+	public List<Friend> getAllFriends() {
 		acquireLock();
 		try {
 			Collection<Friend> allFriends = friendsById.values();

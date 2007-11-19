@@ -277,4 +277,31 @@ public class ChatMessage extends StringMapBasedMessage {
 		
 		return buffer.toString();
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof ChatMessage) {
+			ChatMessage cm = (ChatMessage)obj;
+			
+			return cm.messageType == this.messageType
+			    && equalWithNull(cm.sid, this.sid)
+			    && cm.messageIndex == this.messageIndex
+			    && equalWithNull(cm.message, this.message)
+			    && cm.typingVal == this.typingVal
+			    && equalWithNull(cm.netAddr, this.netAddr)
+			    && equalWithNull(cm.localAddr, this.localAddr)
+			    && cm.status == this.status
+			    && equalWithNull(cm.salt, this.salt);
+		}
+		
+		return false;
+	}
+	
+	private boolean equalWithNull(Object a, Object b) {
+		if(a == null) {
+			return b == null;
+		}
+		
+		return a.equals(b);
+	}
 }

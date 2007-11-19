@@ -16,15 +16,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire.net;
+package uk.azdev.openfire.conversations;
 
-import uk.azdev.openfire.net.messages.IMessage;
+import uk.azdev.openfire.common.SessionId;
 
+public interface IConversationStore {
 
-public interface ConnectionStateListener {
+	public IConversation getConversation(SessionId forUser);
 	
-	public void connectionError(Exception e);
-	public void messageReceived(IMessage message);
-	public void loginFailed();
-
 }
