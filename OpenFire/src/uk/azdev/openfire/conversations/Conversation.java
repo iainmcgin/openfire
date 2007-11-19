@@ -33,7 +33,7 @@ import uk.azdev.openfire.net.ProtocolConstants;
 import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
 import uk.azdev.openfire.net.util.IOUtil;
 
-public class Conversation {
+public class Conversation implements IConversation {
 	
 	private IMessageSender messageSender;
 	private FriendsList friendsList;

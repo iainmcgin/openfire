@@ -29,6 +29,7 @@ import uk.azdev.openfire.common.Logging;
 import uk.azdev.openfire.common.OpenFireConfiguration;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.conversations.Conversation;
+import uk.azdev.openfire.conversations.IConversationStore;
 import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.friendlist.messageprocessors.ChatMessageProcessor;
@@ -62,7 +63,7 @@ import uk.azdev.openfire.net.messages.outgoing.ClientInformationMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientVersionMessage;
 import uk.azdev.openfire.net.messages.outgoing.OutgoingInvitationMessage;
 
-public class XFireConnection implements IMessageSender, ConnectionStateListener, ConnectionManipulator {
+public class XFireConnection implements IMessageSender, ConnectionStateListener, ConnectionManipulator, IConversationStore {
 
 	private OpenFireConfiguration config;
 	private IConnectionController controller;
@@ -158,8 +159,8 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 		processorMap.put(LoginSuccessMessage.LOGIN_SUCCESS_MESSAGE_ID, new LoginSuccessMessageProcessor(this, friendList, config));
 		processorMap.put(LoginFailureMessage.LOGIN_FAILURE_MESSAGE_ID, new LoginFailureMessageProcessor(this));
 		processorMap.put(NewVersionAvailableMessage.TYPE_ID, new NewVersionAvailableMessageProcessor(this, config));
-		processorMap.put(ServerRoutedChatMessage.SR_TYPE_ID, new ChatMessageProcessor(this, eventDispatcher));
-		processorMap.put(ChatMessage.TYPE_ID, new ChatMessageProcessor(this, eventDispatcher));
+		processorMap.put(ServerRoutedChatMessage.SR_TYPE_ID, new ChatMessageProcessor(this, eventDispatcher, this));
+		processorMap.put(ChatMessage.TYPE_ID, new ChatMessageProcessor(this, eventDispatcher, this));
 		processorMap.put(IncomingInvitationMessage.TYPE_ID, new IncomingInvitationMessageProcessor(eventDispatcher, this));
 	}
 	

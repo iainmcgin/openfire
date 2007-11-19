@@ -16,15 +16,27 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package uk.azdev.openfire.net;
+package uk.azdev.openfire.conversations;
 
-import uk.azdev.openfire.net.messages.IMessage;
+import uk.azdev.openfire.friendlist.Friend;
+import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
 
+public interface IConversation {
 
-public interface ConnectionStateListener {
-	
-	public void connectionError(Exception e);
-	public void messageReceived(IMessage message);
-	public void loginFailed();
+	public abstract void receiveMessage(ChatMessage chatMsg);
+
+	public abstract void sendMessage(String text);
+
+	public abstract String getChatLog();
+
+	public abstract ConversationLogLine getLastMessage();
+
+	public abstract void addChatListener(IConversationListener listener);
+
+	public abstract void notifyListeners();
+
+	public abstract void notifyListenersOfTyping();
+
+	public abstract Friend getPeer();
 
 }

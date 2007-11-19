@@ -18,18 +18,33 @@
  */
 package uk.azdev.openfire.friendlist.messageprocessors;
 
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JUnit4Mockery;
+import org.junit.Test;
+
 import uk.azdev.openfire.net.ConnectionStateListener;
-import uk.azdev.openfire.net.messages.IMessage;
+import uk.azdev.openfire.net.messages.incoming.LoginFailureMessage;
 
-public class LoginFailureMessageProcessor implements IMessageProcessor {
+public class LoginFailureMessageProcessorTest {
+
+	Mockery context = new JUnit4Mockery();
 	
-	private final ConnectionStateListener stateListener;
-
-	public LoginFailureMessageProcessor(ConnectionStateListener stateListener) {
-		this.stateListener = stateListener;
+	@Test
+	public void testProcessMessage() {
+		final ConnectionStateListener stateListener = context.mock(ConnectionStateListener.class);
+		
+		context.checking(new Expectations() {{
+			one(stateListener).loginFailed();
+		}});
+		
+		LoginFailureMessage message = new LoginFailureMessage();
+		message.setReason(1L);
+		
+		LoginFailureMessageProcessor processor = new LoginFailureMessageProcessor(stateListener);
+		processor.processMessage(message);
+		
+		context.assertIsSatisfied();
 	}
 
-	public void processMessage(IMessage message) {
-		stateListener.loginFailed();
-	}
 }
