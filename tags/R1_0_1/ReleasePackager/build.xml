@@ -1,0 +1,65 @@
+<project name="OpenFirePackager">
+
+	<property name="release.version" value="DEVEL"/>
+	<property name="keystore" value="keys"/>
+	<property name="keystore.pass" value=""/>
+	<property name="key.alias" value=""/>
+	<property name="key.pass" value=""/>
+	
+	<property name="releases.dir" location="releases"/>
+	<property name="resources.dir" location="resources"/>
+	
+	<property name="release.dir" location="${releases.dir}/openfire-${release.version}"/>
+	
+	<propertyset id="release_props">
+		<propertyref prefix="release."/>
+		<propertyref prefix="keystore"/>
+		<propertyref prefix="key."/>
+	</propertyset>
+	
+	<target name="release" depends="init">
+		<delete dir="${release.dir}" failonerror="false"/>
+		<delete file="${release.dir}/openfire-${release.version}.tar.bz2" failonerror="false"/>
+		<delete file="${release.dir}/openfire-${release.version}.zip" failonerror="false"/>
+		<mkdir dir="${release.dir}"/>
+		
+		
+		<ant antfile="../OpenFire/builder/build.xml" target="release" inheritall="false">
+			<propertyset refid="release_props"/>
+		</ant>
+		
+		<ant antfile="../OpenFireClient/builder/build.xml" target="release" inheritall="false">
+			<propertyset refid="release_props"/>
+		</ant>
+		
+		<ant antfile="../OpenFireClient/builder/build.xml" target="release" inheritall="false">
+			<propertyset refid="release_props"/>
+		</ant>
+
+		<copy file="../OpenFire/build/openfire.jar" todir="${release.dir}" />
+		<copy file="../OpenFireClient/build/openfireclient.jar" todir="${release.dir}"/>
+		<copy file="../OpenFireRelay/build/openfirerelay.jar" todir="${release.dir}"/>
+		<copy todir="${release.dir}">
+			<fileset dir="../OpenFireRelay/resources"/>
+			<fileset dir="${resources.dir}/bin"/>
+			<fileset dir="${resources.dir}/bat"/>
+			<fileset dir="${resources.dir}/doc"/>
+		</copy>
+		
+		<zip destfile="${releases.dir}/openfire-${release.version}.zip" 
+			 basedir="${releases.dir}" includes="openfire-${release.version}/**" excludes="**/*.sh" update="false"/>
+		
+		<tar destfile="${releases.dir}/openfire-${release.version}.tar" 
+					 basedir="${releases.dir}" 
+					 includes="openfire-${release.version}/**" 
+					 excludes="**/*.bat"/>
+		
+		<bzip2 src="${releases.dir}/openfire-${release.version}.tar" 
+			destfile="${releases.dir}/openfire-${release.version}.tar.bz2"/>
+		<delete file="${releases.dir}/openfire-${release.version}.tar"/>
+	</target>
+	
+	<target name="init">
+		<mkdir dir="${releases.dir}"/>
+	</target>
+</project>
