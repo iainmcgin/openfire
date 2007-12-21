@@ -2,23 +2,7 @@
 
 = OpenFire Project Status =
 
-The project is currently working towards it's first release, with the foundations 
-for communication with the XFire server in place.
-
-== Planned Release Dates ==
-
-Release dates will largely follow the intended dates for the LAN party I attend, 
-which is acting as the customer for this project. As such, expected release dates are:
-
-|| *Release* || *Plannned Date*     ||
-|| R1        || 12th July 2007      ||
-|| R2        || 14th December 2007  ||
-|| R3        || 13th February 2008  ||
-|| R4        || 10th April 2008     ||
-
-Features for all these releases have not yet been planned - many requirements will
-only be discovered once the first release have been completed and the customer
-has had a chance to play with it.
+This project plan will be updated in the new year, when normality resumes.
 
 == R2 Release Plan ==
 
@@ -60,5 +44,5 @@ R1 was officially released on the 18th of August, 2007.
 || Representation and maintenance of conversations with other XFire users || Completed || 15th June 2007 ||
 || Introduction of friend "classes", offline-configured || Completed || 22nd June 2007 ||
 || Basic "admin to user" message relay || Completed || 29th June 2007 ||
-|| "user to on-duty admin" relay || In Progress || 6th July 2007 ||
+|| "user to on-duty admin" relay || Not Completed || 6th July 2007 ||
 || Auto-accept invites || Completed || 12th July 2007 ||
