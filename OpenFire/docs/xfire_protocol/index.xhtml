@@ -59,12 +59,54 @@
 			background: #ced;
 		}
 		
+		td.int16-start {
+			background: #ced;
+			border-right: 1px solid #bce;
+		}
+		
+		td.int16-end {
+			background: #ced;
+			border-left: 1px solid #bce;
+		}
+		
 		td.int32 {
 			background: #bdc;
 		}
 		
+		td.int32-start {
+			background: #bdc;
+			border-right: 1px solid #acb;
+		}
+		
+		td.int32-middle {
+			background: #bdc;
+			border-left: 1px solid #acb;
+			border-right: 1px solid #acb;
+		}
+		
+		td.int32-end {
+			background: #bdc;
+			border-left: 1px solid #acb;
+		}
+		
 		td.string {
 			background: #cef;
+		}
+		
+		td.string-start {
+			background: #cef;
+			border-right: 1px solid #bde;
+		}
+		
+		td.string-middle {
+			background: #cef;
+			border-left: 1px solid #bde;
+			border-right: 1px solid #bde;
+		}
+		
+		td.string-end {
+			background: #cef;
+			border-left: 1px solid #bde;
 		}
 		
 		td.indeterminate {
@@ -87,10 +129,13 @@
 <p>This document aims to provide a full specification for the XFire instant
 messaging protocol. A lot of the information found in this document would 
 not be available if it were not for the hard work of the xfirelib project 
-team (<a href="http://xfirelib.sphene.net">http://xfirelib.sphene.net</a>), who reverse engineered the protocol to 
-write xfirelib. This document was written to formally document what they 
-discovered, and to be provided as a basis for implementing XFire 
-communication libraries in alternative languages.</p>
+team (<a href="http://xfirelib.sphene.net">http://xfirelib.sphene.net</a>), 
+who reverse engineered the protocol to 
+write xfirelib. This information, along with some of my own findings from
+writing the <a href="http://code.google.com/p/openfire">OpenFire</a> library 
+and suite of tools, provide the basis for this document which aims to formally 
+document what we discovered, and to be provided as a basis for implementing 
+XFire communication libraries in alternative languages.</p>
 
 <h2>High level details</h2>
 
@@ -216,56 +261,57 @@ appropriate):</p>
 
 <table>
 	<tr>
-		<th></th>
-		<th>0</th>
-		<th>1</th>
-		<th>2</th>
-		<th>3</th>
-		<th>4</th>
-		<th>5</th>
-		<th>6</th>
-		<th>7</th>
+		<th>Position (hex)</th>
+		<th>00</th>
+		<th>01</th>
+		<th>02</th>
+		<th>03</th>
+		<th>04</th>
+		<th>05</th>
+		<th>06</th>
+		<th>07</th>
+		<th>08</th>
+		<th>09</th>
+		<th>0A</th>
+		<th>0B</th>
+		<th>0C</th>
+		<th>0D</th>
+		<th>0E</th>
+		<th>0F</th>
+		<th>10</th>
+		<th>11</th>
 	</tr>
 	<tr>
-		<th rowspan="2">0</th>
-		<td class="int16">12</td>
-		<td class="int16">00</td>
-		<td class="int16">03</td>
-		<td class="int16">00</td>
+		<th>Value (hex)</th>
+		<td class="int16-start">12</td>
+		<td class="int16-end">00</td>
+		<td class="int16-start">03</td>
+		<td class="int16-end">00</td>
 		<td class="int8">01</td>
 		<td class="int8">07</td>
-		<td class="string">76</td>
-		<td class="string">65</td>
-	</tr>
-	<tr>
-		<td colspan="6"></td>
-		<td class="string">v</td>
-		<td class="string">e</td>
-	</tr>
-	<tr>
-		<th rowspan="2">8</th>
-		<td class="string">72</td>
-		<td class="string">73</td>
-		<td class="string">69</td>
-		<td class="string">6f</td>
-		<td class="string">6e</td>
+		<td class="string-start">76</td>
+		<td class="string-middle">65</td>
+		<td class="string-middle">72</td>
+		<td class="string-middle">73</td>
+		<td class="string-middle">69</td>
+		<td class="string-middle">6f</td>
+		<td class="string-end">6e</td>
 		<td class="int8">02<br/></td>
-		<td class="int32">43<br/></td>
-		<td class="int32">00<br/></td>
+		<td class="int32-start">43<br/></td>
+		<td class="int32-middle">00<br/></td>
+		<td class="int32-middle">00<br/></td>
+		<td class="int32-end">00<br/></td>
 	</tr>
 	<tr>
-		<td class="string">r</td>
-		<td class="string">s</td>
-		<td class="string">i</td>
-		<td class="string">o</td>
-		<td class="string">n</td>
-		<td colspan="3"></td>
-	</tr>
-	<tr>
-		<th>16</th>
-		<td class="int32">00<br/></td>
-		<td class="int32">00<br/></td>
-		<td colspan="6" class="end"></td>
+		<th>Value (literal)</th>
+		<td colspan="6"></td>
+		<td class="string-start">v</td>
+		<td class="string-middle">e</td>
+		<td class="string-middle">r</td>
+		<td class="string-middle">s</td>
+		<td class="string-middle">i</td>
+		<td class="string-middle">o</td>
+		<td class="string-end">n</td>
 	</tr>
 </table>
 
@@ -283,14 +329,16 @@ in the message.</p>
 <ol>
 	<li>The client opens a TCP/IP connection with the server, first sending 
 	    the hexadecimal code 55 41 30 31 (or, as a string, "UA01") as an 
-		opening statement.</li>
-	<li>It then sends a <a href="#msg18">client information message</a>, 
+		opening statement.
+	</li>
+	<li>The client then sends a <a href="#msg18">client information message</a>, 
 	    followed by a <a href="#msg3">client version message</a>.
 		<ol>
 			<li>If this version is older than the current XFire version, a 
 			<a href="#msg134">new version message</a> will be sent and the 
 			server will send no more messages. The client should disconnect 
-			at this point.</li>
+			at this point.
+			</li>
 		</ol>
 	</li>
 	<li>The server will then send an <a href="#msg128">authentication challenge 
@@ -661,6 +709,45 @@ client).
 </table>
 
 <h3><a id="msg5">Friends of Online Friend Request Message</a></h3>
+
+<p>
+This message is sent by the client to the server to get a list of friends of
+friends who are online and currently playing a game. The client sends a list
+of session IDs of friends who are currently online, and the server will respond
+with a <a href="#msg136">friends of friends</a> message. 
+</p>
+
+<h4>Properties</h4>
+<table>
+	<tr>
+		<th>Message ID</th>
+		<td>5</td>
+	</tr>
+	<tr>
+		<th>Attribute key type</th>
+		<td>string</td>
+	</tr>
+	<tr>
+		<th>Direction</th>
+		<td>From client to server</td>
+	</tr>
+</table>
+
+<h4>Contents</h4>
+
+<table>
+	<tr>
+		<th>Attribute name</th>
+		<th>Type</th>
+		<th>Details</th>
+	</tr>
+	<tr>
+		<td>sid</td>
+		<td>Session ID list</td>
+		<td>A list of session IDs of currently online friends, for whom
+		    we wish to acquire the list of second-degree online friends.</td>
+	</tr>
+</table>
 
 <h3><a id="msg6">Outgoing Friend Invitation Message</a></h3>
 
@@ -1503,8 +1590,174 @@ represent a new version.
 </table>
 
 <h3><a id="msg135">Friend Game Information Message</a></h3>
+
+<p>
+This message contains a description of games that friends are currently
+playing.
+</p>
+
+<h4>Properties</h4>
+<table>
+	<tr>
+		<th>Message ID</th>
+		<td>135</td>
+	</tr>
+	<tr>
+		<th>Attribute key type</th>
+		<td>string</td>
+	</tr>
+	<tr>
+		<th>Direction</th>
+		<td>From server to client</td>
+	</tr>
+</table>
+
+<h4>Contents</h4>
+
+<table>
+	<tr>
+		<th>Attribute name</th>
+		<th>Type</th>
+		<th>Details</th>
+	</tr>
+	<tr>
+		<td>sid</td>
+		<td>Session ID list</td>
+		<td>
+			A list containing the session IDs for each user that is playing
+			a game.
+		</td>
+	</tr>
+	<tr>
+		<td>gameid</td>
+		<td>32-bit integer list</td>
+		<td>
+			A list containing the game ids currently being played by each user.
+			These correspond to the game IDs contained in the xfire_games.ini
+		</td>
+	</tr>
+	<tr>
+		<td>gip</td>
+		<td>IPv4 address list</td>
+		<td>
+			A list containing the IP addresses of the servers for each game
+			being played by each user. If the game has no server IP or it
+			cannot be determined, then the value will be 0.
+		</td>
+	</tr>
+	<tr>
+		<td>gport</td>
+		<td>32-bit integer list</td>
+		<td>
+			A list containing the port of the servers for each game being
+			played by each user. If the port cannot be determined, then the
+			value will be 0.
+		</td>
+	</tr>
+</table>
+
 <h3><a id="msg136">Friends of Friends Message</a></h3>
+
+<p>
+This message contains a list of users who are friends of friends and are
+currently playing a game. This is sent in response to a 
+<a href="#msg5">friends of online friend request message</a>. 
+</p>
+
+<h4>Properties</h4>
+<table>
+	<tr>
+		<th>Message ID</th>
+		<td>136</td>
+	</tr>
+	<tr>
+		<th>Attribute key type</th>
+		<td>string</td>
+	</tr>
+	<tr>
+		<th>Direction</th>
+		<td>From server to client</td>
+	</tr>
+</table>
+
+<h4>Contents</h4>
+
+<table>
+	<tr>
+		<th>Attribute name</th>
+		<th>Type</th>
+		<th>Details</th>
+	</tr>
+	<tr>
+		<td>fnsid</td>
+		<td>Session ID list</td>
+		<td>
+			A list containing the session ID of a friend of a friend.
+		</td>
+	</tr>
+	<tr>
+		<td>userid</td>
+		<td>32-bit integer list</td>
+		<td>
+			A list containing the user ID of a friend of a friend.
+		</td>
+	</tr>
+	<tr>
+		<td>uname</td>
+		<td>string list</td>
+		<td>
+			A list containing the user name of a friend of a friend.
+		</td>
+	</tr>
+	<tr>
+		<td>nick</td>
+		<td>string list</td>
+		<td>
+			A list containing the display name of a friend of a friend.
+		</td>
+	</tr>
+	<tr>
+		<td>friends</td>
+		<td>list of lists of 32-bit integers</td>
+		<td>
+			A list containing the friends of the friend of a friend.
+		</td>
+	</tr>
+</table>
+
 <h3><a id="msg138">Incoming Friend Invitation Message</a></h3>
+
+<p>
+TODO: describe this message type
+</p>
+
+<h4>Properties</h4>
+<table>
+	<tr>
+		<th>Message ID</th>
+		<td>135</td>
+	</tr>
+	<tr>
+		<th>Attribute key type</th>
+		<td>string</td>
+	</tr>
+	<tr>
+		<th>Direction</th>
+		<td>From server to client</td>
+	</tr>
+</table>
+
+<h4>Contents</h4>
+
+<table>
+	<tr>
+		<th>Attribute name</th>
+		<th>Type</th>
+		<th>Details</th>
+	</tr>
+	<tr><td>TODO: finish enumerating attributes</td></tr>
+</table>
+
 <h3><a id="msg143">User Search Results Message</a></h3>
 
 <p>
