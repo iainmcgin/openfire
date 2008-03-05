@@ -76,7 +76,7 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 	
 	private ConnectionEventDispatcher eventDispatcher;
 	
-	public XFireConnection(OpenFireConfiguration config, IConnectionController controller) {
+	protected XFireConnection(OpenFireConfiguration config, IConnectionController controller) {
 		this.config = config;
 		this.controller = controller;
 		init();
