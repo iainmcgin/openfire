@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +41,8 @@ public class FriendsList {
 	private Map<SessionId, Friend> onlineFriends;
 	
 	private Map<Friend, Set<Friend>> friendConnections;
-	
+	private Map<Friend, FriendEventDispatcher> friendListeners;
+
 	private ReentrantLock accessLock;
 	
 	public FriendsList(Friend self) {
@@ -49,6 +51,7 @@ public class FriendsList {
 		friendsByUName = new HashMap<String, Friend>();
 		onlineFriends = new HashMap<SessionId, Friend>();
 		friendConnections = new HashMap<Friend, Set<Friend>>();
+		friendListeners = new HashMap<Friend, FriendEventDispatcher>();
 		accessLock = new ReentrantLock();
 		addFriend(self);
 	}
@@ -86,6 +89,7 @@ public class FriendsList {
 		} else {
 			friendsById.put(friend.getUserId(), friend);
 			friendConnections.put(friend, new HashSet<Friend>());
+			friendListeners.put(friend, new FriendEventDispatcher());
 		}
 		
 		updateOnlineFriendsMap(friend);
@@ -178,6 +182,7 @@ public class FriendsList {
 			Friend friend = getInternalFriend(userId);
 			friend.setOnline(sessionIdForUser);
 			onlineFriends.put(sessionIdForUser, friend);
+			friendListeners.get(friend).friendOnline();
 		} finally {
 			releaseLock();
 		}
@@ -203,6 +208,7 @@ public class FriendsList {
 			SessionId oldSid = friend.getSessionId();
 			onlineFriends.remove(oldSid);
 			friend.setOffline();
+			friendListeners.get(friend).friendOffline();
 		} finally {
 			releaseLock();
 		}
@@ -217,6 +223,7 @@ public class FriendsList {
 				return;
 			}
 			f.setStatus(newStatus);
+			friendListeners.get(f).statusChanged(newStatus);
 		} finally {
 			releaseLock();
 		}
@@ -291,5 +298,8 @@ public class FriendsList {
 		}
 	}
 
+	public void addFriendListener(Friend forFriend, IFriendListener listener) {
+	    friendListeners.get(forFriend).addListener(listener);
+	}
 	
 }

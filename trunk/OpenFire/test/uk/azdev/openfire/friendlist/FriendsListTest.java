@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.jmock.Expectations;
+import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,6 +34,8 @@ import uk.azdev.openfire.common.SessionId;
 
 public class FriendsListTest {
 
+    private JUnit4Mockery context;
+    
 	private FriendsList friendsList;
 	
 	private Friend self;
@@ -43,6 +47,7 @@ public class FriendsListTest {
 	
 	@Before
 	public void setUp() throws Exception {
+	    context = new JUnit4Mockery();
 		self = new Friend("me");
 		friendsList = new FriendsList(self);
 		
@@ -95,5 +100,29 @@ public class FriendsListTest {
 		assertTrue(friends.contains(carol));
 		assertTrue(friends.contains(dave));
 		assertTrue(friends.contains(self));
+	}
+	
+	@Test
+	public void testNotifiedWhenFriendGoesOnlineOrOffline() {
+	    final IFriendListener listener1 = context.mock(IFriendListener.class);
+	    final IFriendListener listener2 = context.mock(IFriendListener.class);
+	    
+	    context.checking(new Expectations() {{
+	        one(listener1).friendOnline();
+	        one(listener2).friendOnline();
+	        one(listener1).statusChanged("hai guys");
+	        one(listener2).statusChanged("hai guys");
+	        one(listener1).friendOffline();
+	        one(listener2).friendOffline();
+	    }});
+	    
+	    friendsList.addFriendListener(alice, listener1);
+	    friendsList.addFriendListener(alice, listener2);
+	    
+	    friendsList.setFriendOnline(alice.getUserId(), new SessionId(1001));
+	    friendsList.updateFriendStatus(new SessionId(1001), "hai guys");
+	    friendsList.setFriendOffline(alice.getUserId());
+	    
+	    context.assertIsSatisfied();
 	}
 }

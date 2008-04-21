@@ -141,7 +141,6 @@ public class ConnectionControllerTest {
 			// not relevant for this test
 		}
 		
-		@Override
 		public void loginFailed() {
 			// not relevant for this test
 		}
