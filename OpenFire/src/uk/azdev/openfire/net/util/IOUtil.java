@@ -174,6 +174,29 @@ public class IOUtil {
 		}
 	}
 	
+	public static Inet4Address getInet4Address(String textIpRepresentation) {
+	    byte[] address = new byte[4];
+	    String[] segments = textIpRepresentation.split("\\.");
+	    
+	    if(segments.length != 4) {
+	        throw new IllegalArgumentException("Passed textual IP \"" + textIpRepresentation + "\" is not of form a.b.c.d");
+	    }
+	    
+	    for(int i=0; i < segments.length; i++) {
+	        try {
+	            address[i] = (byte)Integer.parseInt(segments[i]);
+	        } catch(NumberFormatException e) {
+	            throw new IllegalArgumentException("component of textual IP could not be parsed", e);
+	        }
+	    }
+	    
+	    try {
+            return (Inet4Address) InetAddress.getByAddress(textIpRepresentation, address);
+        } catch (UnknownHostException e) {
+            throw new IllegalArgumentException("Textual IP could not be used", e);
+        }
+	}
+	
 	public static InetSocketAddress getInetSocketAddress(long addrAsInt32, int port) {
 		return new InetSocketAddress(getAddressFromInt32(addrAsInt32), port);
 	}

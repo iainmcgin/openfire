@@ -48,7 +48,11 @@ public class Int32AttributeValue implements AttributeValue<Long> {
 	}
 
 	public Int32AttributeValue(Inet4Address inetAddress) {
-		setValueAsIPv4Address(inetAddress);
+	    if(inetAddress == null) {
+	        value = 0;
+	    } else {
+	        setValueAsIPv4Address(inetAddress);
+	    }
 	}
 
 	public Long getValue() {

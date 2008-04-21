@@ -75,6 +75,7 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 	private Map<SessionId, Conversation> activeConversations;
 	
 	private ConnectionEventDispatcher eventDispatcher;
+	private RawMessageDispatcher rawMessageDispatcher;
 	
 	protected XFireConnection(OpenFireConfiguration config, IConnectionController controller) {
 		this.config = config;
@@ -95,6 +96,7 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 		timer = new KeepaliveTimer(this);
 		activeConversations = new ConcurrentHashMap<SessionId, Conversation>();
 		eventDispatcher = new ConnectionEventDispatcher();
+		rawMessageDispatcher = new RawMessageDispatcher();
 		
 		initProcessorMap();
 	}
@@ -179,6 +181,8 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 		if(processorMap.containsKey(message.getMessageId())) {
 			processorMap.get(message.getMessageId()).processMessage(message);
 		}
+		
+		rawMessageDispatcher.messageReceived(message);
 	}
 	
 	public void connectionError(Exception e) {
@@ -236,6 +240,10 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 	
 	public void addListener(ConnectionEventListener listener) {
 		eventDispatcher.addListener(listener);
+	}
+	
+	public void addRawListener(RawConnectionListener listener) {
+	    rawMessageDispatcher.addRawListener(listener);
 	}
 	
 	private class LoginFailureHandler implements Runnable {
