@@ -86,10 +86,6 @@ public class FriendVoiceCommsInfoMessageTest {
     
     @Test
     public void testReadMessageContent() throws IOException {
-        /* not working at the moment - bad test data, will fix once I get back
-         * from Amerika
-         */
-        /*
         ByteBuffer buffer = TestUtils.getByteBufferForResource(this.getClass(), "friendvcinfo.sampledata");
         message.readMessageContent(buffer);
         assertEquals(10, message.getSessionIdSet().size());
@@ -99,25 +95,19 @@ public class FriendVoiceCommsInfoMessageTest {
         int i=0;
         while(sessionIdIter.hasNext()) {
             SessionId sid = sessionIdIter.next();
-            assertEquals(testSids[i], sid);
-            assertEquals(testActiveApplications[i], message.getActiveAppForSid(sid));
+            assertEquals("SID no. " + i + " did not match", testSids[i], sid);
+            assertEquals("Active application no. " + i + " did not match", testActiveApplications[i], message.getActiveAppForSid(sid));
             i++;
         }
-        */
     }
     
     @Test
     public void testWriteMessageContent() throws IOException {
-        /* not working at the moment - bad test data, will fix once I get back
-         * from Amerika
-         */
-        /*
         for(int i=0; i < testSids.length; i++) {
             message.addActiveAppInfo(testSids[i], testActiveApplications[i]);
         }
         
         TestUtils.checkMessageOutput(message, this.getClass(), "friendvcinfo.sampledata");
-        */
     }
 
     private static SessionId generateTestSid(int startByteVal) {
