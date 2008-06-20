@@ -73,7 +73,7 @@
 				   merge="true"/>
 		</emma>
 		
-		<junit printsummary="true" fork="yes">
+		<junit printsummary="true" fork="yes" forkmode="once">
 			<classpath refid="tests.lib"/>
 			<classpath>
 				<pathelement location="${instr.build.dir}"/>

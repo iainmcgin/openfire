@@ -38,4 +38,39 @@ public class ActiveApplicationInfo {
         return address;
     }
     
+    @Override
+    public boolean equals(Object obj) {
+    	if(!(obj instanceof ActiveApplicationInfo)) {
+    		return false;
+    	}
+    	
+    	ActiveApplicationInfo other = (ActiveApplicationInfo) obj;
+    	return other.appId == this.appId && addressesEqual(this.address, other.address);
+    }
+    
+    private boolean addressesEqual(Inet4Address a, Inet4Address b) {
+		if(a == null) {
+			return b == null;
+		}
+		
+		return a.equals(b);
+	}
+
+	@Override
+    public int hashCode() {
+    	return new Long(appId).hashCode() ^ address.hashCode();
+    }
+	
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("ActiveApplicationInfo(appId=");
+		buffer.append(appId);
+		buffer.append(",addr=");
+		buffer.append(address);
+		buffer.append(")");
+		
+		return buffer.toString();
+	}
+    
 }
