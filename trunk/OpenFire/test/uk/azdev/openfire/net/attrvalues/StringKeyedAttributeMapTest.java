@@ -97,7 +97,7 @@ public class StringKeyedAttributeMapTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testAddAttribute_withNullValue() {
-		map.addAttribute("test", (AttributeValue)null);
+		map.addAttribute("test", (AttributeValue<?>)null);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)

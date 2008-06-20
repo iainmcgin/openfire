@@ -72,8 +72,8 @@ public class FriendGameInfoMessage extends StringMapBasedMessage {
 		}
 	}
 
-	private List<Integer> getInt16ListFromMap(StringKeyedAttributeMap map, String game_port_list_key2) {
-		List<Long> portsAsInt32 = map.getAttributeValueAsList(GAME_PORT_LIST_KEY, new Int32AttributeValue());
+	private List<Integer> getInt16ListFromMap(StringKeyedAttributeMap map, String key) {
+		List<Long> portsAsInt32 = map.getAttributeValueAsList(key, new Int32AttributeValue());
 		List<Integer> portsAsInt16 = new LinkedList<Integer>();
 		
 		for(Long portAsInt32 : portsAsInt32) {
