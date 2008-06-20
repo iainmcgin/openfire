@@ -19,7 +19,6 @@
 package uk.azdev.openfire.friendlist.messageprocessors;
 
 import uk.azdev.openfire.ConnectionEventListener;
-import uk.azdev.openfire.conversations.Conversation;
 import uk.azdev.openfire.conversations.IConversation;
 import uk.azdev.openfire.conversations.IConversationStore;
 import uk.azdev.openfire.net.IMessageSender;

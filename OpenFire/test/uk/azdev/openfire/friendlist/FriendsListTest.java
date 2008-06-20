@@ -21,7 +21,6 @@ package uk.azdev.openfire.friendlist;
 
 import static org.junit.Assert.*;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
