@@ -19,7 +19,7 @@
 package uk.azdev.openfire.common;
 
 import java.io.IOException;
-import java.io.Reader;
+import java.io.InputStream;
 import java.util.Properties;
 
 import uk.azdev.openfire.net.ProtocolConstants;
@@ -168,7 +168,7 @@ public class OpenFireConfiguration {
 		this.networkPort = netPort;
 	}
 
-	public static OpenFireConfiguration readConfig(Reader configReader) throws IOException, InvalidConfigurationException {
+	public static OpenFireConfiguration readConfig(InputStream configReader) throws IOException, InvalidConfigurationException {
 		Properties properties = new Properties();
 		properties.load(configReader);
 		return readConfig(properties);
