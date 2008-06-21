@@ -19,6 +19,7 @@
 package uk.azdev.openfire.net.util;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -29,11 +30,12 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
 
+import uk.azdev.openfire.common.Logging;
 import uk.azdev.openfire.net.ProtocolConstants;
 
 public class IOUtil {
 
-	private static final Charset CHARACTER_ENCODING = Charset.forName("UTF-8");
+	private static final Charset UTF8_ENCODING = Charset.forName("UTF-8");
 	private static final SecureRandom randomGen = new SecureRandom();
 	
 	IOUtil() {
@@ -118,11 +120,23 @@ public class IOUtil {
 	}
 	
 	public static byte[] encodeString(String str) {
-		return str.getBytes(CHARACTER_ENCODING);
+		try {
+			return str.getBytes(UTF8_ENCODING.name());
+		} catch (UnsupportedEncodingException e) {
+			// UTF-8 should always be supported, so this cannot occur
+			Logging.connectionLogger.severe("UTF-8 encoding is not supported!");
+			return null;
+		}
 	}
 	
 	public static String decodeString(byte[] stringBytes) {
-		return new String(stringBytes, CHARACTER_ENCODING);
+		try {
+			return new String(stringBytes, UTF8_ENCODING.name());
+		} catch (UnsupportedEncodingException e) {
+			// UTF-8 should always be supported, so this cannot occur
+			Logging.connectionLogger.severe("UTF-8 encoding is not supported!");
+			return null;
+		}
 	}
 	
 	public static String printByteArray(byte[] bytes) {

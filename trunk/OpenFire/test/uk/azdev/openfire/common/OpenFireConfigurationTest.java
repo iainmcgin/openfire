@@ -23,8 +23,6 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -52,8 +50,8 @@ public class OpenFireConfigurationTest {
 	
 	@Test
 	public void testReadValidConfig() throws IOException, InvalidConfigurationException {
-		Reader configReader = getTestConfigReader("valid_config.cfg");
-		configuration = OpenFireConfiguration.readConfig(configReader);
+		InputStream configIS = getTestConfigInputStream("valid_config.cfg");
+		configuration = OpenFireConfiguration.readConfig(configIS);
 		assertEquals("testuser", configuration.getUsername());
 		assertEquals("testpass", configuration.getPassword());
 		assertEquals(12345, configuration.getNetworkPort());
@@ -167,7 +165,7 @@ public class OpenFireConfigurationTest {
 	}
 	
 	private Properties readConfigAndRemoveProperty(String propToRemove) throws IOException {
-		Reader configReader = getTestConfigReader("valid_config.cfg");
+		InputStream configReader = getTestConfigInputStream("valid_config.cfg");
 		Properties configProps = new Properties();
 		configProps.load(configReader);
 		
@@ -187,7 +185,7 @@ public class OpenFireConfigurationTest {
 	}
 	
 	private void assertParseThrowsInvalidPropValEx(String propToChange, String newPropVal, String expectedMessage) throws IOException, InvalidConfigurationException {
-		Reader configReader = getTestConfigReader("valid_config.cfg");
+		InputStream configReader = getTestConfigInputStream("valid_config.cfg");
 		Properties configProps = new Properties();
 		configProps.load(configReader);
 		
@@ -202,11 +200,11 @@ public class OpenFireConfigurationTest {
 		}
 	}
 	
-	private Reader getTestConfigReader(String configName) throws IOException {
+	private InputStream getTestConfigInputStream(String configName) throws IOException {
 		InputStream configStream = OpenFireConfiguration.class.getResourceAsStream("testResources/configs/" + configName);
 		if(configStream == null) {
 			throw new IOException("configuration file \"" + configName + "\" does not exist!");
 		}
-		return new InputStreamReader(configStream);
+		return configStream;
 	}
 }
