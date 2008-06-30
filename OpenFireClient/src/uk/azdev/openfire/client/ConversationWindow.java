@@ -35,7 +35,7 @@ public class ConversationWindow extends JDialog implements IConversationListener
 	public void chatLogUpdated() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				conversationBox.setText(conversation.getChatLog());
+				conversationBox.setText(conversation.getChatLog(true));
 				activityLabel.setText(" ");
 			}
 		});
@@ -48,9 +48,17 @@ public class ConversationWindow extends JDialog implements IConversationListener
 			}
 		});
 	}
+	
+	public void peerIsNotTyping() {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				activityLabel.setText(" ");
+			}
+		});
+	}
 
 	private void sendMessage(ActionEvent e) {
-		if(!myMessageBox.getText().isEmpty()) {
+		if(!(myMessageBox.getText().length() == 0)) {
 			conversation.sendMessage(myMessageBox.getText());
 			myMessageBox.setText("");
 		}

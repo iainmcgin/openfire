@@ -20,16 +20,20 @@ package uk.azdev.openfire;
 
 
 import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
 
+@RunWith(JMock.class)
 public class RawMessageDispatcherTest {
 
-    private JUnit4Mockery context;
+    Mockery context = new JUnit4Mockery();
     private RawConnectionListener listener1;
     private RawConnectionListener listener2;
     private RawConnectionListener listener3;
@@ -37,7 +41,6 @@ public class RawMessageDispatcherTest {
     
     @Before
     public void setUp() throws Exception {
-        context = new JUnit4Mockery();
         listener1 = context.mock(RawConnectionListener.class);
         listener2 = context.mock(RawConnectionListener.class);
         listener3 = context.mock(RawConnectionListener.class);
@@ -60,7 +63,6 @@ public class RawMessageDispatcherTest {
         }});
         
         dispatcher.messageReceived(message);
-        context.assertIsSatisfied();
     }
 
 }

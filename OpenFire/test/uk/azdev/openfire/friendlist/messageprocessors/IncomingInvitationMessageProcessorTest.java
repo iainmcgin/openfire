@@ -19,8 +19,11 @@
 package uk.azdev.openfire.friendlist.messageprocessors;
 
 import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import uk.azdev.openfire.ConnectionEventListener;
 import uk.azdev.openfire.common.Invitation;
@@ -28,11 +31,13 @@ import uk.azdev.openfire.common.ReceivedInvitation;
 import uk.azdev.openfire.net.IMessageSender;
 import uk.azdev.openfire.net.messages.incoming.IncomingInvitationMessage;
 
+@RunWith(JMock.class)
 public class IncomingInvitationMessageProcessorTest {
-	
+
+	Mockery context = new JUnit4Mockery();
+
 	@Test
 	public void testProcessMessage() {
-		JUnit4Mockery context = new JUnit4Mockery();
 		final ConnectionEventListener listener = context.mock(ConnectionEventListener.class);
 		final IMessageSender messageSender = context.mock(IMessageSender.class);
 		
@@ -56,7 +61,6 @@ public class IncomingInvitationMessageProcessorTest {
 		
 		IncomingInvitationMessageProcessor processor = new IncomingInvitationMessageProcessor(listener, messageSender);
 		processor.processMessage(message);
-		context.assertIsSatisfied();
 	}
 
 }

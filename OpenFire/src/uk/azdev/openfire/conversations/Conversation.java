@@ -64,7 +64,11 @@ public class Conversation implements IConversation {
 			addMessage(getPeer(), chatMsg.getMessage());
 			notifyListeners();
 		} else if(chatMsg.isTypingMessage()) {
-			notifyListenersOfTyping();
+			if(chatMsg.getTypingVal() == 1) {
+				notifyListenersOfTyping();
+			} else {
+				notifyListenersTypingCeased();
+			}
 		}
 		
 		sendClientInfoIfNecessary();
@@ -114,10 +118,10 @@ public class Conversation implements IConversation {
 		chatLog.add(new ConversationLogLine(user, message));
 	}
 	
-	public String getChatLog() {
+	public String getChatLog(boolean withTimestamps) {
 		StringBuffer entireChatLog = new StringBuffer();
 		for(ConversationLogLine chatLine : chatLog) {
-			entireChatLog.append(chatLine);
+			entireChatLog.append(chatLine.toString(withTimestamps));
 		}
 		
 		return entireChatLog.toString();
@@ -143,11 +147,25 @@ public class Conversation implements IConversation {
 		}
 	}
 	
+	public void notifyListenersTypingCeased() {
+		for(IConversationListener listener : listeners) {
+			listener.peerIsNotTyping();
+		}
+	}
+	
 	public Friend getPeer() {
 		return friendsList.getFriend(peerUid);
 	}
 
-	private Friend getSelf() {
+	public Friend getSelf() {
 		return friendsList.getSelf();
+	}
+
+	public int getNumberMessages() {
+		return chatLog.size();
+	}
+
+	public ConversationLogLine getChatLogLine(int index) {
+		return chatLog.get(index);
 	}
 }

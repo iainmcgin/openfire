@@ -32,7 +32,7 @@ public class OpenFireConfiguration {
 	public static final int DEFAULT_NETWORK_PORT= 50000;
 	public static final int DEFAULT_LOCAL_PORT = 50000;
 	public static final String DEFAULT_LONG_VERSION = "3.2.0.0";
-	public static final long DEFAULT_SHORT_VERSION = 76;
+	public static final long DEFAULT_SHORT_VERSION = 94;
 	public static final String DEFAULT_CLIENT_LANGUAGE = "us";
 	public static final String[] DEFAULT_SKIN_LIST = { "XFire", "standard", "Separator", "XF_URL" }; 
 	public static final String DEFAULT_ACTIVE_SKIN = "XFire";

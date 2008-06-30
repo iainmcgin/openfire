@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
+import uk.azdev.openfire.common.ActiveGameInfo;
 import uk.azdev.openfire.common.Logging;
 import uk.azdev.openfire.common.SessionId;
 
@@ -41,6 +42,7 @@ public class FriendsList {
 	
 	private Map<Friend, Set<Friend>> friendConnections;
 	private Map<Friend, FriendEventDispatcher> friendListeners;
+	private PendingFriendUpdateManager pendingUpdateManager;
 
 	private ReentrantLock accessLock;
 	
@@ -51,6 +53,7 @@ public class FriendsList {
 		onlineFriends = new HashMap<SessionId, Friend>();
 		friendConnections = new HashMap<Friend, Set<Friend>>();
 		friendListeners = new HashMap<Friend, FriendEventDispatcher>();
+		pendingUpdateManager = new PendingFriendUpdateManager();
 		accessLock = new ReentrantLock();
 		addFriend(self);
 	}
@@ -181,7 +184,8 @@ public class FriendsList {
 			Friend friend = getInternalFriend(userId);
 			friend.setOnline(sessionIdForUser);
 			onlineFriends.put(sessionIdForUser, friend);
-			friendListeners.get(friend).friendOnline();
+			pendingUpdateManager.applyUpdates(sessionIdForUser);
+			friendListeners.get(friend).friendOnline(friend.clone());
 		} finally {
 			releaseLock();
 		}
@@ -207,7 +211,7 @@ public class FriendsList {
 			SessionId oldSid = friend.getSessionId();
 			onlineFriends.remove(oldSid);
 			friend.setOffline();
-			friendListeners.get(friend).friendOffline();
+			friendListeners.get(friend).friendOffline(friend.clone());
 		} finally {
 			releaseLock();
 		}
@@ -222,7 +226,28 @@ public class FriendsList {
 				return;
 			}
 			f.setStatus(newStatus);
-			friendListeners.get(f).statusChanged(newStatus);
+			friendListeners.get(f).statusChanged(f.clone());
+		} finally {
+			releaseLock();
+		}
+	}
+	
+	public void updateFriendGame(final SessionId friendSid, final ActiveGameInfo game) {
+		acquireLock();
+		try {
+			Friend f = onlineFriends.get(friendSid);
+			if(f == null) {
+				Logging.connectionLogger.info("Game info update received for friend when friend is unknown. Will apply update once becomes known. SID: " + friendSid + " game:" + game);
+				pendingUpdateManager.queueUpdate(friendSid, new Runnable() {
+					public void run() {
+						updateFriendGame(friendSid, game);
+					}
+				});
+				return;
+			}
+			Logging.connectionLogger.info("Game info update being applied for " + f.getDisplayName());
+			f.setGame(game);
+			friendListeners.get(f).gameInfoChanged(f.clone());
 		} finally {
 			releaseLock();
 		}
@@ -288,6 +313,9 @@ public class FriendsList {
 			Collection<Friend> allFriends = friendsById.values();
 			List<Friend> clonedFriends = new ArrayList<Friend>(allFriends.size());
 			for(Friend f : allFriends) {
+				if(f == self) {
+					continue;
+				}
 				clonedFriends.add(f.clone());
 			}
 			

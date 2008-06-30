@@ -20,8 +20,10 @@ package uk.azdev.openfire.friendlist.messageprocessors;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import uk.azdev.openfire.ConnectionEventListener;
 import uk.azdev.openfire.common.SessionId;
@@ -30,6 +32,7 @@ import uk.azdev.openfire.conversations.IConversationStore;
 import uk.azdev.openfire.net.IMessageSender;
 import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
 
+@RunWith(JMock.class)
 public class ChatMessageProcessorTest {
 	
 	private static final int OTHER_SID = 1000;
@@ -83,7 +86,7 @@ public class ChatMessageProcessorTest {
 			will(returnValue(conversation));
 			
 			one(conversation).receiveMessage(with(equal(message)));
-			one(connListener).conversationUpdate(new SessionId(OTHER_SID));
+			never(connListener).conversationUpdate(new SessionId(OTHER_SID));
 		}});
 		
 		processor.processMessage(message);

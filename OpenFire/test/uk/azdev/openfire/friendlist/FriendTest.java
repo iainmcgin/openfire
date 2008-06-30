@@ -25,8 +25,10 @@ import java.net.InetSocketAddress;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.azdev.openfire.common.ActiveGameInfo;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.friendlist.Friend;
+import uk.azdev.openfire.net.util.IOUtil;
 
 public class FriendTest {
 
@@ -105,6 +107,13 @@ public class FriendTest {
 	}
 	
 	@Test
+	public void testSetGame() {
+		ActiveGameInfo game = new ActiveGameInfo(1L, IOUtil.getInetSocketAddress(0xC0A8000A, 10000));
+		friend.setGame(game);
+		assertEquals("GID1 @ /192.168.0.10:10000", friend.getGame().toString());
+	}
+	
+	@Test
 	public void testUpdate() {
 		Friend updatedFriend = new Friend(100L, "testUser", "New Name");
 		updatedFriend.setOnline(new SessionId(10));
@@ -113,6 +122,16 @@ public class FriendTest {
 		assertEquals("New Name", updatedFriend.getDisplayName());
 		assertEquals(new SessionId(10), friend.getSessionId());
 		assertEquals("AFK", friend.getStatus());
+	}
+	
+	@Test
+	public void testUpdate_withNewGame() {
+		Friend updatedFriend = new Friend(100L);
+		ActiveGameInfo game = new ActiveGameInfo(1L, IOUtil.getInetSocketAddress(0xC0A8000A, 10000));
+		updatedFriend.setGame(game);
+		
+		friend.update(updatedFriend);
+		assertEquals(game, friend.getGame());
 	}
 	
 	@Test
@@ -143,6 +162,24 @@ public class FriendTest {
 		friend.update(updatedFriend);
 		assertEquals("testUser", friend.getUserName());
 		assertEquals("Test User", friend.getDisplayName());
+	}
+	
+	@Test
+	public void testClone() {
+		ActiveGameInfo game = new ActiveGameInfo(100L, IOUtil.getInetSocketAddress(0x01020304, 2000));
+		Friend orig = new Friend(100L, "alice", "Alice");
+		orig.setOnline(new SessionId(1));
+		orig.setStatus("test status");
+		orig.setAddress(IOUtil.getInetSocketAddress(0x0A141D28, 1234));
+		orig.setGame(game);
+		
+		Friend cloned = orig.clone();
+		assertEquals(100L, cloned.getUserId());
+		assertEquals("alice", cloned.getUserName());
+		assertEquals("Alice", cloned.getDisplayName());
+		assertEquals(new SessionId(1), cloned.getSessionId());
+		assertEquals(game, cloned.getGame());
+		assertEquals("test status", cloned.getStatus());
 	}
 	
 	@Test

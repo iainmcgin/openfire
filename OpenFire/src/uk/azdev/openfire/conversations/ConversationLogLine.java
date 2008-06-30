@@ -18,16 +18,21 @@
  */
 package uk.azdev.openfire.conversations;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import uk.azdev.openfire.friendlist.Friend;
 
 public class ConversationLogLine {
 
 	private Friend originator;
 	private String message;
+	private Date timestamp;
 	
 	public ConversationLogLine(Friend originator, String message) {
 		setOriginator(originator);
 		setMessage(message);
+		timestamp = new Date();
 	}
 
 	public String getMessage() {
@@ -46,9 +51,23 @@ public class ConversationLogLine {
 		this.originator = originator;
 	}
 	
+	public Date getTimestamp() {
+		return timestamp;
+	}
+	
 	@Override
 	public String toString() {
+		return toString(true);
+	}
+	
+	public String toString(boolean includeTimestamp) {
 		StringBuffer logLine = new StringBuffer();
+		if(includeTimestamp) {
+			DateFormat formatter = DateFormat.getTimeInstance(DateFormat.SHORT);
+			logLine.append("[");
+			logLine.append(formatter.format(timestamp));
+			logLine.append("] ");
+		}
 		logLine.append(originator.getDisplayName());
 		logLine.append(": ");
 		logLine.append(message);

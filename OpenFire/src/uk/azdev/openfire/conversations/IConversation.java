@@ -27,7 +27,7 @@ public interface IConversation {
 
 	public abstract void sendMessage(String text);
 
-	public abstract String getChatLog();
+	public abstract String getChatLog(boolean withTimestamps);
 
 	public abstract ConversationLogLine getLastMessage();
 

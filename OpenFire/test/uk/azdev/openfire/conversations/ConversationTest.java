@@ -27,9 +27,12 @@ import org.hamcrest.Matcher;
 import org.hamcrest.beans.HasPropertyWithValue;
 import org.hamcrest.core.AllOf;
 import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import uk.azdev.openfire.common.OpenFireConfiguration;
 import uk.azdev.openfire.common.SessionId;
@@ -38,9 +41,10 @@ import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.IMessageSender;
 import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
 
+@RunWith(JMock.class)
 public class ConversationTest {
 
-	private JUnit4Mockery context;
+	private Mockery context = new JUnit4Mockery();
 	
 	private Friend self;
 	private Friend peer;
@@ -86,8 +90,23 @@ public class ConversationTest {
 		ChatMessage message = new ChatMessage();
 		message.setTypingPayload(10L, 1L);
 		conv.receiveMessage(message);
+	}
+	
+	@Test
+	public void testReceiveMessage_typingStopped() {
+		context.checking(new Expectations() {{
+			one(list1).peerIsNotTyping();
+			one(list2).peerIsNotTyping();
+			
+			List<Matcher<ChatMessage>> clientInfoMessageConditions = new LinkedList<Matcher<ChatMessage>>();
+			clientInfoMessageConditions.add(a(ChatMessage.class));
+			clientInfoMessageConditions.add(new HasPropertyWithValue<ChatMessage>("peerInfoMessage", equal(true)));
+			one(messageSender).sendMessage(with(new AllOf<ChatMessage>(clientInfoMessageConditions)));
+		}});
 		
-		context.assertIsSatisfied();
+		ChatMessage message = new ChatMessage();
+		message.setTypingPayload(10L, 0L);
+		conv.receiveMessage(message);
 	}
 	
 	@Test
@@ -106,7 +125,6 @@ public class ConversationTest {
 		message.setContentPayload(10L, "Hello!");
 		conv.receiveMessage(message);
 		
-		context.assertIsSatisfied();
 		assertEquals("Hello!", conv.getLastMessage().getMessage());
 		assertEquals("Alice", conv.getLastMessage().getOriginator().getDisplayName());
 	}
@@ -139,7 +157,6 @@ public class ConversationTest {
 		
 		conv.sendMessage("hello");
 		conv.sendMessage("how are you");
-		context.assertIsSatisfied();
 	}
 
 	@Test
@@ -155,7 +172,7 @@ public class ConversationTest {
 		conv.sendMessage("how are you");
 		conv.receiveMessage(createResponseMessage(1L, "aye not bad"));
 		
-		assertEquals("Me: hello\nAlice: hey\nMe: how are you\nAlice: aye not bad\n", conv.getChatLog());
+		assertEquals("Me: hello\nAlice: hey\nMe: how are you\nAlice: aye not bad\n", conv.getChatLog(false));
 	}
 
 	private ChatMessage createResponseMessage(long messageIndex, String message) {
@@ -175,11 +192,43 @@ public class ConversationTest {
 		}});
 		
 		conv.sendMessage("hello");
-		assertEquals("Me: hello\n", conv.getLastMessage().toString());
+		assertEquals("Me: hello\n", conv.getLastMessage().toString(false));
 		conv.receiveMessage(createResponseMessage(1L, "hey"));
-		assertEquals("Alice: hey\n", conv.getLastMessage().toString());
+		assertEquals("Alice: hey\n", conv.getLastMessage().toString(false));
 		conv.sendMessage("how are you");
-		assertEquals("Me: how are you\n", conv.getLastMessage().toString());
+		assertEquals("Me: how are you\n", conv.getLastMessage().toString(false));
+	}
+	
+	@Test
+	public void testGetMessageCount() {
+		context.checking(new Expectations() {{
+			ignoring(list1);
+			ignoring(list2);
+			ignoring(messageSender);
+		}});
+		
+		conv.sendMessage("hello");
+		conv.receiveMessage(createResponseMessage(1L, "hey"));
+		conv.sendMessage("how are you");
+		assertEquals(3, conv.getNumberMessages());
+	}
+	
+	@Test
+	public void testGetMessageByIndex() {
+		context.checking(new Expectations() {{
+			ignoring(list1);
+			ignoring(list2);
+			ignoring(messageSender);
+		}});
+		
+		conv.sendMessage("hello");
+		conv.receiveMessage(createResponseMessage(1L, "hey"));
+		conv.sendMessage("how are you");
+		
+		ConversationLogLine logLine = conv.getChatLogLine(1);
+		assertEquals("hey", logLine.getMessage());
+		assertEquals(conv.getPeer(), logLine.getOriginator());
+		assertEquals(conv.getSelf(), conv.getChatLogLine(2).getOriginator());
 	}
 	
 	@Test
