@@ -1,6 +1,6 @@
 package uk.azdev.openfire.relay;
 
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashSet;
@@ -182,13 +182,13 @@ public class OpenFireRelay implements ConnectionEventListener {
 	}
 
 	private static OpenFireConfiguration readConfig() throws IOException, InvalidConfigurationException {
-		FileReader reader = new FileReader("openfire.cfg");
+		FileInputStream reader = new FileInputStream("openfire.cfg");
 		return OpenFireConfiguration.readConfig(reader);
 	}
 
 	private static Set<String> parseAdminList() throws IOException {
 		
-		FileReader reader = new FileReader("admin.list");
+		FileInputStream reader = new FileInputStream("admin.list");
 		Properties admins = new Properties();
 		admins.load(reader);
 		
