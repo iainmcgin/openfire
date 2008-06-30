@@ -18,23 +18,27 @@
  */
 package uk.azdev.openfire.friendlist.messageprocessors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import uk.azdev.openfire.ConnectionEventListener;
 import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
 
+@RunWith(JMock.class)
 public class FriendListMessageProcessorTest {
 	
+	Mockery context = new JUnit4Mockery();
+
 	@Test
 	public void testProcessMessage() {
-		JUnit4Mockery context = new JUnit4Mockery();
 		
 		final ConnectionEventListener listener = context.mock(ConnectionEventListener.class);
 		

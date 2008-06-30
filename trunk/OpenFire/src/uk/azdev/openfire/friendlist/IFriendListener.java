@@ -18,14 +18,12 @@
  */
 package uk.azdev.openfire.friendlist;
 
-import uk.azdev.openfire.common.ActiveGameInfo;
 
 public interface IFriendListener {
 
-    public void friendOffline();
-    public void friendOnline();
-    
-    public void statusChanged(String statusMessage);
-    public void gameInfoChanged(ActiveGameInfo gameInfo);
+    public void friendOffline(Friend f);
+    public void friendOnline(Friend f);
+    public void statusChanged(Friend f);
+    public void gameInfoChanged(Friend f);
     
 }

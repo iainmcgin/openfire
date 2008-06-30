@@ -33,6 +33,7 @@ import uk.azdev.openfire.conversations.IConversationStore;
 import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.friendlist.messageprocessors.ChatMessageProcessor;
+import uk.azdev.openfire.friendlist.messageprocessors.FriendGameInfoMessageProcessor;
 import uk.azdev.openfire.friendlist.messageprocessors.FriendListMessageProcessor;
 import uk.azdev.openfire.friendlist.messageprocessors.FriendOfFriendListMessageProcessor;
 import uk.azdev.openfire.friendlist.messageprocessors.FriendStatusMessageProcessor;
@@ -49,6 +50,7 @@ import uk.azdev.openfire.net.IConnectionController;
 import uk.azdev.openfire.net.IMessageSender;
 import uk.azdev.openfire.net.messages.IMessage;
 import uk.azdev.openfire.net.messages.bidirectional.ChatMessage;
+import uk.azdev.openfire.net.messages.incoming.FriendGameInfoMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendOfFriendListMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendStatusMessage;
@@ -64,7 +66,7 @@ import uk.azdev.openfire.net.messages.outgoing.ClientVersionMessage;
 import uk.azdev.openfire.net.messages.outgoing.OutgoingInvitationMessage;
 
 public class XFireConnection implements IMessageSender, ConnectionStateListener, ConnectionManipulator, IConversationStore {
-
+	
 	private OpenFireConfiguration config;
 	private IConnectionController controller;
 	private KeepaliveTimer timer;
@@ -164,6 +166,7 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 		processorMap.put(ServerRoutedChatMessage.SR_TYPE_ID, new ChatMessageProcessor(this, eventDispatcher, this));
 		processorMap.put(ChatMessage.TYPE_ID, new ChatMessageProcessor(this, eventDispatcher, this));
 		processorMap.put(IncomingInvitationMessage.TYPE_ID, new IncomingInvitationMessageProcessor(eventDispatcher, this));
+		processorMap.put(FriendGameInfoMessage.FRIEND_GAME_INFO_MESSAGE_ID, new FriendGameInfoMessageProcessor(friendList, eventDispatcher));
 	}
 	
 	private void sendClientInfo() {

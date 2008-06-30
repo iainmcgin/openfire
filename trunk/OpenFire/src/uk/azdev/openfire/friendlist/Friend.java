@@ -20,6 +20,7 @@ package uk.azdev.openfire.friendlist;
 
 import java.net.InetSocketAddress;
 
+import uk.azdev.openfire.common.ActiveGameInfo;
 import uk.azdev.openfire.common.SessionId;
 
 public class Friend {
@@ -30,6 +31,7 @@ public class Friend {
 	private String statusString;
 	private SessionId sessionId;
 	private InetSocketAddress address;
+	private ActiveGameInfo game;
 	
 	public Friend(String userName) {
 		this(-1, userName, null);
@@ -100,6 +102,7 @@ public class Friend {
 	protected void setOffline() {
 		this.sessionId = null;
 		this.address = null;
+		this.game = null;
 	}
 	
 	public InetSocketAddress getAddress() {
@@ -108,6 +111,14 @@ public class Friend {
 	
 	protected void setAddress(InetSocketAddress netAddr) {
 		this.address = netAddr;
+	}
+	
+	public ActiveGameInfo getGame() {
+		return game;
+	}
+	
+	protected void setGame(ActiveGameInfo game) {
+		this.game = game;
 	}
 	
 	protected void update(Friend friend) {
@@ -126,6 +137,10 @@ public class Friend {
 		if(friend.sessionId != null) {
 			this.sessionId = friend.sessionId;
 		}
+		
+		if(friend.game != null) {
+			this.game = friend.game;
+		}
 	}
 	
 	@Override
@@ -136,6 +151,7 @@ public class Friend {
 		clone.statusString = statusString;
 		clone.sessionId = sessionId;
 		clone.address = cloneAddress(address);
+		clone.game = game;
 		
 		return clone;
 	}

@@ -22,5 +22,6 @@ public interface IConversationListener {
 
 	public void chatLogUpdated();
 	public void peerIsTyping();
+	public void peerIsNotTyping();
 	
 }

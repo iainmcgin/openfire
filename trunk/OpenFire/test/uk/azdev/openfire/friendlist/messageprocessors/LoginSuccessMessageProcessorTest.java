@@ -30,8 +30,10 @@ import org.hamcrest.beans.HasPropertyWithValue;
 import org.hamcrest.core.AllOf;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import uk.azdev.openfire.common.OpenFireConfiguration;
 import uk.azdev.openfire.common.SessionId;
@@ -41,7 +43,7 @@ import uk.azdev.openfire.net.IMessageSender;
 import uk.azdev.openfire.net.messages.incoming.LoginSuccessMessage;
 import uk.azdev.openfire.net.messages.outgoing.ClientConfigurationMessage;
 
-
+@RunWith(JMock.class)
 public class LoginSuccessMessageProcessorTest {
 
 	Mockery context = new JUnit4Mockery();
@@ -79,7 +81,6 @@ public class LoginSuccessMessageProcessorTest {
 		LoginSuccessMessageProcessor processor = new LoginSuccessMessageProcessor(messageSender, friendsList, config);
 		
 		processor.processMessage(message);
-		context.assertIsSatisfied();
 		
 		assertTrue(self.isOnline());
 		assertEquals(new SessionId(100), self.getSessionId());

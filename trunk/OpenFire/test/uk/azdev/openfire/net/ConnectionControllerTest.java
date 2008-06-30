@@ -118,8 +118,6 @@ public class ConnectionControllerTest {
 		assertTrue(listener.receivedMessages.get(2) instanceof UserSessionIdListMessage);
 		UserSessionIdListMessageTest.verifyMessage((UserSessionIdListMessage) listener.receivedMessages.get(2));
 		
-		
-		
 		assertFalse(emulator.didErrorOccur());
 	}
 	

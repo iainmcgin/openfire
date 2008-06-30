@@ -19,18 +19,22 @@
 package uk.azdev.openfire;
 
 import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import uk.azdev.openfire.common.Invitation;
 import uk.azdev.openfire.common.ReceivedInvitation;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.net.IMessageSender;
 
+@RunWith(JMock.class)
 public class ConnectionEventDispatcherTest {
 
-	private JUnit4Mockery context;
+	private Mockery context = new JUnit4Mockery();
 	private ConnectionEventListener listener1;
 	private ConnectionEventListener listener2;
 	private ConnectionEventListener listener3;
@@ -40,7 +44,6 @@ public class ConnectionEventDispatcherTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		context = new JUnit4Mockery();
 		listener1 = context.mock(ConnectionEventListener.class);
 		listener2 = context.mock(ConnectionEventListener.class);
 		listener3 = context.mock(ConnectionEventListener.class);
@@ -60,7 +63,6 @@ public class ConnectionEventDispatcherTest {
 		}});
 		
 		dispatcher.connectionError();
-		context.assertIsSatisfied();
 	}
 
 	@Test
@@ -73,7 +75,6 @@ public class ConnectionEventDispatcherTest {
 		}});
 		
 		dispatcher.conversationUpdate(peerId);
-		context.assertIsSatisfied();
 	}
 
 	@Test
@@ -85,7 +86,6 @@ public class ConnectionEventDispatcherTest {
 		}});
 		
 		dispatcher.disconnected();
-		context.assertIsSatisfied();
 	}
 
 	@Test
@@ -97,7 +97,6 @@ public class ConnectionEventDispatcherTest {
 		}});
 		
 		dispatcher.friendsListUpdated();
-		context.assertIsSatisfied();
 	}
 
 	@Test
@@ -109,7 +108,6 @@ public class ConnectionEventDispatcherTest {
 		}});
 		
 		dispatcher.loginFailed();
-		context.assertIsSatisfied();
 	}
 
 	@Test
@@ -122,7 +120,6 @@ public class ConnectionEventDispatcherTest {
 		}});
 		
 		dispatcher.internalError(e);
-		context.assertIsSatisfied();
 	}
 	
 	@Test
@@ -136,7 +133,6 @@ public class ConnectionEventDispatcherTest {
 		}});
 		
 		dispatcher.inviteReceived(invite);
-		context.assertIsSatisfied();
 	}
 
 }

@@ -21,8 +21,6 @@ package uk.azdev.openfire.friendlist;
 import java.util.LinkedList;
 import java.util.List;
 
-import uk.azdev.openfire.common.ActiveGameInfo;
-
 public class FriendEventDispatcher implements IFriendListener {
 
     private List<IFriendListener> listeners;
@@ -31,27 +29,27 @@ public class FriendEventDispatcher implements IFriendListener {
         listeners = new LinkedList<IFriendListener>();
     }
     
-    public void friendOffline() {
+    public void friendOffline(Friend f) {
         for(IFriendListener listener : listeners) {
-            listener.friendOffline();
+            listener.friendOffline(f);
         }
     }
 
-    public void friendOnline() {
+    public void friendOnline(Friend f) {
         for(IFriendListener listener : listeners) {
-            listener.friendOnline();
+            listener.friendOnline(f);
         }
     }
 
-    public void gameInfoChanged(ActiveGameInfo gameInfo) {
+    public void gameInfoChanged(Friend f) {
         for(IFriendListener listener : listeners) {
-            listener.gameInfoChanged(gameInfo);
+            listener.gameInfoChanged(f);
         }
     }
 
-    public void statusChanged(String statusMessage) {
+    public void statusChanged(Friend f) {
         for(IFriendListener listener : listeners) {
-            listener.statusChanged(statusMessage);
+            listener.statusChanged(f);
         }
     }
 

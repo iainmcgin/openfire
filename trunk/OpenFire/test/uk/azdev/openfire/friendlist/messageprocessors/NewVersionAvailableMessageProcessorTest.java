@@ -18,20 +18,22 @@
  */
 package uk.azdev.openfire.friendlist.messageprocessors;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 
 import org.jmock.Expectations;
+import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import uk.azdev.openfire.ConnectionManipulator;
 import uk.azdev.openfire.common.OpenFireConfiguration;
 import uk.azdev.openfire.common.XFireUpdate;
 import uk.azdev.openfire.net.messages.incoming.NewVersionAvailableMessage;
 
-
+@RunWith(JMock.class)
 public class NewVersionAvailableMessageProcessorTest {
 
 	JUnit4Mockery context = new JUnit4Mockery();
@@ -55,6 +57,5 @@ public class NewVersionAvailableMessageProcessorTest {
 		processor.processMessage(message);
 		
 		assertEquals(130L, config.getShortVersion());
-		context.assertIsSatisfied();
 	}
 }

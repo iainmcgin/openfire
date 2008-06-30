@@ -56,6 +56,7 @@ public class ActiveGameInfo {
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
+		buffer.append("GID");
 		buffer.append(gameId);
 		
 		if(gameAddr == null) {

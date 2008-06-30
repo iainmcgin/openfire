@@ -24,16 +24,24 @@ import static org.junit.Assert.*;
 import java.util.List;
 import java.util.Set;
 
+import org.hamcrest.Matcher;
+import org.hamcrest.beans.HasPropertyWithValue;
 import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+import uk.azdev.openfire.common.ActiveGameInfo;
 import uk.azdev.openfire.common.SessionId;
+import uk.azdev.openfire.net.util.IOUtil;
 
+@RunWith(JMock.class)
 public class FriendsListTest {
 
-    private JUnit4Mockery context;
+    Mockery context = new JUnit4Mockery();
     
 	private FriendsList friendsList;
 	
@@ -46,7 +54,6 @@ public class FriendsListTest {
 	
 	@Before
 	public void setUp() throws Exception {
-	    context = new JUnit4Mockery();
 		self = new Friend("me");
 		friendsList = new FriendsList(self);
 		
@@ -93,26 +100,32 @@ public class FriendsListTest {
 	public void testGetAllFriends() {
 		List<Friend> friends = friendsList.getAllFriends();
 		
-		assertEquals(5, friends.size());
+		assertEquals(4, friends.size());
 		assertTrue(friends.contains(alice));
 		assertTrue(friends.contains(bob));
 		assertTrue(friends.contains(carol));
 		assertTrue(friends.contains(dave));
-		assertTrue(friends.contains(self));
+		assertFalse(friends.contains(self));
 	}
 	
 	@Test
-	public void testNotifiedWhenFriendGoesOnlineOrOffline() {
+	public void testFriendUpdateNotifications() {
 	    final IFriendListener listener1 = context.mock(IFriendListener.class);
 	    final IFriendListener listener2 = context.mock(IFriendListener.class);
 	    
+	    final Friend aliceOnline = alice.clone();
+	    aliceOnline.setOnline(new SessionId(1001));
+	    
+	    final Friend aliceOnlineWithStatus = aliceOnline.clone();
+	    aliceOnlineWithStatus.setStatus("hai guys");
+	    
 	    context.checking(new Expectations() {{
-	        one(listener1).friendOnline();
-	        one(listener2).friendOnline();
-	        one(listener1).statusChanged("hai guys");
-	        one(listener2).statusChanged("hai guys");
-	        one(listener1).friendOffline();
-	        one(listener2).friendOffline();
+	        one(listener1).friendOnline(with(hasProp("online", equal(true))));
+	        one(listener2).friendOnline(with(hasProp("online", equal(true))));
+	        one(listener1).statusChanged(with(hasProp("status", equal("hai guys"))));
+	        one(listener2).statusChanged(with(hasProp("status", equal("hai guys"))));
+	        one(listener1).friendOffline(with(hasProp("online", equal(false))));
+	        one(listener2).friendOffline(with(hasProp("online", equal(false))));
 	    }});
 	    
 	    friendsList.addFriendListener(alice, listener1);
@@ -123,5 +136,22 @@ public class FriendsListTest {
 	    friendsList.setFriendOffline(alice.getUserId());
 	    
 	    context.assertIsSatisfied();
+	}
+	
+	@Test
+	public void testSetsGameInfoWhenFriendBecomesKnown() {
+		alice.setOffline();
+		
+		ActiveGameInfo gameInfo = new ActiveGameInfo(100L, IOUtil.getInetSocketAddress(0x01020304, 10000));
+		SessionId newAliceSid = new SessionId(2000);
+		friendsList.updateFriendGame(newAliceSid, gameInfo);
+		
+		friendsList.setFriendOnline(alice.getUserId(), newAliceSid);
+		
+		assertEquals(gameInfo, alice.getGame());
+	}
+	
+	private HasPropertyWithValue<Friend> hasProp(String propName, Matcher<?> expected) {
+		return new HasPropertyWithValue<Friend>(propName, expected);
 	}
 }

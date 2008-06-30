@@ -4,24 +4,31 @@
 
 package uk.azdev.openfire.client;
 
+import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
@@ -50,19 +57,24 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 	private CountDownLatch exitLatch;
 	
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-	private JMenuBar menuBar;
-	private JMenu actionMenu;
-	private JMenuItem connectionOption;
-	private JMenuItem disconnectOption;
+	private JPanel panel4;
+	private JPanel panel1;
 	private JLabel onlineFriendsLabel;
 	private JScrollPane onlineFriendsContainer;
-	private JList onlineFriendsList;
+	private JTable onlineFriendsList;
+	private JPanel panel2;
 	private JLabel friendsOfFriendsLabel;
 	private JScrollPane fofContainer;
-	private JList fofList;
+	private JTable fofList;
+	private JPanel panel3;
 	private JLabel offlineFriendsLabel;
 	private JScrollPane offlineFriendsContainer;
-	private JList offlineFriendsList;
+	private JTable offlineFriendsList;
+	private JToolBar toolbar;
+	private JButton connectBtn;
+	private JButton disconnectBtn;
+	private JPanel hSpacer1;
+	private JButton helpBtn;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 	
 	public OpenFireClient() {
@@ -71,6 +83,9 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 		config.setLocalPort(50000);
 		exitLatch = new CountDownLatch(1);
 		initComponents();
+		
+		disconnectBtn.setEnabled(false);
+		connectBtn.setEnabled(true);
 		
 		onlineFriendsModel = new FriendListModel();
 		onlineFriendsList.setModel(onlineFriendsModel);
@@ -89,118 +104,150 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 		this.setVisible(true);
 	}
 
+	private void showHelp(ActionEvent e) {
+		AboutDialog dialog = new AboutDialog(this);
+		dialog.setVisible(true);
+	}
+
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-		menuBar = new JMenuBar();
-		actionMenu = new JMenu();
-		connectionOption = new JMenuItem();
-		disconnectOption = new JMenuItem();
+		panel4 = new JPanel();
+		panel1 = new JPanel();
 		onlineFriendsLabel = new JLabel();
 		onlineFriendsContainer = new JScrollPane();
-		onlineFriendsList = new JList();
+		onlineFriendsList = new JTable();
+		panel2 = new JPanel();
 		friendsOfFriendsLabel = new JLabel();
 		fofContainer = new JScrollPane();
-		fofList = new JList();
+		fofList = new JTable();
+		panel3 = new JPanel();
 		offlineFriendsLabel = new JLabel();
 		offlineFriendsContainer = new JScrollPane();
-		offlineFriendsList = new JList();
+		offlineFriendsList = new JTable();
+		toolbar = new JToolBar();
+		connectBtn = new JButton();
+		disconnectBtn = new JButton();
+		hSpacer1 = new JPanel(null);
+		helpBtn = new JButton();
 
 		//======== this ========
 		setTitle("OpenFire");
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		setName("this");
 		Container contentPane = getContentPane();
-		contentPane.setLayout(new GridBagLayout());
-		((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {0, 0};
-		((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 0, 0};
-		((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {1.0, 1.0E-4};
-		((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0E-4};
+		contentPane.setLayout(new BorderLayout());
 
-		//======== menuBar ========
-		menuBar.setName("menuBar");
+		//======== panel4 ========
+		{
+			panel4.setLayout(new GridLayout(3, 0, 0, 2));
 
-		//======== actionMenu ========
-		actionMenu.setText("Action");
-		actionMenu.setName("actionMenu");
+			//======== panel1 ========
+			{
+				panel1.setLayout(new BorderLayout());
 
-		//---- connectionOption ----
-		connectionOption.setText("Connect");
-		connectionOption.setName("connectionOption");
-		connectionOption.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				connect(e);
+				//---- onlineFriendsLabel ----
+				onlineFriendsLabel.setText("Online Friends:");
+				onlineFriendsLabel.setFont(new Font("Dialog", Font.PLAIN, 10));
+				panel1.add(onlineFriendsLabel, BorderLayout.NORTH);
+
+				//======== onlineFriendsContainer ========
+				{
+					onlineFriendsContainer.setPreferredSize(new Dimension(300, 150));
+
+					//---- onlineFriendsList ----
+					onlineFriendsList.setFont(new Font("Dialog", Font.PLAIN, 10));
+					onlineFriendsList.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseClicked(MouseEvent e) {
+							onlineFriendClicked(e);
+						}
+					});
+					onlineFriendsContainer.setViewportView(onlineFriendsList);
+				}
+				panel1.add(onlineFriendsContainer, BorderLayout.CENTER);
 			}
-		});
-		actionMenu.add(connectionOption);
+			panel4.add(panel1);
 
-		//---- disconnectOption ----
-		disconnectOption.setText("Disconnect");
-		disconnectOption.setName("disconnectOption");
-		disconnectOption.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				disconnect(e);
+			//======== panel2 ========
+			{
+				panel2.setLayout(new BorderLayout());
+
+				//---- friendsOfFriendsLabel ----
+				friendsOfFriendsLabel.setText("Friends of Friends:");
+				friendsOfFriendsLabel.setFont(new Font("Dialog", Font.PLAIN, 10));
+				panel2.add(friendsOfFriendsLabel, BorderLayout.NORTH);
+
+				//======== fofContainer ========
+				{
+					fofContainer.setPreferredSize(new Dimension(300, 150));
+
+					//---- fofList ----
+					fofList.setFont(new Font("Dialog", Font.PLAIN, 10));
+					fofContainer.setViewportView(fofList);
+				}
+				panel2.add(fofContainer, BorderLayout.CENTER);
 			}
-		});
-		actionMenu.add(disconnectOption);
-		menuBar.add(actionMenu);
-		setJMenuBar(menuBar);
+			panel4.add(panel2);
 
-		//---- onlineFriendsLabel ----
-		onlineFriendsLabel.setText("Online Friends:");
-		onlineFriendsLabel.setName("onlineFriendsLabel");
-		contentPane.add(onlineFriendsLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-			new Insets(0, 0, 5, 0), 0, 0));
+			//======== panel3 ========
+			{
+				panel3.setLayout(new BorderLayout());
 
-		//======== onlineFriendsContainer ========
-		onlineFriendsContainer.setName("onlineFriendsContainer");
+				//---- offlineFriendsLabel ----
+				offlineFriendsLabel.setText("Offline Friends:");
+				offlineFriendsLabel.setFont(new Font("Dialog", Font.PLAIN, 10));
+				panel3.add(offlineFriendsLabel, BorderLayout.NORTH);
 
-		//---- onlineFriendsList ----
-		onlineFriendsList.setName("onlineFriendsList");
-		onlineFriendsList.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				onlineFriendClicked(e);
+				//======== offlineFriendsContainer ========
+				{
+					offlineFriendsContainer.setPreferredSize(new Dimension(300, 150));
+
+					//---- offlineFriendsList ----
+					offlineFriendsList.setFont(new Font("Dialog", Font.PLAIN, 10));
+					offlineFriendsContainer.setViewportView(offlineFriendsList);
+				}
+				panel3.add(offlineFriendsContainer, BorderLayout.CENTER);
 			}
-		});
-		onlineFriendsContainer.setViewportView(onlineFriendsList);
-		contentPane.add(onlineFriendsContainer, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-			new Insets(0, 0, 5, 0), 0, 0));
+			panel4.add(panel3);
+		}
+		contentPane.add(panel4, BorderLayout.CENTER);
 
-		//---- friendsOfFriendsLabel ----
-		friendsOfFriendsLabel.setText("Friends of Friends:");
-		friendsOfFriendsLabel.setName("friendsOfFriendsLabel");
-		contentPane.add(friendsOfFriendsLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
-			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-			new Insets(0, 0, 5, 0), 0, 0));
+		//======== toolbar ========
+		{
+			toolbar.setRollover(true);
+			toolbar.setFloatable(false);
 
-		//======== fofContainer ========
-		fofContainer.setName("fofContainer");
+			//---- connectBtn ----
+			connectBtn.setText("Login");
+			connectBtn.setIcon(new ImageIcon(getClass().getResource("/uk/azdev/openfire/client/icons/connect.png")));
+			connectBtn.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					connect(e);
+				}
+			});
+			toolbar.add(connectBtn);
 
-		//---- fofList ----
-		fofList.setName("fofList");
-		fofContainer.setViewportView(fofList);
-		contentPane.add(fofContainer, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
-			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-			new Insets(0, 0, 5, 0), 0, 0));
+			//---- disconnectBtn ----
+			disconnectBtn.setText("Logout");
+			disconnectBtn.setIcon(new ImageIcon(getClass().getResource("/uk/azdev/openfire/client/icons/disconnect.png")));
+			disconnectBtn.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					disconnect(e);
+				}
+			});
+			toolbar.add(disconnectBtn);
+			toolbar.add(hSpacer1);
 
-		//---- offlineFriendsLabel ----
-		offlineFriendsLabel.setText("Offline Friends:");
-		offlineFriendsLabel.setName("offlineFriendsLabel");
-		contentPane.add(offlineFriendsLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
-			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-			new Insets(0, 0, 5, 0), 0, 0));
-
-		//======== offlineFriendsContainer ========
-		offlineFriendsContainer.setName("offlineFriendsContainer");
-
-		//---- offlineFriendsList ----
-		offlineFriendsList.setName("offlineFriendsList");
-		offlineFriendsContainer.setViewportView(offlineFriendsList);
-		contentPane.add(offlineFriendsContainer, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
-			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-			new Insets(0, 0, 0, 0), 0, 0));
+			//---- helpBtn ----
+			helpBtn.setText("About");
+			helpBtn.setIcon(new ImageIcon(getClass().getResource("/uk/azdev/openfire/client/icons/help.png")));
+			helpBtn.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showHelp(e);
+				}
+			});
+			toolbar.add(helpBtn);
+		}
+		contentPane.add(toolbar, BorderLayout.NORTH);
 		pack();
 		setLocationRelativeTo(getOwner());
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
@@ -209,6 +256,10 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 	private void connect(ActionEvent e) {
 		LoginDialog dialog = new LoginDialog(this);
 		dialog.setVisible(true);
+		
+		if(!dialog.shouldProceed()) {
+			return;
+		}
 		
 		config.setUsername(dialog.getUserName());
 		config.setPassword(dialog.getPassword());
@@ -224,8 +275,8 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				disconnectOption.setEnabled(true);
-				connectionOption.setEnabled(false);
+				disconnectBtn.setEnabled(true);
+				connectBtn.setEnabled(false);
 			}
 		});
 	}
@@ -233,7 +284,7 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 	private void disconnect(ActionEvent e) {
 		try {
 			connection.blockingDisconnect();
-			connectionOption.setEnabled(true);
+			connectBtn.setEnabled(true);
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(this, "Error occurred while attempting to disconnect", "Connection Error", JOptionPane.ERROR_MESSAGE);
 			return;
@@ -241,8 +292,8 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				disconnectOption.setEnabled(false);
-				connectionOption.setEnabled(true);
+				disconnectBtn.setEnabled(false);
+				connectBtn.setEnabled(true);
 			}
 		});
 	}
@@ -258,7 +309,7 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 			return;
 		}
 		
-		int selectedFriendIndex = onlineFriendsList.getSelectedIndex();
+		int selectedFriendIndex = onlineFriendsList.getSelectedRow();
 		Friend selectedFriend = onlineFriendsModel.getFriendAt(selectedFriendIndex);
 		createConversationWindow(selectedFriend.getSessionId());
 	}
@@ -293,14 +344,20 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 
 	public void loginFailed() {
 		JOptionPane.showMessageDialog(this, "Incorrect login details", "Login failed", JOptionPane.ERROR_MESSAGE);
+		disconnectBtn.setEnabled(false);
+		connectBtn.setEnabled(true);
 	}
 	
 	public void connectionError() {
 		JOptionPane.showMessageDialog(this, "An error occurred which required your connection with the XFire server to be closed", "Connection error", JOptionPane.ERROR_MESSAGE);
+		disconnectBtn.setEnabled(false);
+		connectBtn.setEnabled(true);
 	}
 	
 	public void internalError(Exception e) {
 		JOptionPane.showMessageDialog(this, "An internal error has occurred. It is recommended that you restart the program now\n Details:\n" + e.getMessage(), "Internal error", JOptionPane.ERROR_MESSAGE);
+		disconnectBtn.setEnabled(false);
+		connectBtn.setEnabled(true);
 	}
 
 	public void conversationClosed(SessionId sessionId) {

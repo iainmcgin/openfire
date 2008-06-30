@@ -53,6 +53,8 @@ public class LoginChallengeMessageProcessorTest {
 		
 		LoginChallengeMessageProcessor processor = new LoginChallengeMessageProcessor(messageSender, config);
 		processor.processMessage(message);
+		
+		context.assertIsSatisfied();
 	}
 
 }
