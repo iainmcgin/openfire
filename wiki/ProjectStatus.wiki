@@ -2,16 +2,16 @@
 
 = OpenFire Project Status =
 
-This project plan will be updated in the new year, when normality resumes.
+This is the rough planned feature set for OpenFire v2.0. I've stopped putting target completion dates against tasks, because my life can be so unpredictable as to make mid-term planning pointless.
 
 == R2 Release Plan ==
 
 === OpenFire core library ===
 
 || *Task* || *Status* || *Target/Actual completion date* ||
-|| Record games currently being played for each friend || Pending || ||
-|| Conversation specific event listener interface || Pending || ||
-|| Friend specific event listener interface || Pending || ||
+|| Record games currently being played for each friend || COMPLETE || 2008/06/30 ||
+|| Conversation specific event listener interface || COMPLETE || 2008/06/30 ||
+|| Friend specific event listener interface || COMPLETE || 2008/06/30 ||
 
 === OpenFire relay ===
 
