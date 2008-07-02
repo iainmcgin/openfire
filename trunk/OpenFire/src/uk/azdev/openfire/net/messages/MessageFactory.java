@@ -27,6 +27,7 @@ import uk.azdev.openfire.net.messages.incoming.FriendGameInfoMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendListMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendOfFriendListMessage;
 import uk.azdev.openfire.net.messages.incoming.FriendStatusMessage;
+import uk.azdev.openfire.net.messages.incoming.FriendVoiceCommsInfoMessage;
 import uk.azdev.openfire.net.messages.incoming.IncomingInvitationMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginChallengeMessage;
 import uk.azdev.openfire.net.messages.incoming.LoginFailureMessage;
@@ -72,6 +73,7 @@ public class MessageFactory {
 		addMessageType(new AcceptInvitationMessage());
 		addMessageType(new RejectInvitationMessage());
 		addMessageType(new OutgoingInvitationMessage());
+		addMessageType(new FriendVoiceCommsInfoMessage());
 	}
 
 	private void addMessageType(IMessage message) {
