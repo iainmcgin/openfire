@@ -22,17 +22,24 @@ import java.net.InetSocketAddress;
 
 public class ActiveGameInfo {
 	
-	private long gameId;
+	private GameInfo gameInfo;
 	private InetSocketAddress gameAddr;
 	
-	
-	public ActiveGameInfo(long gameId, InetSocketAddress gameAddr) {
-		this.gameId = gameId;
+	public ActiveGameInfo(GameInfo gameInfo, InetSocketAddress gameAddr) {
+		this.gameInfo = gameInfo;
 		this.gameAddr = gameAddr;
 	}
 
 	public long getGameId() {
-		return gameId;
+		return gameInfo.getId();
+	}
+	
+	public GameInfo getGameInfo() {
+		return gameInfo;
+	}
+	
+	public void setGameInfo(GameInfo gameInfo) {
+		this.gameInfo = gameInfo;
 	}
 	
 	public InetSocketAddress getGameAddress() {
@@ -47,17 +54,17 @@ public class ActiveGameInfo {
 		
 		ActiveGameInfo other = (ActiveGameInfo)o;
 		
-		return (this.gameId == other.gameId) &&
-			((this.gameAddr == null) 
-			? other.gameAddr == null 
-			: this.gameAddr.equals(other.gameAddr));
+		return objEqual(this.gameInfo, other.gameInfo) && objEqual(this.gameAddr, other.gameAddr);
 	}
 	
+	private boolean objEqual(Object a, Object b) {
+		return (a == null && b == null) || (a != null && a.equals(b));
+	}
+
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("GID");
-		buffer.append(gameId);
+		gameInfo.toString(buffer);
 		
 		if(gameAddr == null) {
 			buffer.append(" (no server info)");
@@ -72,4 +79,6 @@ public class ActiveGameInfo {
 	public boolean hasGameAddr() {
 		return gameAddr != null;
 	}
+
+	
 }

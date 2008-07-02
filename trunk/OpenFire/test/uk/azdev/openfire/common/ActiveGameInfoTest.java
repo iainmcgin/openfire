@@ -29,18 +29,18 @@ public class ActiveGameInfoTest {
 
 	@Test
 	public void testAccessors() {
-		ActiveGameInfo gameInfo = new ActiveGameInfo(1000L, new InetSocketAddress("127.0.0.1", 10000));
+		ActiveGameInfo gameInfo = new ActiveGameInfo(new GameInfo(1000L), new InetSocketAddress("127.0.0.1", 10000));
 		assertEquals(1000L, gameInfo.getGameId());
 		assertEquals("/127.0.0.1:10000", gameInfo.getGameAddress().toString());
 	}
 	
 	@Test
 	public void testEquals() {
-		ActiveGameInfo ag1 = new ActiveGameInfo(1000L, new InetSocketAddress("127.0.0.1", 10000));
-		ActiveGameInfo ag2 = new ActiveGameInfo(1000L, new InetSocketAddress("127.0.0.1", 10000));
-		ActiveGameInfo ag3 = new ActiveGameInfo(1000L, new InetSocketAddress("127.0.0.2", 10000));
-		ActiveGameInfo ag4 = new ActiveGameInfo(1000L, new InetSocketAddress("127.0.0.1", 10001));
-		ActiveGameInfo ag5 = new ActiveGameInfo(1001L, new InetSocketAddress("127.0.0.1", 10000));
+		ActiveGameInfo ag1 = new ActiveGameInfo(new GameInfo(1000L), new InetSocketAddress("127.0.0.1", 10000));
+		ActiveGameInfo ag2 = new ActiveGameInfo(new GameInfo(1000L), new InetSocketAddress("127.0.0.1", 10000));
+		ActiveGameInfo ag3 = new ActiveGameInfo(new GameInfo(1000L), new InetSocketAddress("127.0.0.2", 10000));
+		ActiveGameInfo ag4 = new ActiveGameInfo(new GameInfo(1000L), new InetSocketAddress("127.0.0.1", 10001));
+		ActiveGameInfo ag5 = new ActiveGameInfo(new GameInfo(1001L), new InetSocketAddress("127.0.0.1", 10000));
 		
 		assertTrue(ag1.equals(ag2));
 		assertTrue(ag2.equals(ag1));
