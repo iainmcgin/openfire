@@ -15,21 +15,22 @@ import uk.azdev.openfire.conversations.IConversationListener;
 /**
  * @author Iain McGinniss
  */
-public class ConversationWindow extends JDialog implements IConversationListener {
+public class ConversationWindow extends JFrame implements IConversationListener {
 	
 	private static final long serialVersionUID = 1L;
 	private Conversation conversation;
 	private OpenFireClient owner;
 	
 	public ConversationWindow(OpenFireClient owner, Conversation conversation) {
-		super(owner, false);
 		this.owner = owner;
 		this.conversation = conversation;
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("Conversation with " + conversation.getPeer().getDisplayName());
 		initComponents();
 		
 		chatLogUpdated();
 		conversation.addChatListener(this);
+		this.setVisible(true);
 	}
 
 	public void chatLogUpdated() {
@@ -86,8 +87,6 @@ public class ConversationWindow extends JDialog implements IConversationListener
 		activityLabel = new JLabel();
 
 		//======== this ========
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		setName("this");
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -98,69 +97,68 @@ public class ConversationWindow extends JDialog implements IConversationListener
 		contentPane2.setLayout(new BorderLayout());
 
 		//======== contentPane ========
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setName("contentPane");
-		contentPane.setLayout(new GridBagLayout());
-		((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {0, 0, 0};
-		((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
-		((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {1.0, 0.0, 1.0E-4};
-		((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {1.0, 0.0, 0.0, 1.0E-4};
+		{
+			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+			contentPane.setLayout(new GridBagLayout());
+			((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {0, 0, 0};
+			((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
+			((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {1.0, 0.0, 1.0E-4};
+			((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {1.0, 0.0, 0.0, 1.0E-4};
 
-		//======== conversationContainer ========
-		conversationContainer.setName("conversationContainer");
+			//======== conversationContainer ========
+			{
 
-		//---- conversationBox ----
-		conversationBox.setColumns(30);
-		conversationBox.setRows(10);
-		conversationBox.setEditable(false);
-		conversationBox.setLineWrap(true);
-		conversationBox.setWrapStyleWord(true);
-		conversationBox.setName("conversationBox");
-		conversationContainer.setViewportView(conversationBox);
-		contentPane.add(conversationContainer, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0,
-			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-			new Insets(0, 0, 5, 0), 0, 0));
-
-		//======== myMessageContainer ========
-		myMessageContainer.setName("myMessageContainer");
-
-		//---- myMessageBox ----
-		myMessageBox.setRows(2);
-		myMessageBox.setColumns(20);
-		myMessageBox.setWrapStyleWord(true);
-		myMessageBox.setLineWrap(true);
-		myMessageBox.setName("myMessageBox");
-		myMessageBox.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				myMessageBoxKeyPressed(e);
+				//---- conversationBox ----
+				conversationBox.setColumns(30);
+				conversationBox.setRows(10);
+				conversationBox.setEditable(false);
+				conversationBox.setLineWrap(true);
+				conversationBox.setWrapStyleWord(true);
+				conversationContainer.setViewportView(conversationBox);
 			}
-		});
-		myMessageContainer.setViewportView(myMessageBox);
-		contentPane.add(myMessageContainer, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-			new Insets(0, 0, 5, 5), 0, 0));
+			contentPane.add(conversationContainer, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(0, 0, 5, 0), 0, 0));
 
-		//---- sendButton ----
-		sendButton.setText("Send");
-		sendButton.setName("sendButton");
-		sendButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				sendMessage(e);
+			//======== myMessageContainer ========
+			{
+
+				//---- myMessageBox ----
+				myMessageBox.setRows(2);
+				myMessageBox.setColumns(20);
+				myMessageBox.setWrapStyleWord(true);
+				myMessageBox.setLineWrap(true);
+				myMessageBox.addKeyListener(new KeyAdapter() {
+					@Override
+					public void keyPressed(KeyEvent e) {
+						myMessageBoxKeyPressed(e);
+					}
+				});
+				myMessageContainer.setViewportView(myMessageBox);
 			}
-		});
-		contentPane.add(sendButton, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
-			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-			new Insets(0, 0, 5, 0), 0, 0));
+			contentPane.add(myMessageContainer, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(0, 0, 5, 5), 0, 0));
 
-		//---- activityLabel ----
-		activityLabel.setText(" ");
-		activityLabel.setName("activityLabel");
-		contentPane.add(activityLabel, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0,
-			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-			new Insets(0, 0, 0, 0), 0, 0));
+			//---- sendButton ----
+			sendButton.setText("Send");
+			sendButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					sendMessage(e);
+				}
+			});
+			contentPane.add(sendButton, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(0, 0, 5, 0), 0, 0));
+
+			//---- activityLabel ----
+			activityLabel.setText(" ");
+			contentPane.add(activityLabel, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(0, 0, 0, 0), 0, 0));
+		}
 		contentPane2.add(contentPane, BorderLayout.CENTER);
-		pack();
+		setSize(390, 280);
 		setLocationRelativeTo(getOwner());
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 	}

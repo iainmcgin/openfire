@@ -15,6 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,10 +78,9 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 	private JButton helpBtn;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 	
-	public OpenFireClient() {
-		config = new OpenFireConfiguration();
-		config.setNetworkPort(50000);
-		config.setLocalPort(50000);
+	public OpenFireClient(String configFilePath) {
+		readConfig(configFilePath);
+		
 		exitLatch = new CountDownLatch(1);
 		initComponents();
 		
@@ -102,6 +102,20 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 		
 		this.pack();
 		this.setVisible(true);
+	}
+
+	/**
+	 * @param configFilePath
+	 */
+	private void readConfig(String configFilePath) {
+		try {
+			FileInputStream reader = new FileInputStream(configFilePath);
+			config = OpenFireConfiguration.readConfig(reader);
+		} catch(Exception e) {
+			config = new OpenFireConfiguration();
+			config.setNetworkPort(50000);
+			config.setLocalPort(50000);
+		}
 	}
 
 	private void showHelp(ActionEvent e) {
@@ -311,14 +325,20 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 		
 		int selectedFriendIndex = onlineFriendsList.getSelectedRow();
 		Friend selectedFriend = onlineFriendsModel.getFriendAt(selectedFriendIndex);
-		createConversationWindow(selectedFriend.getSessionId());
+		ConversationWindow window = getConversationWindow(selectedFriend.getSessionId());
+		window.requestFocus();
 	}
 
-	private void createConversationWindow(SessionId friendSid) {
+	private ConversationWindow getConversationWindow(final SessionId friendSid) {
 		Conversation conversation = connection.getConversation(friendSid);
+		if(openConversations.containsKey(friendSid)) {
+			return openConversations.get(friendSid);
+		}
+		
 		ConversationWindow convWindow = new ConversationWindow(this, conversation);
 		openConversations.put(friendSid, convWindow);
-		convWindow.setVisible(true);
+		
+		return convWindow;
 	}
 	
 	public void waitForExit() throws InterruptedException {
@@ -331,7 +351,7 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				if(!openConversations.containsKey(sessionId)) {
-					createConversationWindow(sessionId);
+					getConversationWindow(sessionId);
 				}
 			}
 		});
@@ -367,6 +387,12 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 	private final class ExitListener extends WindowAdapter {
 		@Override
 		public void windowClosing(WindowEvent e) {
+			
+			for(ConversationWindow window : openConversations.values()) {
+				window.setVisible(false);
+				window.dispose();
+			}
+			
 			if(connection != null) {
 				try {
 					connection.blockingDisconnect();
@@ -374,6 +400,7 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 					JOptionPane.showMessageDialog(OpenFireClient.this, "Error occurred while attempting to disconnect", "Connection Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
+			
 			exitLatch.countDown();
 		}
 	}
@@ -412,7 +439,11 @@ public class OpenFireClient extends JFrame implements ConnectionEventListener {
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
-		OpenFireClient client = new OpenFireClient();
+		String configFilePath = null;
+		if(args.length > 0) {
+			configFilePath = args[0];
+		}
+		OpenFireClient client = new OpenFireClient(configFilePath);
 		client.waitForExit();
 	}
 
