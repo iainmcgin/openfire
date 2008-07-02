@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.azdev.openfire.common.ActiveGameInfo;
+import uk.azdev.openfire.common.GameInfo;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.testutil.TestUtils;
 
@@ -52,15 +53,15 @@ public class FriendGameInfoMessageTest {
 	private static final ActiveGameInfo[] testActiveGames =
 		new ActiveGameInfo[] {
 			null,
-			new ActiveGameInfo(4216, null),
-			new ActiveGameInfo(4216, null),
-			new ActiveGameInfo(4684, new InetSocketAddress("85.25.17.183", 28960)),
-			new ActiveGameInfo(4215, null),
-			new ActiveGameInfo(4880, new InetSocketAddress("62.104.18.109", 17567)),
-			new ActiveGameInfo(4216, null),
-			new ActiveGameInfo(4331, new InetSocketAddress("194.50.80.26", 27017)),
-			new ActiveGameInfo(4880, new InetSocketAddress("62.104.18.181",17567)),
-			new ActiveGameInfo(4578, null)
+			new ActiveGameInfo(new GameInfo(4216, null, null), null),
+			new ActiveGameInfo(new GameInfo(4216, null, null), null),
+			new ActiveGameInfo(new GameInfo(4684, null, null), new InetSocketAddress("85.25.17.183", 28960)),
+			new ActiveGameInfo(new GameInfo(4215, null, null), null),
+			new ActiveGameInfo(new GameInfo(4880, null, null), new InetSocketAddress("62.104.18.109", 17567)),
+			new ActiveGameInfo(new GameInfo(4216, null, null), null),
+			new ActiveGameInfo(new GameInfo(4331, null, null), new InetSocketAddress("194.50.80.26", 27017)),
+			new ActiveGameInfo(new GameInfo(4880, null, null), new InetSocketAddress("62.104.18.181",17567)),
+			new ActiveGameInfo(new GameInfo(4578, null, null), null)
 		};
 	
 	private static SessionId generateTestSid(int startByteVal) {

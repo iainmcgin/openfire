@@ -35,6 +35,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import uk.azdev.openfire.common.ActiveGameInfo;
+import uk.azdev.openfire.common.GameInfo;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.net.util.IOUtil;
 
@@ -142,7 +143,7 @@ public class FriendsListTest {
 	public void testSetsGameInfoWhenFriendBecomesKnown() {
 		alice.setOffline();
 		
-		ActiveGameInfo gameInfo = new ActiveGameInfo(100L, IOUtil.getInetSocketAddress(0x01020304, 10000));
+		ActiveGameInfo gameInfo = new ActiveGameInfo(new GameInfo(100L), IOUtil.getInetSocketAddress(0x01020304, 10000));
 		SessionId newAliceSid = new SessionId(2000);
 		friendsList.updateFriendGame(newAliceSid, gameInfo);
 		

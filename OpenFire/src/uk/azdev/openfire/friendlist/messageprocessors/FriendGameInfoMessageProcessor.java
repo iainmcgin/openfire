@@ -19,6 +19,9 @@
 package uk.azdev.openfire.friendlist.messageprocessors;
 
 import uk.azdev.openfire.ConnectionEventListener;
+import uk.azdev.openfire.common.ActiveGameInfo;
+import uk.azdev.openfire.common.GameInfo;
+import uk.azdev.openfire.common.GameInfoMap;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.friendlist.FriendsList;
 import uk.azdev.openfire.net.messages.IMessage;
@@ -28,20 +31,33 @@ public class FriendGameInfoMessageProcessor implements IMessageProcessor {
 
 	private FriendsList friendList;
 	private ConnectionEventListener listener;
+	private GameInfoMap gameTypeLookup;
 
-	public FriendGameInfoMessageProcessor(FriendsList friendList, ConnectionEventListener listener) {
+	public FriendGameInfoMessageProcessor(FriendsList friendList, ConnectionEventListener listener, GameInfoMap gameTypeLookup) {
 		this.friendList = friendList;
 		this.listener = listener;
+		this.gameTypeLookup = gameTypeLookup;
 	}
 
 	public void processMessage(IMessage message) {
 		FriendGameInfoMessage gameInfoMessage = (FriendGameInfoMessage) message;
 		
 		for(SessionId sid : gameInfoMessage.getSessionIdSet()) {
-			friendList.updateFriendGame(sid, gameInfoMessage.getActiveGameInfoForSid(sid));
+			ActiveGameInfo activeGameInfoForSid = gameInfoMessage.getActiveGameInfoForSid(sid);
+			resolveGameInfo(activeGameInfoForSid);
+			friendList.updateFriendGame(sid, activeGameInfoForSid);
 		}
 		
 		listener.friendsListUpdated();
+	}
+
+	private void resolveGameInfo(ActiveGameInfo activeGameInfo) {
+		if(activeGameInfo != null) {
+			GameInfo resolvedGame = gameTypeLookup.getGameById(activeGameInfo.getGameId());
+			if(resolvedGame != null) {
+				activeGameInfo.setGameInfo(resolvedGame);
+			}
+		}
 	}
 
 }

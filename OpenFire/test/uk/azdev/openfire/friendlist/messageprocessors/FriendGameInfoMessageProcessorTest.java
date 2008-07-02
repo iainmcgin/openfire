@@ -29,6 +29,8 @@ import org.junit.runner.RunWith;
 
 import uk.azdev.openfire.ConnectionEventListener;
 import uk.azdev.openfire.common.ActiveGameInfo;
+import uk.azdev.openfire.common.GameInfo;
+import uk.azdev.openfire.common.GameInfoMap;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.friendlist.FriendsList;
@@ -73,7 +75,7 @@ public class FriendGameInfoMessageProcessorTest {
 		list.addFriend(alice);
 		list.addFriend(bob);
 		list.addFriend(carol);
-		list.updateFriendGame(CAROL_SID, new ActiveGameInfo(1001L, IOUtil.getInetSocketAddress(0xC0A8000C, 10001)));
+		list.updateFriendGame(CAROL_SID, new ActiveGameInfo(new GameInfo(1001L), IOUtil.getInetSocketAddress(0xC0A8000C, 10001)));
 		list.addFriend(dave);
 
 		list.addFriendListener(alice, friendListenerMock);
@@ -81,20 +83,25 @@ public class FriendGameInfoMessageProcessorTest {
 		list.addFriendListener(carol, friendListenerMock);
 		list.addFriendListener(dave, friendListenerMock);
 		
-		FriendGameInfoMessageProcessor processor = new FriendGameInfoMessageProcessor(list, connEventListenerMock);
+		GameInfoMap map = new GameInfoMap();
+		GameInfo fullGameInfo = new GameInfo(1000L, "Awesome game", "AG");
+		map.addGameInfo(fullGameInfo);
+		
+		FriendGameInfoMessageProcessor processor = new FriendGameInfoMessageProcessor(list, connEventListenerMock, map);
 		
 		FriendGameInfoMessage message = new FriendGameInfoMessage();
-		ActiveGameInfo aliceGame = new ActiveGameInfo(1000L, IOUtil.getInetSocketAddress(0xC0A8000A, 10000));
+		ActiveGameInfo aliceGame = new ActiveGameInfo(new GameInfo(1000L), IOUtil.getInetSocketAddress(0xC0A8000A, 10000));
+		ActiveGameInfo aliceGameWithFullInfo = new ActiveGameInfo(fullGameInfo, IOUtil.getInetSocketAddress(0xC0A8000A, 10000));
 		message.addActiveGameInfo(ALICE_SID, aliceGame);
 		message.addActiveGameInfo(BOB_SID, aliceGame);
 		message.addActiveGameInfo(CAROL_SID, null);
-		ActiveGameInfo daveGame = new ActiveGameInfo(1002L, null);
+		ActiveGameInfo daveGame = new ActiveGameInfo(new GameInfo(1002L), null);
 		message.addActiveGameInfo(DAVE_SID, daveGame);
 		
 		processor.processMessage(message);
 		
-		assertEquals(aliceGame, list.getFriend(ALICE_ID).getGame());
-		assertEquals(aliceGame, list.getFriend(BOB_ID).getGame());
+		assertEquals(aliceGameWithFullInfo, list.getFriend(ALICE_ID).getGame());
+		assertEquals(aliceGameWithFullInfo, list.getFriend(BOB_ID).getGame());
 		assertNull(list.getFriend(CAROL_ID).getGame());
 		assertEquals(daveGame, list.getFriend(DAVE_ID).getGame());
 	}

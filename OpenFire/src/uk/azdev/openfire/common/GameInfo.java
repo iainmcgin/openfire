@@ -24,10 +24,14 @@ public class GameInfo {
 	private String name;
 	private String shortName;
 	
-	protected GameInfo(long id, String name, String shortName) {
+	public GameInfo(long id, String name, String shortName) {
 		this.id = id;
 		this.name = name;
 		this.shortName = shortName;
+	}
+	
+	public GameInfo(long id) {
+		this(id, null, null);
 	}
 
 	public long getId() {
@@ -55,5 +59,22 @@ public class GameInfo {
 	@Override
 	public int hashCode() {
 		return (int)(id & 0xFFFFFFFFL);
+	}
+
+	public void toString(StringBuffer buffer) {
+		if(name != null) {
+			buffer.append(name);
+		} else {
+			buffer.append("GID");
+			buffer.append(id);
+		}
+	}
+	
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		toString(buffer);
+		
+		return buffer.toString();
 	}
 }

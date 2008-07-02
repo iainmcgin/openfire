@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.azdev.openfire.common.ActiveGameInfo;
+import uk.azdev.openfire.common.GameInfo;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.friendlist.Friend;
 import uk.azdev.openfire.net.util.IOUtil;
@@ -108,7 +109,7 @@ public class FriendTest {
 	
 	@Test
 	public void testSetGame() {
-		ActiveGameInfo game = new ActiveGameInfo(1L, IOUtil.getInetSocketAddress(0xC0A8000A, 10000));
+		ActiveGameInfo game = new ActiveGameInfo(new GameInfo(1L), IOUtil.getInetSocketAddress(0xC0A8000A, 10000));
 		friend.setGame(game);
 		assertEquals("GID1 @ /192.168.0.10:10000", friend.getGame().toString());
 	}
@@ -127,7 +128,7 @@ public class FriendTest {
 	@Test
 	public void testUpdate_withNewGame() {
 		Friend updatedFriend = new Friend(100L);
-		ActiveGameInfo game = new ActiveGameInfo(1L, IOUtil.getInetSocketAddress(0xC0A8000A, 10000));
+		ActiveGameInfo game = new ActiveGameInfo(new GameInfo(1L), IOUtil.getInetSocketAddress(0xC0A8000A, 10000));
 		updatedFriend.setGame(game);
 		
 		friend.update(updatedFriend);
@@ -166,7 +167,7 @@ public class FriendTest {
 	
 	@Test
 	public void testClone() {
-		ActiveGameInfo game = new ActiveGameInfo(100L, IOUtil.getInetSocketAddress(0x01020304, 2000));
+		ActiveGameInfo game = new ActiveGameInfo(new GameInfo(100L), IOUtil.getInetSocketAddress(0x01020304, 2000));
 		Friend orig = new Friend(100L, "alice", "Alice");
 		orig.setOnline(new SessionId(1));
 		orig.setStatus("test status");

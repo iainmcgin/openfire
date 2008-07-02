@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import uk.azdev.openfire.common.ActiveGameInfo;
+import uk.azdev.openfire.common.GameInfo;
 import uk.azdev.openfire.common.SessionId;
 import uk.azdev.openfire.net.attrvalues.Int32AttributeValue;
 import uk.azdev.openfire.net.attrvalues.ListAttributeValue;
@@ -75,7 +76,7 @@ public class FriendGameInfoMessage extends StringMapBasedMessage {
 				game = null;
 			} else {
 				InetSocketAddress socketAddr = getSocketAddress(gameIp, gamePort);
-				game = new ActiveGameInfo(gameId, socketAddr);
+				game = new ActiveGameInfo(new GameInfo(gameId), socketAddr);
 			}
 			
 			sidToGameInfoMap.put(sid, game);

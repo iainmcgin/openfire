@@ -18,13 +18,17 @@
  */
 package uk.azdev.openfire;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
+import uk.azdev.openfire.common.GameInfoMap;
 import uk.azdev.openfire.common.Logging;
 import uk.azdev.openfire.common.OpenFireConfiguration;
 import uk.azdev.openfire.common.SessionId;
@@ -79,6 +83,8 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 	private ConnectionEventDispatcher eventDispatcher;
 	private RawMessageDispatcher rawMessageDispatcher;
 	
+	private GameInfoMap gameInfoMap;
+	
 	protected XFireConnection(OpenFireConfiguration config, IConnectionController controller) {
 		this.config = config;
 		this.controller = controller;
@@ -100,9 +106,27 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 		eventDispatcher = new ConnectionEventDispatcher();
 		rawMessageDispatcher = new RawMessageDispatcher();
 		
+		loadGameInfo();
+		
 		initProcessorMap();
 	}
 	
+	private void loadGameInfo() {
+		gameInfoMap = new GameInfoMap();
+		InputStreamReader reader;
+		try {
+			File xfireGamesIniFile = new File(config.getXfireGamesIniPath());
+			if(xfireGamesIniFile.exists() && xfireGamesIniFile.isFile()) {
+				reader = new FileReader(xfireGamesIniFile);
+				gameInfoMap.loadFromXfireGamesIni(reader);
+			} else {
+				Logging.connectionLogger.warning("Resource at path " + config.getXfireGamesIniPath() + " is not a valid xfire_games.ini file");
+			}
+		} catch(IOException e) {
+			Logging.connectionLogger.warning("Unable to read xfire_games.ini from the following path: " + config.getXfireGamesIniPath());
+		}
+	}
+
 	public void connect() {
 		new Thread(new ConnectHandler()).start();
 	}
@@ -166,7 +190,7 @@ public class XFireConnection implements IMessageSender, ConnectionStateListener,
 		processorMap.put(ServerRoutedChatMessage.SR_TYPE_ID, new ChatMessageProcessor(this, eventDispatcher, this));
 		processorMap.put(ChatMessage.TYPE_ID, new ChatMessageProcessor(this, eventDispatcher, this));
 		processorMap.put(IncomingInvitationMessage.TYPE_ID, new IncomingInvitationMessageProcessor(eventDispatcher, this));
-		processorMap.put(FriendGameInfoMessage.FRIEND_GAME_INFO_MESSAGE_ID, new FriendGameInfoMessageProcessor(friendList, eventDispatcher));
+		processorMap.put(FriendGameInfoMessage.FRIEND_GAME_INFO_MESSAGE_ID, new FriendGameInfoMessageProcessor(friendList, eventDispatcher, gameInfoMap));
 	}
 	
 	private void sendClientInfo() {
