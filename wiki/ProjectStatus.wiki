@@ -31,6 +31,12 @@ This is the rough planned feature set for OpenFire v2.0. I've stopped putting ta
 || Commands to create, subscribe, broadcast to and unsubscribe from channels || Pending || ||
 || Store gameplay stats in database || Pending || ||
 
+=== OpenFire GUI Client ===
+
+|| *Task* || *Status* || *Target/Actual completion date* ||
+|| Ability to invite users || Pending || ||
+|| Ability to accept/reject invitations || Pending || ||
+
 == R1 Release Plan ==
 
 R1 was officially released on the 18th of August, 2007.
