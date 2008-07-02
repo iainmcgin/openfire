@@ -51,7 +51,7 @@ public class FriendGameInfoMessageTest {
 	
 	private static final ActiveGameInfo[] testActiveGames =
 		new ActiveGameInfo[] {
-			new ActiveGameInfo(4216, null),
+			null,
 			new ActiveGameInfo(4216, null),
 			new ActiveGameInfo(4216, null),
 			new ActiveGameInfo(4684, new InetSocketAddress("85.25.17.183", 28960)),
@@ -123,7 +123,7 @@ public class FriendGameInfoMessageTest {
 	
 	private static final String EXPECTED_TOSTRING
 		= "Friend Game Info Message" +
-	      "\n\tSID:<00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F> -> GID4216 (no server info)" +
+	      "\n\tSID:<00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F> -> no game" +
 		  "\n\tSID:<10 11 12 13 14 15 16 17 18 19 1A 1B 1C 1D 1E 1F> -> GID4216 (no server info)" +
 		  "\n\tSID:<20 21 22 23 24 25 26 27 28 29 2A 2B 2C 2D 2E 2F> -> GID4216 (no server info)" +
 		  "\n\tSID:<30 31 32 33 34 35 36 37 38 39 3A 3B 3C 3D 3E 3F> -> GID4684 @ /85.25.17.183:28960" +
