@@ -65,10 +65,20 @@ public class FriendGameInfoMessage extends StringMapBasedMessage {
 		Iterator<Integer> gamePortsIter = gamePorts.iterator();
 		
 		while(sidIter.hasNext()) {
-			InetSocketAddress socketAddr = getSocketAddress(gameIpsIter.next(), gamePortsIter.next());
+			long gameId = gameIdsIter.next();
+			long gameIp = gameIpsIter.next();
+			int gamePort = gamePortsIter.next();			
+			SessionId sid = sidIter.next();
 			
-			ActiveGameInfo gameInfo = new ActiveGameInfo(gameIdsIter.next(), socketAddr);
-			sidToGameInfoMap.put(sidIter.next(), gameInfo);
+			ActiveGameInfo game;
+			if(gameId == 0L) {
+				game = null;
+			} else {
+				InetSocketAddress socketAddr = getSocketAddress(gameIp, gamePort);
+				game = new ActiveGameInfo(gameId, socketAddr);
+			}
+			
+			sidToGameInfoMap.put(sid, game);
 		}
 	}
 
@@ -106,15 +116,22 @@ public class FriendGameInfoMessage extends StringMapBasedMessage {
 		for(Entry<SessionId, ActiveGameInfo> entry : sidToGameInfoMap.entrySet()) {
 			sidList.addValue(new SessionIdAttributeValue(entry.getKey()));
 			ActiveGameInfo gameInfo = entry.getValue();
-			gameIdList.addValue(new Int32AttributeValue(gameInfo.getGameId()));
 			
-			if(gameInfo.hasGameAddr()) {
-				Inet4Address address = (Inet4Address)gameInfo.getGameAddress().getAddress();
-				gameIpList.addValue(new Int32AttributeValue(address));
-				gamePortList.addValue(new Int32AttributeValue(gameInfo.getGameAddress().getPort()));
-			} else {
+			if(gameInfo == null) {
+				gameIdList.addValue(new Int32AttributeValue(0));
 				gameIpList.addValue(new Int32AttributeValue(0));
 				gamePortList.addValue(new Int32AttributeValue(0));
+			} else {
+				gameIdList.addValue(new Int32AttributeValue(gameInfo.getGameId()));
+				
+				if(gameInfo.hasGameAddr()) {
+					Inet4Address address = (Inet4Address)gameInfo.getGameAddress().getAddress();
+					gameIpList.addValue(new Int32AttributeValue(address));
+					gamePortList.addValue(new Int32AttributeValue(gameInfo.getGameAddress().getPort()));
+				} else {
+					gameIpList.addValue(new Int32AttributeValue(0));
+					gamePortList.addValue(new Int32AttributeValue(0));
+				}
 			}
 		}
 		
@@ -154,7 +171,11 @@ public class FriendGameInfoMessage extends StringMapBasedMessage {
 			buffer.append("\n\t");
 			buffer.append(entry.getKey());
 			buffer.append(" -> ");
-			buffer.append(entry.getValue());
+			if(entry.getValue() == null) {
+				buffer.append("no game");
+			} else {
+				buffer.append(entry.getValue());
+			}
 		}
 		
 		return buffer.toString();
