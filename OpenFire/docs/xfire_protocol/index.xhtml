@@ -151,18 +151,18 @@ encoding for strings.</p>
 
 <h3>Message structure</h3>
 
-<p>The Messages between client and server follow a common pattern:</p>
+<p>The messages between client and server follow a common pattern:</p>
 
-<table>
+<table style="text-align: center">
 	<tr>
-		<th></th>
-		<th>0</th>
-		<th>1</th>
-		<th>2</th>
-		<th>3</th>
-		<th>4</th>
-		<th>5</th>
-		<th>...</th>
+		<th style="width: 1em"></th>
+		<th style="width: 6em">0</th>
+		<th style="width: 6em">1</th>
+		<th style="width: 6em">2</th>
+		<th style="width: 6em">3</th>
+		<th style="width: 6em">4</th>
+		<th style="width: 6em">5</th>
+		<th style="width: 6em">...</th>
 	</tr>
 	<tr>
 		<th>0</th>
@@ -183,15 +183,15 @@ encoding for strings.</p>
 
 <p>Message attributes are formatted as follows:</p>
 
-<table>
+<table style="text-align: center">
 	<tr>
-		<th></th>
-		<th>0</th>
-		<th>1</th>
-		<th>...</th>
-		<th>n+1</th>
-		<th>n+2</th>
-		<th></th>
+		<th style="width: 2em"></th>
+		<th style="width: 6em">0</th>
+		<th style="width: 6em">1</th>
+		<th style="width: 6em">...</th>
+		<th style="width: 6em">n+1</th>
+		<th style="width: 6em">n+2</th>
+		<th style="width: 6em">...</th>
 	</tr>
 	<tr>
 		<th>0</th>
@@ -395,7 +395,7 @@ response message (for instance, checking to see what friends of friends are onli
 	<tr><td><a href="#msg138">138</a></td><td>Incoming friend invitation</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
 	<tr><td><a href="#msg141">141</a></td><td>???</td><td>Int8</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
 	<tr><td><a href="#msg143">143</a></td><td>User search results</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
-	<tr><td><a href="#msg147">147</a></td><td>???</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
+	<tr><td><a href="#msg147">147</a></td><td>Friend VoIP information</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
 	<tr><td><a href="#msg148">148</a></td><td>???</td><td>Int8</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
 	<tr><td><a href="#msg154">154</a></td><td>Friend status</td><td>String</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
 	<tr><td><a href="#msg151">151</a></td><td>???</td><td>Int8</td><td class="center"><img src="cross.png" alt="no" title="no"/></td><td class="center"><img src="tick.png" alt="yes" title="yes"/></td><td class="center"><img src="cross.png" alt="no" title="no"/></td></tr>
@@ -485,7 +485,7 @@ user via UDP. The message can represent a number of things:
 	<li>An content message (e.g. "hi there")</li>
 	<li>An indication of whether the user is typing or not</li>
 	<li>A list of the client's details (IP address, open UDP port, etc)</li>
-	<li>An acknowledgement of that a message from the peer was received</li> 
+	<li>An acknowledgement that a message from the peer was received</li> 
 </ul> 
 
 <p>
@@ -1725,17 +1725,17 @@ currently playing a game. This is sent in response to a
 	</tr>
 </table>
 
-<h3><a id="msg138">Incoming Friend Invitation Message</a></h3>
+<h3><a id="msg137">Outgoing friend invitation confirmation message</a></h3>
 
 <p>
-TODO: describe this message type
+TODO: describe this message type.
 </p>
 
 <h4>Properties</h4>
 <table>
 	<tr>
 		<th>Message ID</th>
-		<td>135</td>
+		<td>137</td>
 	</tr>
 	<tr>
 		<th>Attribute key type</th>
@@ -1755,7 +1755,65 @@ TODO: describe this message type
 		<th>Type</th>
 		<th>Details</th>
 	</tr>
-	<tr><td>TODO: finish enumerating attributes</td></tr>
+	<tr>
+		<td>TBD</td>
+		<td>TBD</td>
+		<td>TBD</td>
+	</tr>
+</table>
+
+<h3><a id="msg138">Incoming Friend Invitation Message</a></h3>
+
+<p>
+Incoming friend invitation messages are sent to the client by the server when a peer is requesting
+to add them to their friends list.
+</p>
+
+<h4>Properties</h4>
+<table>
+	<tr>
+		<th>Message ID</th>
+		<td>138</td>
+	</tr>
+	<tr>
+		<th>Attribute key type</th>
+		<td>string</td>
+	</tr>
+	<tr>
+		<th>Direction</th>
+		<td>From server to client</td>
+	</tr>
+</table>
+
+<h4>Contents</h4>
+
+<table>
+	<tr>
+		<th>Attribute name</th>
+		<th>Type</th>
+		<th>Details</th>
+	</tr>
+	<tr>
+		<td>name</td>
+		<td>list of strings</td>
+		<td>
+			A list containing the user names of all the peers requesting to become a friend.
+		</td>
+	</tr>
+	<tr>
+		<td>nick</td>
+		<td>list of strings</td>
+		<td>
+			A list containing the display names of all the peers requesting to become a friend.
+		</td>
+	</tr>
+	<tr>
+		<td>msg</td>
+		<td>list of strings</td>
+		<td>
+			A list containing the invitation messages from each user (e.g. "will you be my friend?"). 
+		</td>
+	</tr>
 </table>
 
 <h3><a id="msg143">User Search Results Message</a></h3>
@@ -1824,8 +1882,151 @@ indices in the lists form the information for a matching user.</p>
 	</tr>
 </table>
 
+<h3><a id="msg147">Friend VoIP Information message</a></h3>
+
+<p>
+This message is sent to the client by the server to notify them of any VoIP servers in use by
+their friends.
+</p>
+
+
+<h4>Properties</h4>
+<table>
+	<tr>
+		<th>Message ID</th>
+		<td>147</td>
+	</tr>
+	<tr>
+		<th>Attribute key type</th>
+		<td>string</td>
+	</tr>
+	<tr>
+		<th>Direction</th>
+		<td>From server to client</td>
+	</tr>
+</table>
+
+<h4>Contents</h4>
+
+<table>
+	<tr>
+		<th>Attribute name</th>
+		<th>Type</th>
+		<th>Details</th>
+	</tr>
+	<tr>
+		<td>sid</td>
+		<td>session id list</td>
+		<td>
+			The list of session ids for which VoIP information has been updated.
+		</td>
+	</tr>
+	<tr>
+		<td>vid</td>
+		<td>int32 list</td>
+		<td>
+			The IDs of the VoIP applications that are being used for each user. These relate
+			to the IDs stored in the xfire_games.ini file that comes with the standard XFire
+			client.
+		</td>
+	</tr>
+	<tr>
+		<td>vip</td>
+		<td>int32 (IPv4 address) list</td>
+		<td>
+			The list of IP addresses of the VoIP servers for each user.
+		</td>
+	</tr>
+</table>
+
 <h3><a id="msg154">Friend Status Message</a></h3>
+
+<p>
+This message is sent to the client by the server to notify it of a change in a friend's
+status message (e.g. "AFK" or "out to lunch").
+</p>
+
+<p>The message contains a set of string lists, where strings at corresponding
+indices in the lists form each individual status update.</p>
+
+<h4>Properties</h4>
+<table>
+	<tr>
+		<th>Message ID</th>
+		<td>154</td>
+	</tr>
+	<tr>
+		<th>Attribute key type</th>
+		<td>string</td>
+	</tr>
+	<tr>
+		<th>Direction</th>
+		<td>From server to client</td>
+	</tr>
+</table>
+
+<h4>Contents</h4>
+
+<table>
+	<tr>
+		<th>Attribute name</th>
+		<th>Type</th>
+		<th>Details</th>
+	</tr>
+	<tr>
+		<td>sid</td>
+		<td>session id list</td>
+		<td>
+			The list of session ids of users whose status message has changed.
+		</td>
+	</tr>
+	<tr>
+		<td>msg</td>
+		<td>string list</td>
+		<td>
+			The list new status messages;
+		</td>
+	</tr>
+</table>
+
 <h3><a id="msg400">DID Message</a></h3>
+
+<p>The purpose of this message type is unknown. Unusually, it also contains an entirely unique
+data-type, consisting of a 21 byte value. It is sent from the server to the client at the start
+of a session, and does not appear to be used thereafter.</p>
+
+<h4>Properties</h4>
+<table>
+	<tr>
+		<th>Message ID</th>
+		<td>400</td>
+	</tr>
+	<tr>
+		<th>Attribute key type</th>
+		<td>string</td>
+	</tr>
+	<tr>
+		<th>Direction</th>
+		<td>From server to client</td>
+	</tr>
+</table>
+
+<h4>Contents</h4>
+
+<table>
+	<tr>
+		<th>Attribute name</th>
+		<th>Type</th>
+		<th>Details</th>
+	</tr>
+	<tr>
+		<td>did</td>
+		<td>DID value</td>
+		<td>
+			The mystery 21-byte value.
+		</td>
+	</tr>
+</table>
 
 </body>
 </html>
